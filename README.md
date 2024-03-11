@@ -5,7 +5,7 @@ To entertain and educate the general public of statistical and analytical concep
 
 
 # The Objective
-Using data from the UK hit TV show “Taskmaster”, _"The Median Duck"_ aims to entertain and educate the general public of statistical and analytical concepts. Articles and analysis will be written a non-technical audience.
+Using data from the UK hit TV show “Taskmaster”, _"The Median Duck"_ aims to entertain and educate the general public of statistical and analytical concepts. Articles and analysis will be written for a non-technical audience predominantly.
 
 Types of analysis and content fall under the following umbrellas, and example topics include. 
 
@@ -45,6 +45,8 @@ Perhaps optimistically, I want to (stealthy) educate others of analytics to the 
 
 I made the somewhat brave decision to become self employed at the start of 2024, and have various ventures in the work to provide some income and keep me entertained on a daily basis (piano teaching, piano performance, admin for my housing association). The Median Duck is one of these ventures. I don’t expect this venture to be only money maker at all, but I do want to retain my engagement in the data science and analytical field. Add to this, my “imposter syndrome” often wants me to relearn the basics. 
 
-I do have some aspirations to potentially go into journalism through data science and analytics and this venture may provide some 
+I do have some aspirations to potentially go into data journalism through data science and analytics and this venture may provide some experience.
 
 Finally, I do not claim to be a full expert and entirely knowledgeable about the analysis I will be covering. However I’m always eager to learn new topics and also educate others; I believe I am an educator and teacher at my core. My passion for Taskmaster and prior experience with the analytics field thus makes _"The Median Duck"_ this the ideal vehicle.
+
+Christopher F H Nam
