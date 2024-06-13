@@ -3,7 +3,7 @@ title: "Strength in Data: Connecting to the Taskmaster Database"
 author: "Christopher Nam"
 date: "May 23rd 2024"
 output: 
-    html_document:
+    github_document:
         toc: true
         toc_depth: 1
         df_print: paged
