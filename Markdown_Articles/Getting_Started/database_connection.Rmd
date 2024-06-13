@@ -2,7 +2,11 @@
 title: "Strength in Data: Connecting to the Taskmaster Database"
 author: "Christopher Nam"
 date: "May 23rd 2024"
-output: github_document
+output: 
+    html_document:
+        toc: true
+        toc_depth: 1
+        df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -11,16 +15,16 @@ knitr::opts_chunk$set(echo = TRUE, root.dir = "../")
 
 
 # Introduction and Objective
-This article provides an overview of *Trabajo de las Mesas*, a Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
+This article provides an overview of *Trabajo de las Mesas*, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
 
 
 The article will also provide guidance on how to connect to the database from within <R>.
 
 # Your Task
-Successfully connect to the Taskmaster database from within `R`. Fastest wins; your time starts now!l
+>Successfully connect to the Taskmaster database from within `R`. Fastest wins; your time starts now!l
 
 # *Trabajo de las Mesas* Database
-*[Trabajo de las Mesas] (TdlM)*(https://tdlm.fly.dev/)^[Taskmaster fanatics will know that this is in reference to the hint in S2E5's task *Build a bridge for the potato.*, which has since become one of key pieces of advice for all Taskmaster contestants. It has been suitably adapted for working on data tables in a database, rather than a piece of furniture.] provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant. 
+*[Trabajo de las Mesas](https://tdlm.fly.dev/)* (TdlM^[Taskmaster fanatics will know that this is in reference to the hint in S2E5's task *Build a bridge for the potato.*, which has since become one of key pieces of advice for all Taskmaster contestants. It has been suitably adapted for working on data tables in a database, rather than a piece of furniture.]) provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant. 
 
 The exhaustive nature of the data truly opens the door to potential questions we may want to answer in the Taskmaster universe. For this reasons, I am immensely grateful to the contributors of this project. 
 
@@ -35,7 +39,7 @@ If there are any instances where the data quality is suspect, and/or a contradic
 
 
 ## Why This Datasource?
-As the Taskmaster is a global phenomena, there is no doubt other datasources that could be used for this project. Most noticeably, Jack Bernhadt has an exhaustive [Google sheet document] (https://docs.google.com/spreadsheets/d/1Us84BGInJw8Ef32xCVSVNo1W5mjri9CpUffYfLnq5xA/edit?usp=sharing) in which similar analysis and modelling could be performed. 
+As the Taskmaster is a global phenomena, there is no doubt other datasources that could be used for this project. Most noticeably, Jack Bernhadt has an exhaustive [Google sheet document](https://docs.google.com/spreadsheets/d/1Us84BGInJw8Ef32xCVSVNo1W5mjri9CpUffYfLnq5xA/edit?usp=sharing) in which similar analysis and modelling could be performed. 
 
 
 However, for the purposes of this project, being able to query from database has several advantages. This includes:
@@ -86,7 +90,10 @@ if(!file.exists(file.path(repo_root_dir, data_dir))){
 }
 
 # Download file specified by URL, save in the local destination.
-download.file(url = db_url, destfile = db_data_location, mode = "wb")
+if(!file.exists(db_data_location)){
+    download.file(url = db_url, destfile = db_data_location, mode = "wb")
+}
+
 ```
 ## Connecting to the `.db` file 
 Now that the database file has been successfully downloaded, we can start to connect to it from `R` directory. The `DBI` package will be employed to establish this connection. 
@@ -111,7 +118,7 @@ tm_db <- dbConnect(sqlite_driver, dbname = db_data_location)
 
 If successful, we should be able to list all the tables included in the database.
 
-```{r}
+```{r list_tables}
 # List all tables that are available in the database
 dbListTables(tm_db)
 ```
@@ -122,7 +129,7 @@ Now that we are successfully able to connect to the database, we are able to wri
 
 ### A Basic `SELECT` query
 
-```{r}
+```{r cols.print=25, series_output}
 
 # A Basic Select query  on the series table.
 query <- "SELECT * FROM series LIMIT 10"
@@ -130,10 +137,10 @@ query <- "SELECT * FROM series LIMIT 10"
 dbGetQuery(tm_db, query)
 ```
 
-# Advanced query
+### Advanced query
 
 A more involved query involving `JOIN` and date manipulation
-```{r}
+```{r max.print=25, advanced_query}
 # A join, and data manipulation
 query <- "SELECT ts.name,
 ts.special as special_flag,
@@ -149,9 +156,9 @@ AND ts.champion = tp.id
 "
 
 results <- dbGetQuery(tm_db, query)
-
 results
 ```
+
 
 The results of this query already indicate interesting insights, namely that 204 days (approximately `r round(204/7)` weeks) occurred between the studio record and first air date for Series 13, which is a noticeable deviation from prior seasons (greater broadcast lag). Future series also seem delayed, although to a lesser extent. Could the pandemic have initiated this lag? Or where there other production changes that led to this lag?
 
@@ -159,81 +166,3 @@ The results of this query already indicate interesting insights, namely that 204
 # Times Up!
 And that concludes this task! Hopefully you've been able to connect to the TdlM database directly through `R` and potentially inspired to start performing your own analysis.
 
-```{r }
-dbListTables(tm_db)
-```
-
-```{r querying}
-
-dbGetQuery(tm_db, 'SELECT * FROM profanity LIMIT 5')
-```
-
-```{r}
-teams_tbl <- dbGetQuery(tm_db, 'SELECT * FROM profanity')
-teams_tbl
-
-dim(teams_tbl)
-
-summary(teams_tbl)
-
-```
-
-```{r}
-
-library(tidyverse)
-
-series_profanity <- teams_tbl %>% 
-    group_by(series) %>%
-    summarise(no_episodes = dplyr::n_distinct(episode),
-    sum_profanity_series = dplyr::n()
-                                   ) %>%
-    mutate(profanity_per_episode = sum_profanity_series/no_episodes)
-
-
-dbWriteTable(tm_db, "series_profanity", series_profanity)
-
-#dbWriteTable(tm_db, "teams", teams)
-#head(teams)
-```
-
-
-```{r}
-dbListTables(tm_db)
-```
-
-
-```{r}
-
-
-dbGetQuery(tm_db, "SELECT sp.*,
-           ts.name, 
-           ts.champion,
-           tp.name as champion_name,
-           ts.special,
-           ts.episodes
-           FROM series_profanity sp 
-           LEFT JOIN series ts 
-           ON sp.series = ts.id
-           LEFT JOIN people tp
-           ON sp.series = tp.series
-           AND ts.champion = tp.id
-          ")
-```
-
-```{r}
-dbGetQuery(tm_db, "SELECT * FROM people")
-```
-## Future Ideas
-* Standard queries to join data into the most exhaustive/comprehensive dataset 
- ** Data at the (series, episode, task, contestant) level.
-* Dashboard to provide insight as to when the database was last updated.
-** What is the latest episode that we have data for?
-** What is the latest ETL stamp.
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
