@@ -4,6 +4,7 @@ author: Christopher Nam
 output: html_document
 email_address: themedianduck@gmail.com
 github_repo: https://github.com/bluevolvo87/themedianduck
+url: https://buymeacoffee.com/bluevolvo87
 ---
 
 ```{r echo = FALSE, message = FALSE}
@@ -20,14 +21,87 @@ library(lubridate)
 }
 
 body {
-  background-color: black;
-  color: #f5f5f5;
+  background-color: #f9f9d2;
+  color: black;
   font-size: 1.2vw;
+  font-family: Tahoma
 }
 ```
 
-![](Images/The Median Duck.jpeg)
+<center>
+
+![](Images/The Median Duck.jpeg){style="text-align" width="500" }
+
+</center>
+
+# Welcome!
+
+Welcome to The Median Duck, a self initiated project that aims to
+educate and entertain the general public on data analytic topics through
+data from the hit UK TV show "Taskmaster".
+
+This project is in its early stages, but great things are planned; see
+this [vision document](Vision_Document.md) for the ambitious plans I
+have in mind.
+
+# Article Navigation
+
+-   Getting Started
+
+    -   [Strength in Data: Connecting to the
+        Database](Markdown_Articles/Getting_Started/database_connection.md)
+
+> # **Your Time Starts Now!**
+
+------------------------------------------------------------------------
+
+## The Prize Task
+
+As mentioned earlier, this project is self initiated and funded. If you
+would like to show your appreciation and gratitude in this project, feel
+free to donate to my [buy me a coffee
+page](`r rmarkdown::metadata$url`). All donations are welcome.
+
+> Make a donation to the aforementioned [Buy Me a Coffee
+> page](`r rmarkdown::metadata$url`). The Median Donation
+> Amount for the calendar month wins!
+
+------------------------------------------------------------------------
+
+## The Individual Task
+
+In order to achieve the desired vision, multiple contributors would be
+appreciated; as of `r Sys.Date()` it is just myself. The first step in the
+road to this vision is to tell as many people about this project.
+
+> Tell and redirect as many people as you can about The Median Duck
+> project. Most number of redirects for the calendar months wins!
+
+------------------------------------------------------------------------
+
+## The Team Task
+
+There are no doubt teething errors and mistakes in this project;
+constructive feedback and criticism is welcome!
+
+> Provide constructive criticism on the project by sending an e-mail to
+> [themedianduck\@gmail.com](mailto:`r rmarkdown::metadata$email_address`){.email}.
+> Most useful constructive criticism provided wins. Your time starts
+> now!
+
+------------------------------------------------------------------------
+
+## The Team Studio Task
+
+Based on the ambitious vision of this project, and my limited skill set
+and bandwidth, contributors are also welcome in any shape or form
+(website design, article writing, analysis expertise)!
+
+> Contribute to The Median Duck project; best contribution wins. E-mail
+> [themedianduck\@gmail.com](mailto:`r rmarkdown::metadata$email_address`){.email} to
+> express your contribution interest. Most useful contribution provided
+> wins. Your time starts now!
 
 
-Last updated on `r today()`  
+Last updated on `r today()`.  
 Site [developed](`r rmarkdown::metadata$github_repo`) by [Christopher Nam](mailto:`r rmarkdown::metadata$email_address`)
