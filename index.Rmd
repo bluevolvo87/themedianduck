@@ -24,7 +24,7 @@ body {
   background-color: #f9f9d2;
   color: black;
   font-size: 1.2vw;
-  font-family: Tahoma
+  font-family: Lucida Sans Typewriter
 }
 ```
 
