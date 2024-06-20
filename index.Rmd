@@ -41,7 +41,7 @@ educate and entertain the general public on data analytic topics through
 data from the hit UK TV show "Taskmaster".
 
 This project is in its early stages, but great things are planned; see
-this [vision document](Vision_Document.md) for the ambitious plans I
+this [vision document](Vision_Document.html) for the ambitious plans I
 have in mind.
 
 # Article Navigation
@@ -49,7 +49,7 @@ have in mind.
 -   Getting Started
 
     -   [Strength in Data: Connecting to the
-        Database](Markdown_Articles/Getting_Started/database_connection.md)
+        Database](Markdown_Articles/Getting_Started/database_connection.html)
 
 > # **Your Time Starts Now!**
 

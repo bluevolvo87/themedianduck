@@ -1,4 +1,13 @@
-# The Median Duck (themedianduck)
+---
+title: "The Median Duck Vision"
+author: "Christopher Nam"
+date: "May 23rd 2024"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 1
+        df_print: paged
+---
 
 # The Vision 
 To entertain and educate the general public of statistical and analytical concepts through data associated with the hit UK TV show “Taskmaster”.
