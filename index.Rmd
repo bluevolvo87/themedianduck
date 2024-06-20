@@ -1,0 +1,7 @@
+---
+title: The Median Duck
+layout: template
+filename: index.Rmd
+--- 
+
+Test test, this a test. Wonderwoman!
