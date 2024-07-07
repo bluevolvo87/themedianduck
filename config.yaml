@@ -2,7 +2,7 @@ baseURL: https://bluevolvo87.github.io/themedianduck/
 languageCode: en-us
 title: The Median Duck
 theme: archie
-copyright: © The Median Duck
+copyright: © Christopher Nam
 pygmentsstyle: monokai
 pygmentscodefences: yes
 pygmentscodefencesguesssyntax: yes
@@ -13,11 +13,36 @@ params:
       name: GitHub
       url: https://github.com/bluevolvo87/themedianduck
     
-    - icon: youtube
-      name: YouTube
+    - icon: tv
+      name: YouTube Channel
       url: https://youtube.com/naanbread87/
+      
+    - icon: coffee
+      name: BuyMeACoffee
+      url: https://buymeacoffee.com/bluevolvo87
+      
+    - icon: music
+      name: Piano
+      url: https://www.youtube.com/playlist?list=PL8smthAx7GcfC-gZv6zGNoORClnEXq-ru
+      
+    - icon: smile
+      name: Task Playlist
+      url: https://www.youtube.com/playlist?list=PL8smthAx7GcdBfg9C_TRtPC_8m99ho6Ou
+      
   subtitle: vires in notitia
+  description: "Educating Data Science through Taskmaster"
   useCDN: no
+  
+  highlightjsVersion: "9.12.0"
+  highlightjsCDN: "//cdnjs.cloudflare.com/ajax/libs"
+  highlightjsLang: ["r", "yaml"]
+  highlightjsTheme: "github"
+  logo:
+    url: "logo.jpeg"
+    width: 50
+    height: 50
+    alt: "Logo Duck"
+    
 menu:
   main:
     - name: Home
