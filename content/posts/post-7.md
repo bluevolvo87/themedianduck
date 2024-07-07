@@ -4,6 +4,7 @@ summary: Here is how you can setup dark mode for Ink and test on various OS like
   Android, macOS and Windows 10.
 title: How to test dark mode?
 tldr: Wubba lubba dub dub
+draft: yes
 ---
 
 You can set dark mode as default by setting `params.mode` to `dark` in `config.toml` or set it to `auto` which will detect based on your OS and switch to dark mode. For more details [refer documentation](https://github.com/knadh/hugo-ink#configuration)

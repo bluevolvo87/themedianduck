@@ -4,6 +4,7 @@ description: The art of letting go.
 tags:
 - Procrastinating
 title: How I Learned to Stop Procrastinating, & Love Letting Go
+draft: yes
 ---
 
 The end of procrastination is the art of letting go.

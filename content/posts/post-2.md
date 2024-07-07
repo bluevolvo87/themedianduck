@@ -3,6 +3,7 @@ date: "2018-03-18T12:13:30+05:30"
 tags:
 - Space
 title: 'Fearlessness: How to Stop Running from Space'
+draft: yes
 ---
 
 We spend our days filling in every available space, cramming in more tasks, responding to messages, checking social media and online sites, watching videos.

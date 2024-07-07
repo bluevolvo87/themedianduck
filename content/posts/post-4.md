@@ -3,6 +3,7 @@ date: "2020-03-18T12:13:35+05:30"
 description: Start by getting a small backpack (less than 20 liters) and then just
   travel with what fits in that.
 title: Getting Started with Traveling Ultralight
+draft: yes
 ---
 
 I’m on a trip at the moment, and a friend who generously let me sleep on his couch looked at my small travel backpack and commented on how little I travel with: “That’s impressive,” he said.
