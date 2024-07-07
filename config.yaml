@@ -1,36 +1,37 @@
-baseURL: https://example.com
+baseURL: https://bluevolvo87.github.io/themedianduck/
 languageCode: en-us
-title: Archie
+title: The Median Duck
 theme: archie
-copyright: © Athul
+copyright: © The Median Duck
 pygmentsstyle: monokai
 pygmentscodefences: yes
 pygmentscodefencesguesssyntax: yes
 params:
-  mode: auto
+  mode: toggle
   social:
     - icon: github
       name: GitHub
-      url: https://github.com/athul/archie
-    - icon: twitter
-      name: Twitter
-      url: https://twitter.com/athulcajay/
-    - icon: gitlab
-      name: GitLab
-      url: https://gitlab.com/athul/
-  subtitle: Minimal and Clean [blog theme for Hugo](https://github.com/athul/archie)
+      url: https://github.com/bluevolvo87/themedianduck
+    
+    - icon: youtube
+      name: YouTube
+      url: https://youtube.com/naanbread87/
+  subtitle: vires in notitia
   useCDN: no
 menu:
   main:
     - name: Home
       url: /
       weight: 1
-    - name: All posts
+    - name: All posts 
       url: /posts
       weight: 2
-    - name: About
-      url: /about
+    - name: The Vision
+      url: /vision
       weight: 3
-    - name: Tags
-      url: /tags
+    - name: About Me
+      url: /about
       weight: 4
+    - name: Categories
+      url: /tags
+      weight: 5

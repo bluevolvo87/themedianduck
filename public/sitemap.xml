@@ -2,57 +2,85 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:4321/</loc>
+    <loc>http://localhost:4321/themedianduck/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/categories/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/hugo_test/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/posts/2024-07-06-new-post-on-archie/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/posts/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/categories/test/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/categories/trial/</loc>
+    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/posts/2020-12-01-r-rmarkdown/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/plot/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/categories/r/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/r-markdown/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/regression/</loc>
+    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/posts/tg-gh/</loc>
     <lastmod>2020-04-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/</loc>
-    <lastmod>2020-04-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:4321/posts/tg-gh/</loc>
-    <lastmod>2020-04-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:4321/tags/primer/</loc>
+    <loc>http://localhost:4321/themedianduck/tags/primer/</loc>
     <lastmod>2020-04-01T02:01:58+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/post-1/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-1/</loc>
     <lastmod>2020-04-01T02:01:58+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/tags/</loc>
+    <loc>http://localhost:4321/themedianduck/tags/todo/</loc>
     <lastmod>2020-04-01T02:01:58+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/tags/todo/</loc>
-    <lastmod>2020-04-01T02:01:58+05:30</lastmod>
-  </url><url>
-    <loc>http://localhost:4321/posts/post-4/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-4/</loc>
     <lastmod>2020-03-18T12:13:35+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/archives/</loc>
+    <loc>http://localhost:4321/themedianduck/archives/</loc>
     <lastmod>2019-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/about/</loc>
+    <loc>http://localhost:4321/themedianduck/about/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/post-7/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-7/</loc>
     <lastmod>2018-03-18T12:13:38+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/post-5/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-5/</loc>
     <lastmod>2018-03-18T12:13:38+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/post-6/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-6/</loc>
     <lastmod>2018-03-18T12:13:36+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/post-3/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-3/</loc>
     <lastmod>2018-03-18T12:13:32+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/tags/procrastinating/</loc>
+    <loc>http://localhost:4321/themedianduck/tags/procrastinating/</loc>
     <lastmod>2018-03-18T12:13:32+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/posts/post-2/</loc>
+    <loc>http://localhost:4321/themedianduck/posts/post-2/</loc>
     <lastmod>2018-03-18T12:13:30+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/tags/space/</loc>
+    <loc>http://localhost:4321/themedianduck/tags/space/</loc>
     <lastmod>2018-03-18T12:13:30+05:30</lastmod>
-  </url><url>
-    <loc>http://localhost:4321/categories/</loc>
   </url>
 </urlset>
