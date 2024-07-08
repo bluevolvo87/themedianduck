@@ -7,14 +7,28 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Sat, 06 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About Me</title>
+      <link>http://localhost:4321/themedianduck/about/</link>
+      <pubDate>Mon, 08 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/about/</guid>
+      <description>My Professional Background I obtained a PhD in Statistics from the University of Warwick in 2013, my thesis title was &amp;ldquo;Uncertainty in Changepoints in Time Series&amp;rdquo; 1. I’m delighted that Dr Little Alex Horne recently became associated with my alma mater through the Taskmaster Education.&#xA;I have 10 years of industry experience as a Research Scientist/Data Scientist at Amazon and Samsung, predominantly demand forecasting at scale for products. I can impart best practices and vision of how to run this project at scale and with rigor (automation, repeatability).</description>
+    </item>
     <item>
       <title>New Post on Archie</title>
       <link>http://localhost:4321/themedianduck/posts/2024-07-06-new-post-on-archie/</link>
       <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/posts/2024-07-06-new-post-on-archie/</guid>
       <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -0.4895228 -0.1800012 0.3154719 1.0259020 2.0400095 Here&amp;rsquo;s an image of a duck.</description>
+    </item>
+    <item>
+      <title>Resources</title>
+      <link>http://localhost:4321/themedianduck/resources/</link>
+      <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/resources/</guid>
+      <description>Here are some of the resources I used as part of The Median Duck.&#xA;(I will tabulate and automate this eventually).&#xA;Taskmaster Related Website Related Statistics Related Misc Related </description>
     </item>
     <item>
       <title>The Vision</title>
@@ -57,13 +71,6 @@
       <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/archives/</guid>
       <description></description>
-    </item>
-    <item>
-      <title>About</title>
-      <link>http://localhost:4321/themedianduck/about/</link>
-      <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/about/</guid>
-      <description>This is where I would boast about myself no doubt.&#xA;Written in Go, Hugo is an open source static site generator available under the Apache Licence 2.0. Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.&#xA;Hugo makes use of a variety of open source projects including:</description>
     </item>
     <item>
       <title>How to test dark mode?</title>

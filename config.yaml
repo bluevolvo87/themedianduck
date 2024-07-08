@@ -48,15 +48,15 @@ menu:
     - name: Home
       url: /
       weight: 1
-    - name: All posts 
-      url: /posts
-      weight: 2
     - name: The Vision
       url: /vision
-      weight: 3
+      weight: 2
     - name: About Me
       url: /about
+      weight: 3
+    - name: All posts 
+      url: /posts
       weight: 4
-    - name: Categories
-      url: /tags
+    - name: Resources
+      url: /resources
       weight: 5
