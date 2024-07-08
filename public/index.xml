@@ -17,6 +17,13 @@
       <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -0.4895228 -0.1800012 0.3154719 1.0259020 2.0400095 Here&amp;rsquo;s an image of a duck.</description>
     </item>
     <item>
+      <title>The Vision</title>
+      <link>http://localhost:4321/themedianduck/vision/</link>
+      <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/vision/</guid>
+      <description>To entertain and educate the general public of statistical and analytical concepts through data associated with the hit UK TV show “Taskmaster”.&#xA;The Objective Using data from the UK hit TV show “Taskmaster”, &amp;ldquo;The Median Duck&amp;rdquo; aims to entertain and educate the general public of statistical and analytical concepts. Articles and analysis will be written for a non-technical audience predominantly.&#xA;Types of analysis and content fall under the following umbrellas, and example topics include.</description>
+    </item>
+    <item>
       <title>Hello R Markdown</title>
       <link>http://localhost:4321/themedianduck/posts/2020-12-01-r-rmarkdown/</link>
       <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
