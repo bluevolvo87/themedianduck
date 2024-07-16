@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Beginner on The Median Duck</title>
+    <link>http://localhost:4321/themedianduck/tags/beginner/</link>
+    <description>Recent content in Beginner on The Median Duck</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Christopher Nam</copyright>
+    <lastBuildDate>Wed, 10 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:4321/themedianduck/tags/beginner/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Strength in Data: Connecting to the Taskmaster Database</title>
+      <link>http://localhost:4321/themedianduck/posts/2024-07-10-strength-in-data-connecting-to-the-taskmaster-database/</link>
+      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/posts/2024-07-10-strength-in-data-connecting-to-the-taskmaster-database/</guid>
+      <description>Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!&#xA;Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster. TOC&#xA;The article will also provide guidance on how to connect to the database from within .</description>
+    </item>
+  </channel>
+</rss>

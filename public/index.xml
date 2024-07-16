@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Mon, 08 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Strength in Data: Connecting to the Taskmaster Database</title>
+      <link>http://localhost:4321/themedianduck/posts/2024-07-10-strength-in-data-connecting-to-the-taskmaster-database/</link>
+      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/posts/2024-07-10-strength-in-data-connecting-to-the-taskmaster-database/</guid>
+      <description>Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!&#xA;Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster. TOC&#xA;The article will also provide guidance on how to connect to the database from within .</description>
+    </item>
     <item>
       <title>About Me</title>
       <link>http://localhost:4321/themedianduck/about/</link>
@@ -28,7 +35,7 @@
       <link>http://localhost:4321/themedianduck/resources/</link>
       <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/resources/</guid>
-      <description>Here are some of the resources I used as part of The Median Duck.&#xA;(I will tabulate and automate this eventually).&#xA;Taskmaster Related Website Related Statistics Related Misc Related </description>
+      <description>Here are some of the resources I used as part of The Median Duck.&#xA;(I will tabulate and automate this eventually).&#xA;Taskmaster Related TaskMaster.Info Trabajo de las Mesas Website Related Feather Icons Statistics Related Misc Related </description>
     </item>
     <item>
       <title>The Vision</title>
