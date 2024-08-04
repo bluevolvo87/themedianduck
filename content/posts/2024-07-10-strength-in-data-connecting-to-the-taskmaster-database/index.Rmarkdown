@@ -2,9 +2,13 @@
 title: 'Strength in Data: Connecting to the Taskmaster Database'
 author: Christopher Nam
 date: '2024-07-10'
-slug: []
-categories: ["Getting Started", "Introduction", "Beginner", "Setup"]
-tags:
+keywords: ["intro", "setup"]
+section: 
+    - intro
+    - setup
+    - data
+series: "Stength in Data"
+tag:
   - Introduction
   - Setup
   - Beginner
@@ -13,11 +17,15 @@ draft: no
 output:
   blogdown::html_page:
     toc: true
-    toc_depth: 1
+    toc_depth: 2
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE, echo = FALSE}
-knitr::opts_chunk$set(echo = TRUE, root.dir = "../")
+knitr::opts_chunk$set(echo = TRUE, root.dir = "../",
+                      tidy = TRUE
+                      )
+options(width = 1000)
 ```
 
 # Your Task
@@ -26,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE, root.dir = "../")
 
 # Introduction and Objective
 
-This article provides an overview of *Trabajo de las Mesas*, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster. TOC
+This article provides an overview of *Trabajo de las Mesas*, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
 
 The article will also provide guidance on how to connect to the database from within <R>.
 
@@ -81,21 +89,22 @@ I opting choosing to choose `R` for this project due to my familarity with it, a
 
 The tables displayed on the website are powered from the following [database file](https://tdlm.fly.dev/taskmaster.db) which can downloaded and stored locally. The following code chunk downloads the database file locally (based on the repo directory); a corresponding folder location will be created if it does not already exist.
 
-```{r download}
+```{r download, message = FALSE}
+library(here)
+
 # URL where Database file resides. We will download from here.
 db_url <- "https://tdlm.fly.dev/taskmaster.db"
 
 # Where the data will be stored locally
-repo_root_dir <- getwd()
 db_file_name <- "taskmaster.db"
-data_dir <- "Data"
+data_dir <- here("static", "data")
 
-db_data_location <- file.path(repo_root_dir, data_dir, db_file_name)
+db_data_location <- file.path(data_dir, db_file_name)
 
 
 # Create Data Directory if does not exist
-if(!file.exists(file.path(repo_root_dir, data_dir))){
-    dir.create(file.path(repo_root_dir, data_dir))
+if(!file.exists(file.path(data_dir))){
+    dir.create(file.path(data_dir))
 }
 
 # Download file specified by URL, save in the local destination.

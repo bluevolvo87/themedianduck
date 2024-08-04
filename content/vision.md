@@ -9,7 +9,6 @@ title: The Vision
 
 > To entertain and educate the general public of statistical and analytical concepts through data associated with the hit UK TV show “Taskmaster”.
 
-
 # The Objective
 Using data from the UK hit TV show “Taskmaster”, _"The Median Duck"_ aims to entertain and educate the general public of statistical and analytical concepts. Articles and analysis will be written for a non-technical audience predominantly.
 

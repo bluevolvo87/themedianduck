@@ -1,6 +1,9 @@
 body {
   color: white;
   background-color: #202124;
+  margin: 0;
+  padding: 0;
+  position: relative;
 }
 
 ::-moz-selection {
@@ -31,7 +34,15 @@ pre {
   padding: 1em;
 }
 blockquote {
-  border-color: blue;
+  border-color: red;
+  background-color: #FCF5E5;
+  min-height: 40px;
+  padding-left: 48px;
+  padding-block-start: 1px;
+  padding-block-end: 1px;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 400
 }
 
 h1,
@@ -94,6 +105,11 @@ a:hover {
 .site-title a {
   color: white;
   text-decoration: none !important;
+}
+
+.site-toc a {
+    colour: purple;
+    
 }
 
 .header nav,

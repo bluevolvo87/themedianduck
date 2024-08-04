@@ -39,3 +39,7 @@
        url('../fonts/ibm-plex-mono-v6-latin-500italic.ttf') format('truetype'), /* Safari, Android, iOS */
        url('../fonts/ibm-plex-mono-v6-latin-500italic.svg#IBMPlexMono') format('svg'); /* Legacy iOS */
 }
+
+@page {
+  size: auto;
+}
