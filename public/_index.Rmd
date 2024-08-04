@@ -1,0 +1,23 @@
+---
+title: The Median Duck Home Page
+author: Christopher Nam
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# Welcome!
+
+![](img/duck_tt.png)
+
+Welcome to The Median Duck, a self initiated project that aims to
+educate and entertain the general public on data analytic topics through
+data from the hit UK TV show "Taskmaster".
+
+This project is in its early stages, but great things are planned; see
+this [vision document](vision) for the ambitious plans I have in mind.
+
+> **Your Time Starts Now!**
+
+------------------------------------------------------------------------
+

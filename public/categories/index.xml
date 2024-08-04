@@ -7,36 +7,8 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Wed, 10 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Beginner</title>
-      <link>http://localhost:4321/themedianduck/categories/beginner/</link>
-      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/beginner/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Getting Started</title>
-      <link>http://localhost:4321/themedianduck/categories/getting-started/</link>
-      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/getting-started/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Introduction</title>
-      <link>http://localhost:4321/themedianduck/categories/introduction/</link>
-      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/introduction/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Setup</title>
-      <link>http://localhost:4321/themedianduck/categories/setup/</link>
-      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/setup/</guid>
-      <description></description>
-    </item>
     <item>
       <title>Test</title>
       <link>http://localhost:4321/themedianduck/categories/test/</link>
