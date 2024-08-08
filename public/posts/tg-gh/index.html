@@ -24,8 +24,8 @@
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:4321/themedianduck/css/dark.82f2f83e158df3716afd11f528064d908bb886ea20970e6355ed93ddabe741a0.css"  disabled />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.7534bb61a5f169e92170d3cd6a3ecc130e9170759644b8c32e623544c5585844.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:4321/themedianduck/css/dark.3d4e84970aad49c6bb5f5a88e4ad85a36308f4ecc2dd0318e94ca36c305666bd.css"  disabled />
 	
 
 	
@@ -62,11 +62,19 @@
 </header>
 
 <em><p>vires in notitia</p></em>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-61T5JLRMP0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-61T5JLRMP0');
+</script>
 <main>
 	<article>
 		<div class="title">
 			<h1 class="title">Telegram Bot for  GitHub Actions</h1>
-			<div class="meta">Posted on 2020-04-01 <span class="draft-label">DRAFT</span> </div>
+			<div class="meta">Posted on Apr 1, 2020 <span class="draft-label">DRAFT</span> </div>
 		</div>
 		
 		<div class="tldr">
@@ -74,6 +82,26 @@
 			Making GitHub Actions with Js Code
 		</div>
 		
+	    <div class="toc">
+	        
+	        <h1 class="site-toc">Table of Contents</h1>
+		<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#telegram">Telegram</a></li>
+        <li><a href="#github-actions">GitHub Actions</a></li>
+        <li><a href="#building-the-bot">Building the Bot</a></li>
+        <li><a href="#making-the-bot">Making the Bot</a></li>
+        <li><a href="#compiling-and-minifying-the-js-code">Compiling and Minifying the Js code</a></li>
+        <li><a href="#making-it-a-valid-action">Making it a valid action</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav> 
+		
+		</div>  
+		    
 		<section class="body">
 			<h2 id="telegram">Telegram</h2>
 <p><a href="https://telegram.org/">Telegram</a> is a cloud-based mobile and desktop messaging app with a focus on security and speed. It is free to use and extensively hackable. It also has a good bot support system. The API is also easy to implement and has many wrappers for building bots with the API.</p>
@@ -412,6 +440,8 @@ Create a new bot with the <code>/newbot</code> command and get the API key. We&r
 <p>You can try out many different items using actions and this is just a sample action to get you started. Maybe sending Cat GIFs if the build succeded on the pull request or sending a welcome message to a first time contributor. You imagination is the limit😄 and <strong>Never Stop being ⚡️</strong></p>
 
 		</section>
+		
+  
 
 		<div class="post-tags">
 			

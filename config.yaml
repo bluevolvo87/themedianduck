@@ -64,8 +64,8 @@ menu:
 outputs:
 home: [html, rss, json]
 permalinks: 
-    posts: "/:year/:month/:day/:slug/"
-
+    posts: "/:year/:month/:slug/"
+    post: "/:year/:month/:slug/"
 taxonomies:
   category: categories
   series: series

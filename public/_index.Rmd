@@ -12,10 +12,10 @@ editor_options:
 
 Welcome to The Median Duck, a self initiated project that aims to
 educate and entertain the general public on data analytic topics through
-data from the hit UK TV show "Taskmaster".
+the hit UK TV show [Taskmaster](https://en.wikipedia.org/wiki/Taskmaster_(TV_series)).
 
 This project is in its early stages, but great things are planned; see
-this [vision document](vision) for the ambitious plans I have in mind.
+this [vision document](vision) for the ambitious plans that I have in mind.
 
 > **Your Time Starts Now!**
 

@@ -2,22 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:4321/themedianduck/tasks/</loc>
+    <loc>http://localhost:4321/themedianduck/tags/musings/</loc>
+    <lastmod>2024-07-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/posts/</loc>
+    <lastmod>2024-07-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/2024/07/data-quality-musings/</loc>
+    <lastmod>2024-07-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/</loc>
+    <lastmod>2024-07-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/tdlm/</loc>
     <lastmod>2024-07-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/</loc>
     <lastmod>2024-07-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/posts/</loc>
+    <loc>http://localhost:4321/themedianduck/tasks/</loc>
+    <lastmod>2024-07-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/beginner/</loc>
     <lastmod>2024-07-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/series/</loc>
     <lastmod>2024-07-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/series/stength-in-data/</loc>
+    <loc>http://localhost:4321/themedianduck/tags/strength-in-data/</loc>
     <lastmod>2024-07-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2024/07/10/strength-in-data-connecting-to-the-taskmaster-database/</loc>
+    <loc>http://localhost:4321/themedianduck/series/strength-in-data/</loc>
+    <lastmod>2024-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</loc>
     <lastmod>2024-07-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/about/</loc>
@@ -29,10 +47,7 @@
     <loc>http://localhost:4321/themedianduck/tags/hugo_test/</loc>
     <lastmod>2024-07-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2024/07/06/new-post-on-archie/</loc>
-    <lastmod>2024-07-06T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:4321/themedianduck/tags/</loc>
+    <loc>http://localhost:4321/themedianduck/2024/07/new-post-on-archie/</loc>
     <lastmod>2024-07-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/categories/test/</loc>
@@ -47,7 +62,7 @@
     <loc>http://localhost:4321/themedianduck/vision/</loc>
     <lastmod>2024-07-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2020/12/01/hello-r-markdown/</loc>
+    <loc>http://localhost:4321/themedianduck/2020/12/hello-r-markdown/</loc>
     <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/plot/</loc>
@@ -62,40 +77,40 @@
     <loc>http://localhost:4321/themedianduck/tags/regression/</loc>
     <lastmod>2020-12-01T21:13:14-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2020/04/01/telegram-bot-for-github-actions/</loc>
+    <loc>http://localhost:4321/themedianduck/2020/04/telegram-bot-for-github-actions/</loc>
     <lastmod>2020-04-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/primer/</loc>
     <lastmod>2020-04-01T02:01:58+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2020/04/01/primer-when-you-have-too-much-to-do/</loc>
+    <loc>http://localhost:4321/themedianduck/2020/04/primer-when-you-have-too-much-to-do/</loc>
     <lastmod>2020-04-01T02:01:58+05:30</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/todo/</loc>
     <lastmod>2020-04-01T02:01:58+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2020/03/18/getting-started-with-traveling-ultralight/</loc>
+    <loc>http://localhost:4321/themedianduck/2020/03/getting-started-with-traveling-ultralight/</loc>
     <lastmod>2020-03-18T12:13:35+05:30</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/archives/</loc>
     <lastmod>2019-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2018/03/18/how-to-test-dark-mode/</loc>
+    <loc>http://localhost:4321/themedianduck/2018/03/how-to-test-dark-mode/</loc>
     <lastmod>2018-03-18T12:13:38+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2018/03/18/typography/</loc>
+    <loc>http://localhost:4321/themedianduck/2018/03/typography/</loc>
     <lastmod>2018-03-18T12:13:38+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2018/03/18/hugo-shortcodes/</loc>
+    <loc>http://localhost:4321/themedianduck/2018/03/hugo-shortcodes/</loc>
     <lastmod>2018-03-18T12:13:36+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2018/03/18/how-i-learned-to-stop-procrastinating-love-letting-go/</loc>
+    <loc>http://localhost:4321/themedianduck/2018/03/how-i-learned-to-stop-procrastinating-love-letting-go/</loc>
     <lastmod>2018-03-18T12:13:32+05:30</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/procrastinating/</loc>
     <lastmod>2018-03-18T12:13:32+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2018/03/18/fearlessness-how-to-stop-running-from-space/</loc>
+    <loc>http://localhost:4321/themedianduck/2018/03/fearlessness-how-to-stop-running-from-space/</loc>
     <lastmod>2018-03-18T12:13:30+05:30</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/space/</loc>

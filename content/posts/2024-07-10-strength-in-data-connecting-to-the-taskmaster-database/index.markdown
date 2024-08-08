@@ -7,18 +7,15 @@ section:
     - intro
     - setup
     - data
-series: "Stength in Data"
-tag:
-  - Introduction
-  - Setup
-  - Beginner
-  - Getting Started
+series: "Strength in Data"
+tags: ["Strength in Data", "Beginner"]
 draft: no
 output:
   blogdown::html_page:
     toc: true
     toc_depth: 2
     number_sections: true
+    df_print: "default"
 ---
 
 
@@ -27,66 +24,33 @@ output:
 
 > Successfully connect to the Taskmaster database from within `R`. Fastest wins; your time starts now!
 
-# Introduction and Objective
+This article provides an overview of *Trabajo de las Mesas*, a pivotal database that will be central to this project.
 
-This article provides an overview of *Trabajo de las Mesas*, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
-
-The article will also provide guidance on how to connect to the database from within <R>.
+The article will also provide guidance on how to connect to the database from within `R`.
 
 # *Trabajo de las Mesas* Database
 
-[*Trabajo de las Mesas*](https://tdlm.fly.dev/) (TdlM^\[Taskmaster fanatics will know that this is in reference to the hint in S2E5's task *Build a bridge for the potato.*, which has since become one of key pieces of advice for all Taskmaster contestants. It has been suitably adapted for working on data tables in a database, rather than a piece of furniture.\]) provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant.
+[*Trabajo de las Mesas*](https://tdlm.fly.dev/) (TdlM [^1]) provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant.
+
+[^1]: Taskmaster fanatics will know that this is in reference to the hint in S2E5's task *Build a bridge for the potato.*, which has since become one of key pieces of advice for all Taskmaster contestants. It has been suitably adapted for working on data tables in a database, rather than a piece of furniture.
 
 The exhaustive nature of the data truly opens the door to potential questions we may want to answer in the Taskmaster universe. For this reasons, I am immensely grateful to the contributors of this project.
 
-## Data Quality
-
-As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.
-
-I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from [taskmaster.info](https://taskmaster.info/), an equally exhaustive Taskmaster resource. .
-
-For now, and to not derail me from my initial interest and excitement on The Median Duck project, I will assume that the data is of high quality (accurate, consistent etc.).
-
-If there are any instances where the data quality is suspect, and/or a contradictory insight or conclusion is identified, a deep dive will likely occurr and the deep dive process will like provide useful insight for any inspiring individuals hoping to get into data analytics more.
-
-## Why This Datasource?
-
-As the Taskmaster is a global phenomena, there is no doubt other datasources that could be used for this project. Most noticeably, Jack Bernhadt has an exhaustive [Google sheet document](https://docs.google.com/spreadsheets/d/1Us84BGInJw8Ef32xCVSVNo1W5mjri9CpUffYfLnq5xA/edit?usp=sharing) in which similar analysis and modelling could be performed.
-
-However, for the purposes of this project, being able to query from database has several advantages. This includes:
-
--   Quality: Data being in a structured tabular format which often leads to better data quality
--   Manipulations: Greater manipulation and transformations could potentially be employed (joins, group bys etc)
--   Automation, Repeatability and Scalabilty: if we wanted to repeat the same or similar analysis but on a new subset of data (for example updated data due to a new series being broadcast, or new parameters being employed), it is more convenient to do this in a structured data source such as a database.
-
-However, a database approach is by no means perfect either. The barrier to entry is considerably higher than data stored in a spreadsheet (both adding, manipulating and analysing data), and spreadsheets are good for ad-hoc, interactive analysis.
-
-Considering overall vision of The Median Duck, I believe that a database approach is ideal.
-
-## Potential Areas to Explore in the Future
-
--   Greater understanding of how the data is being collected.
-    -   Is it manual, and are their quality checks in place? Is there any opportunity to automate?
-    -   Can we introduce a SLA (service level agreement) of when the data can be expected to be populated. Data associated with more recent seasons don't appear to be present, despite being broadcasted already.
-    -   Introduction of an ETL timestamp.
--   Generate a data dictionary page
-    -   What tables are available, samples of the data, what the table pertains to, and key columns.
--   A dashboard on data quality.
-    -   A highlevel overview of the quality and how recent the data is.
+For some musings on TdlM, data quality and assumptions made, see this [post](/2024/07/data-quality-musings/).
 
 # Connecting to the Database from `R`
 
 ## Downloading the `.db` file
 
-It is possible to view and query these the numerous tables in TdlM from the [website itself](https://tdlm.fly.dev/). However, this does not lead to intuitively to repeatable and reproduceable analysis. Connecting to the database from a statistical programming language such as `R` or `python`, naturally leads to repeatablility and reproduceability.
+It is possible to view and query these the numerous tables in TdlM from the [website itself](https://tdlm.fly.dev/). However, this does not lead  intuitively to repeatable and reproduceable analysis. Connecting to the database from a (statistical)        programming language such as `R` or `python`, naturally leads to repeatablility and reproduceability.
 
-I opting choosing to choose `R` for this project due to my familarity with it, and the high level visualisations and modelling that can be employed.
+I am opting choosing to choose `R` for this project due to my familarity with it, and the high level visualisations and modelling that can be employed.
 
 The tables displayed on the website are powered from the following [database file](https://tdlm.fly.dev/taskmaster.db) which can downloaded and stored locally. The following code chunk downloads the database file locally (based on the repo directory); a corresponding folder location will be created if it does not already exist.
 
 
 ```r
-library(here)
+library(here)  #library to help with identifying the repo working directory
 
 # URL where Database file resides. We will download from here.
 db_url <- "https://tdlm.fly.dev/taskmaster.db"
@@ -111,12 +75,13 @@ if (!file.exists(db_data_location)) {
 
 ## Connecting to the `.db` file
 
-Now that the database file has been successfully downloaded, we can start to connect to it from `R` directory. The `DBI` package will be employed to establish this connection.
+Now that the database file has been downloaded successfully, we can start to connect to it from `R` directory. The `DBI` package will be employed to establish this connection.
 
 
 ```r
 package_name <- "RSQLite"
 
+# Install packages if does not exist, then load.
 if (!require(package_name, character.only = TRUE)) {
     install.packages(package_name, character.only = TRUE)
 } else {
@@ -149,8 +114,7 @@ dbListTables(tm_db)
 ```
 
 ## Querying the Database
-
-Now that we are successfully able to connect to the database, we are able to write queries and execute them directly from `R` to access the data. For example:
+With the database connection established, we are able to write queries and execute them directly from `R` to access the data. For example:
 
 ### A Basic `SELECT` query
 
@@ -178,7 +142,7 @@ dbGetQuery(tm_db, query)
 
 ### Advanced query
 
-A more involved query involving `JOIN` and date manipulation
+A more involved query involving `JOIN` and date manipulation is also possible.
 
 
 ```r
@@ -189,15 +153,17 @@ tp.name as champion_name,
 tp.seat as chamption_seat,
 DATE(ts.studio_end) as studio_end, 
 DATE(ts.air_start) as air_start, 
+-- Days between air start date, and last studio record date
 JULIANDAY(ts.air_start) - JULIANDAY(ts.studio_end) as broadcast_lag_days
-FROM series ts
-LEFT JOIN people tp
-ON ts.id = tp.series
-AND ts.champion = tp.id
-WHERE ts.special <> 1
+FROM series ts -- Series information
+LEFT JOIN people tp -- People/Contestant information
+    ON ts.id = tp.series
+    AND ts.champion = tp.id
+WHERE ts.special <> 1 -- Consider regular series
 "
 
 results <- dbGetQuery(tm_db, query)
+
 results
 ```
 
@@ -221,8 +187,14 @@ results
 ## 16 Series 16            0     Sam Campbell              3 2023-05-12 2023-09-21                132
 ```
 
-The results of this query already indicate interesting insights, namely that 204 days (approximately 29 weeks) occurred between the studio record and first air date for Series 13, which is a noticeable deviation from prior seasons (greater broadcast lag). Future series also seem delayed, although to a lesser extent. Could the pandemic have initiated this lag? Or where there other production changes that led to this lag?
+
+
+# A recording to airing insight...
+The results of this query already indicate interesting insights; Series 13 has the largest known delay between studio recording and airing of 204 days (approximately 29 weeks). This is a noticeable deviation from prior series. Future series also seem delayed, although to a lesser extent. 
+
+**Potential followup questions:**
+- Could the 2020 pandemic have initiated this lag? 
+- Were there other production changes that led to this lag?
 
 # Times Up!
-
 And that concludes this task! Hopefully you've been able to connect to the TdlM database directly through `R` and potentially inspired to start performing your own analysis.

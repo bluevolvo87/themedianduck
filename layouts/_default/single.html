@@ -11,17 +11,16 @@
 			{{ .Params.tldr }}
 		</div>{{ end }}
 		
-		<div class="article-container">
-		    
-
-	    <div class="col-12 col-lg-3 docs-toc">
+	    <div class="toc">
+	        {{ if .TableOfContents}}
 	        <h1 class="site-toc">Table of Contents</h1>
-		{{ .TableOfContents }} <!-- HUGO variable which contains the TOC of the post -->    
+		{{ .TableOfContents }} 
+		{{ end}}
 		</div>  
 		    
-		<div class="col-12 col-lg-9 article-style">
+		<section class="body">
 			{{ .Content }}
-		</div>
+		</section>
 		
   
 
@@ -30,8 +29,9 @@
 			{{ if gt .Params.tags 0 }}
 			<nav class="nav tags">
 				<ul class="tags">
+				    Tags: 
 					{{ range .Params.tags }}
-					<li><a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a></li>
+					<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a> 
 					{{ end }}
 				</ul>
 			</nav>

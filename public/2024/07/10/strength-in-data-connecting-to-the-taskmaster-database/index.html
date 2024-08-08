@@ -3,26 +3,31 @@
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Strength in Data: Connecting to the Taskmaster Database - The Median Duck</title><meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!
-Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
-The article will also provide guidance on how to connect to the database from within ." />
+Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.
+The article will also provide guidance on how to connect to the database from within R.
+Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format." />
 	<meta property="og:image" content=""/>
 	<meta property="og:url" content="http://localhost:4321/themedianduck/2024/07/10/strength-in-data-connecting-to-the-taskmaster-database/">
   <meta property="og:site_name" content="The Median Duck">
   <meta property="og:title" content="Strength in Data: Connecting to the Taskmaster Database">
   <meta property="og:description" content="Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!
-Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
-The article will also provide guidance on how to connect to the database from within .">
+Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.
+The article will also provide guidance on how to connect to the database from within R.
+Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2024-07-10T00:00:00+00:00">
     <meta property="article:modified_time" content="2024-07-10T00:00:00+00:00">
+    <meta property="article:tag" content="Strength in Data">
+    <meta property="article:tag" content="Beginner">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Strength in Data: Connecting to the Taskmaster Database">
   <meta name="twitter:description" content="Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!
-Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.
-The article will also provide guidance on how to connect to the database from within .">
+Introduction and Objective This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.
+The article will also provide guidance on how to connect to the database from within R.
+Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format.">
 <script src="http://localhost:4321/themedianduck/js/feather.min.js"></script>
 	
 	
@@ -30,8 +35,8 @@ The article will also provide guidance on how to connect to the database from wi
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:4321/themedianduck/css/dark.53ca5c131680137084bf0a534d892573cf9b227d95f07a6065e598f4c80345b2.css"  disabled />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.7534bb61a5f169e92170d3cd6a3ecc130e9170759644b8c32e623544c5585844.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:4321/themedianduck/css/dark.3d4e84970aad49c6bb5f5a88e4ad85a36308f4ecc2dd0318e94ca36c305666bd.css"  disabled />
 	
 
 	
@@ -84,22 +89,14 @@ The article will also provide guidance on how to connect to the database from wi
 		</div>
 		
 		
-		<div class="article-container">
-		    
-
-	    <div class="col-12 col-lg-3 docs-toc">
+	    <div class="toc">
+	        
 	        <h1 class="site-toc">Table of Contents</h1>
 		<nav id="TableOfContents">
   <ul>
     <li><a href="#your-task">Your Task</a></li>
     <li><a href="#introduction-and-objective">Introduction and Objective</a></li>
-    <li><a href="#trabajo-de-las-mesas-database"><em>Trabajo de las Mesas</em> Database</a>
-      <ul>
-        <li><a href="#data-quality">Data Quality</a></li>
-        <li><a href="#why-this-datasource">Why This Datasource?</a></li>
-        <li><a href="#potential-areas-to-explore-in-the-future">Potential Areas to Explore in the Future</a></li>
-      </ul>
-    </li>
+    <li><a href="#trabajo-de-las-mesas-database"><em>Trabajo de las Mesas</em> Database</a></li>
     <li><a href="#connecting-to-the-database-from-r">Connecting to the Database from <code>R</code></a>
       <ul>
         <li><a href="#downloading-the-db-file">Downloading the <code>.db</code> file</a></li>
@@ -109,58 +106,25 @@ The article will also provide guidance on how to connect to the database from wi
     </li>
     <li><a href="#times-up">Times Up!</a></li>
   </ul>
-</nav>     
+</nav> 
+		
 		</div>  
 		    
-		<div class="col-12 col-lg-9 article-style">
+		<section class="body">
 			<h1 id="your-task">Your Task</h1>
 <blockquote>
 <p>Successfully connect to the Taskmaster database from within <code>R</code>. Fastest wins; your time starts now!</p>
 </blockquote>
 <h1 id="introduction-and-objective">Introduction and Objective</h1>
-<p>This article provides an overview of <em>Trabajo de las Mesas</em>, a pivotal Taskmaster database that will be central to performing a multitude of analysis and questions that we may want to answer regarding Taskmaster.</p>
-<p>The article will also provide guidance on how to connect to the database from within <!-- raw HTML omitted -->.</p>
+<p>This article provides an overview of <em>Trabajo de las Mesas</em>, a pivotal database that will be central to this project.</p>
+<p>The article will also provide guidance on how to connect to the database from within <code>R</code>.</p>
 <h1 id="trabajo-de-las-mesas-database"><em>Trabajo de las Mesas</em> Database</h1>
-<p><a href="https://tdlm.fly.dev/"><em>Trabajo de las Mesas</em></a> (TdlM^[Taskmaster fanatics will know that this is in reference to the hint in S2E5&rsquo;s task <em>Build a bridge for the potato.</em>, which has since become one of key pieces of advice for all Taskmaster contestants. It has been suitably adapted for working on data tables in a database, rather than a piece of furniture.]) provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant.</p>
+<p><a href="https://tdlm.fly.dev/"><em>Trabajo de las Mesas</em></a> (TdlM <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>) provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant.</p>
 <p>The exhaustive nature of the data truly opens the door to potential questions we may want to answer in the Taskmaster universe. For this reasons, I am immensely grateful to the contributors of this project.</p>
-<h2 id="data-quality">Data Quality</h2>
-<p>As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.</p>
-<p>I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from <a href="https://taskmaster.info/">taskmaster.info</a>, an equally exhaustive Taskmaster resource. .</p>
-<p>For now, and to not derail me from my initial interest and excitement on The Median Duck project, I will assume that the data is of high quality (accurate, consistent etc.).</p>
-<p>If there are any instances where the data quality is suspect, and/or a contradictory insight or conclusion is identified, a deep dive will likely occurr and the deep dive process will like provide useful insight for any inspiring individuals hoping to get into data analytics more.</p>
-<h2 id="why-this-datasource">Why This Datasource?</h2>
-<p>As the Taskmaster is a global phenomena, there is no doubt other datasources that could be used for this project. Most noticeably, Jack Bernhadt has an exhaustive <a href="https://docs.google.com/spreadsheets/d/1Us84BGInJw8Ef32xCVSVNo1W5mjri9CpUffYfLnq5xA/edit?usp=sharing">Google sheet document</a> in which similar analysis and modelling could be performed.</p>
-<p>However, for the purposes of this project, being able to query from database has several advantages. This includes:</p>
-<ul>
-<li>Quality: Data being in a structured tabular format which often leads to better data quality</li>
-<li>Manipulations: Greater manipulation and transformations could potentially be employed (joins, group bys etc)</li>
-<li>Automation, Repeatability and Scalabilty: if we wanted to repeat the same or similar analysis but on a new subset of data (for example updated data due to a new series being broadcast, or new parameters being employed), it is more convenient to do this in a structured data source such as a database.</li>
-</ul>
-<p>However, a database approach is by no means perfect either. The barrier to entry is considerably higher than data stored in a spreadsheet (both adding, manipulating and analysing data), and spreadsheets are good for ad-hoc, interactive analysis.</p>
-<p>Considering overall vision of The Median Duck, I believe that a database approach is ideal.</p>
-<h2 id="potential-areas-to-explore-in-the-future">Potential Areas to Explore in the Future</h2>
-<ul>
-<li>Greater understanding of how the data is being collected.
-<ul>
-<li>Is it manual, and are their quality checks in place? Is there any opportunity to automate?</li>
-<li>Can we introduce a SLA (service level agreement) of when the data can be expected to be populated. Data associated with more recent seasons don&rsquo;t appear to be present, despite being broadcasted already.</li>
-<li>Introduction of an ETL timestamp.</li>
-</ul>
-</li>
-<li>Generate a data dictionary page
-<ul>
-<li>What tables are available, samples of the data, what the table pertains to, and key columns.</li>
-</ul>
-</li>
-<li>A dashboard on data quality.
-<ul>
-<li>A highlevel overview of the quality and how recent the data is.</li>
-</ul>
-</li>
-</ul>
+<p>For some musings on TdlM, data quality and assumptions made, see this <a href="/2024/07/data-quality-musings/">post</a>.</p>
 <h1 id="connecting-to-the-database-from-r">Connecting to the Database from <code>R</code></h1>
 <h2 id="downloading-the-db-file">Downloading the <code>.db</code> file</h2>
-<p>It is possible to view and query these the numerous tables in TdlM from the <a href="https://tdlm.fly.dev/">website itself</a>. However, this does not lead to intuitively to repeatable and reproduceable analysis. Connecting to the database from a statistical programming language such as <code>R</code> or <code>python</code>, naturally leads to repeatablility and reproduceability.</p>
+<p>It is possible to view and query these the numerous tables in TdlM from the <a href="https://tdlm.fly.dev/">website itself</a>. However, this does not lead  intuitively to repeatable and reproduceable analysis. Connecting to the database from a statistical programming language such as <code>R</code> or <code>python</code>, naturally leads to repeatablility and reproduceability.</p>
 <p>I opting choosing to choose <code>R</code> for this project due to my familarity with it, and the high level visualisations and modelling that can be employed.</p>
 <p>The tables displayed on the website are powered from the following <a href="https://tdlm.fly.dev/taskmaster.db">database file</a> which can downloaded and stored locally. The following code chunk downloads the database file locally (based on the repo directory); a corresponding folder location will be created if it does not already exist.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#a6e22e">library</span>(here)
@@ -260,13 +224,32 @@ The article will also provide guidance on how to connect to the database from wi
 </span></span></code></pre></div><p>The results of this query already indicate interesting insights, namely that 204 days (approximately 29 weeks) occurred between the studio record and first air date for Series 13, which is a noticeable deviation from prior seasons (greater broadcast lag). Future series also seem delayed, although to a lesser extent. Could the pandemic have initiated this lag? Or where there other production changes that led to this lag?</p>
 <h1 id="times-up">Times Up!</h1>
 <p>And that concludes this task! Hopefully you&rsquo;ve been able to connect to the TdlM database directly through <code>R</code> and potentially inspired to start performing your own analysis.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Taskmaster fanatics will know that this is in reference to the hint in S2E5&rsquo;s task <em>Build a bridge for the potato.</em>, which has since become one of key pieces of advice for all Taskmaster contestants. It has been suitably adapted for working on data tables in a database, rather than a piece of furniture.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
 
-		</div>
+		</section>
 		
   
 
 		<div class="post-tags">
 			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+				    Tags: 
+					
+					<a href="/tags/strength-in-data">Strength in Data</a> 
+					
+					<a href="/tags/beginner">Beginner</a> 
+					
+				</ul>
+			</nav>
 			
 			
 		</div>

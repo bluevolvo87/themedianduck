@@ -1,7 +1,7 @@
 ---
-title: Tasks
+title: Your Time Starts Now!
 date: 2024-07-17
-draft: true
+draft: false
 ---
 
 A site about Taskmaster has got to have some tasks....surely?
@@ -45,7 +45,7 @@ constructive feedback and criticism is welcome!
 
 # The Team Studio Task
 
-Based on the ambitious vision of this project, and my limited skill set
+Based on the ambitious [vision](vision) of this project, and my limited skillset
 and bandwidth, contributors are also welcome in any shape or form
 (website design, article writing, analysis expertise)!
 
