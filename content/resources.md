@@ -1,0 +1,24 @@
+---
+aliases:
+- resources
+author: Christopher Nam
+date: "2024-07-04"
+description: Resources 
+title: Resources
+---
+
+Here are some of the resources I used as part of _The Median Duck_.
+
+(I will tabulate and automate this eventually).
+
+# Taskmaster Related
+- [TaskMaster.Info](https://taskmaster.info/)
+- [Trabajo de las Mesas](https://tdlm.fly.dev/)
+
+# Website Related
+
+- [Feather Icons](https://feathericons.com/)
+
+# Statistics Related
+
+# Misc Related

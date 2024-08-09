@@ -1,0 +1,55 @@
+---
+title: Your Time Starts Now!
+date: 2024-07-17
+draft: false
+---
+
+A site about Taskmaster has got to have some tasks....surely?
+
+
+# The Prize Task
+
+This project is self initiated and funded. If you
+would like to show your appreciation and gratitude in this project, feel
+free to donate to my [buy me a coffee
+page](https://buymeacoffee.com/bluevolvo87). All donations are welcome.
+
+> Make a donation to the aforementioned [Buy Me a Coffee
+> page](https://buymeacoffee.com/bluevolvo87). The Median Donation
+> Amount for the calendar month wins!
+
+------------------------------------------------------------------------
+
+# The Individual Task
+
+In order to achieve the desired vision, multiple contributors would be
+appreciated; as of `r Sys.Date()` it is just myself. The first step in
+the road to this vision is to tell as many people about this project.
+
+> Tell and redirect as many people as you can about The Median Duck
+> project. Most number of redirects for the calendar months wins!
+
+------------------------------------------------------------------------
+
+# The Team Task
+
+There are no doubt teething errors and mistakes in this project;
+constructive feedback and criticism is welcome!
+
+> Provide constructive criticism on the project by sending an e-mail to
+> [themedianduck\@gmail.com](mailto:themedianduck@gmail.com){.email}.
+> Most useful constructive criticism provided wins. Your time starts
+> now!
+
+------------------------------------------------------------------------
+
+# The Team Studio Task
+
+Based on the ambitious [vision](vision) of this project, and my limited skillset
+and bandwidth, contributors are also welcome in any shape or form
+(website design, article writing, analysis expertise)!
+
+> Contribute to The Median Duck project; best contribution wins. E-mail
+> [themedianduck\@gmail.com](mailto:themedianduck@gmail.com){.email} to
+> express your contribution interest. Most useful contribution provided
+> wins. Your time starts now!

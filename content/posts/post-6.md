@@ -1,0 +1,34 @@
+---
+date: "2018-03-18T12:13:36+05:30"
+description: Here is a demo of all shortcodes available in Hugo.
+title: Hugo shortcodes
+draft: yes
+---
+
+## Images
+
+
+
+
+
+
+## Github Gist
+
+{{< gist spf13 7896402 >}}
+
+## Youtube video
+
+{{< youtube w7Ft2ymGmfc >}}
+
+
+## Vimeo
+
+{{< vimeo id="146022717" >}}
+
+## Instagram
+
+{{< instagram BWNjjyYFxVx >}}
+
+## Callouts
+
+{{< callout emoji="⚡️" text="I guess this works" >}}

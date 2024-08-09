@@ -1,0 +1,16 @@
+---
+title: Home Page Beta
+author: Christopher Nam
+menu:
+    header: 
+        weight: 1
+---
+
+Is this the homepage?
+I hope so....
+
+
+So I can see this information in the description part.
+How do I get it to appear in the main body of the page.
+
+If you see this, then you've cracked the problem! Try.

@@ -1,0 +1,79 @@
+baseURL: https://bluevolvo87.github.io/themedianduck
+relativeUrls: true
+languageCode: en-us
+title: The Median Duck
+theme: archie
+copyright: © Christopher Nam
+googleAnalytics: "G-61T5JLRMP0"
+pygmentsstyle: monokai
+pygmentscodefences: yes
+pygmentscodefencesguesssyntax: yes
+params:
+  homePosts: 1
+  mode: toggle
+  social:
+    - icon: github
+      name: GitHub
+      url: https://github.com/bluevolvo87/themedianduck
+    
+    - icon: tv
+      name: YouTube Channel
+      url: https://youtube.com/naanbread87/
+      
+    - icon: coffee
+      name: BuyMeACoffee
+      url: https://buymeacoffee.com/bluevolvo87
+      
+    - icon: music
+      name: Piano
+      url: https://www.youtube.com/playlist?list=PL8smthAx7GcfC-gZv6zGNoORClnEXq-ru
+      
+    - icon: smile
+      name: Taskmaster Silliness
+      url: https://www.youtube.com/playlist?list=PL8smthAx7GcdBfg9C_TRtPC_8m99ho6Ou
+      
+  subtitle: vires in notitia
+  description: "Educating Data Science through Taskmaster"
+  useCDN: no
+  
+  highlightjsVersion: "9.12.0"
+  highlightjsCDN: "//cdnjs.cloudflare.com/ajax/libs"
+  highlightjsLang: ["r", "yaml"]
+  highlightjsTheme: "github"
+  logo: "/img/logo.jpg"
+menu:
+  main:
+    - name: Home
+      url: /
+      weight: 1
+    - name: The Vision
+      url: /vision
+      weight: 2
+    - name: Posts 
+      url: /posts
+      weight: 3
+    - name: Tasks
+      url: /tasks
+      weight: 4
+    - name: About Me
+      url: /about
+      weight: 5
+    - name: Resources
+      url: /resources
+      weight: 6
+      
+outputs:
+home: [html, rss, json]
+permalinks: 
+    posts: "/:year/:month/:slug/"
+taxonomies:
+  category: categories
+  series: series
+  tag: tags
+  section: sections
+  
+markup:
+  tableOfContents:
+    startLevel: 1
+    endLevel: 2
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on The Median Duck</title>
+    <link>http://localhost:4321/themedianduck/post/</link>
+    <description>Recent content in Posts on The Median Duck</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Christopher Nam</copyright>
+    <lastBuildDate>Wed, 10 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:4321/themedianduck/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Strength in Data: Connecting to the Taskmaster Database</title>
+      <link>http://localhost:4321/themedianduck/post/2024-07-10-strength-in-data-connecting-to-the-taskmaster-database/</link>
+      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/post/2024-07-10-strength-in-data-connecting-to-the-taskmaster-database/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

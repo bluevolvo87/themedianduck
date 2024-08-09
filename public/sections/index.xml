@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sections on The Median Duck</title>
+    <link>//localhost:4321/sections/</link>
+    <description>Recent content in Sections on The Median Duck</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Christopher Nam</copyright>
+    <atom:link href="//localhost:4321/sections/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

@@ -1,0 +1,71 @@
+---
+title: "Sidenote: Musings on TdlM"
+author: Christopher Nam
+date: '2024-07-17'
+slug: data-quality-musings
+categories: []
+tags: ["Musings", "TdlM"]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+    df_print: "default"
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#sidenote-introduction" id="toc-sidenote-introduction">Sidenote Introduction</a>
+<ul>
+<li><a href="#data-quality" id="toc-data-quality">Data Quality</a></li>
+<li><a href="#why-this-datasource" id="toc-why-this-datasource">Why This Datasource?</a></li>
+<li><a href="#potential-articles-to-explore-in-the-future" id="toc-potential-articles-to-explore-in-the-future">Potential Articles to Explore in the Future</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="sidenote-introduction" class="section level1">
+<h1>Sidenote Introduction</h1>
+<p>A few remarks and musings on the <a href="https://tdlm.fly.dev/">Trabajo de las Mesas database (TdlM)</a>.</p>
+<div id="data-quality" class="section level2">
+<h2>Data Quality</h2>
+<p>As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.</p>
+<p>I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from <a href="https://taskmaster.info/">taskmaster.info</a>, an equally exhaustive Taskmaster resource.</p>
+<p>For now, and to not derail me from my initial interest and excitement on The Median Duck project, I will assume that the data is of high quality (accurate, consistent etc.).</p>
+<p>If there are any instances where the data quality is suspect, and/or a contradictory insight or conclusion is identified, a deep dive will likely occur and the deep dive process will like provide useful insight for any inspiring individuals hoping to get into data analytics more.</p>
+</div>
+<div id="why-this-datasource" class="section level2">
+<h2>Why This Datasource?</h2>
+<p>As Taskmaster is a global phenomena, there is no doubt other data sources that could be used for this project. Most noticeably, Jack Bernhadt has an exhaustive <a href="https://docs.google.com/spreadsheets/d/1Us84BGInJw8Ef32xCVSVNo1W5mjri9CpUffYfLnq5xA/edit?usp=sharing">Google sheet document</a> in which similar analysis and modelling could be performed.</p>
+<p>However, for the purposes of this project, being able to query from database has several advantages. This includes:</p>
+<ul>
+<li><strong>Quality:</strong> Data being in a structured tabular format which often leads to better data quality</li>
+<li><strong>Manipulations:</strong> Greater manipulation and transformations could potentially be employed (joins, group bys etc)</li>
+<li><strong>Automation, Repeatability and Scalabilty:</strong> if we wanted to repeat the same or similar analysis but on a new subset of data (for example updated data due to a new series being broadcast, or new parameters being employed), it is more convenient to do this in a structured data source such as a database.</li>
+</ul>
+<p>However, a database approach is by no means perfect either. The barrier to entry is considerably higher than data stored in a spreadsheet (both adding, manipulating and analysing data), and spreadsheets are good for ad-hoc, interactive analysis through a visual interface.</p>
+<p>Considering overall vision of The Median Duck, I believe that a database approach is ideal.</p>
+</div>
+<div id="potential-articles-to-explore-in-the-future" class="section level2">
+<h2>Potential Articles to Explore in the Future</h2>
+<ul>
+<li><strong>Greater understanding of how the data is being collected.</strong>
+<ul>
+<li>Is it manual, and are their quality checks in place? Is there any opportunity to automate?</li>
+<li>Can we introduce a SLA (service level agreement) of when the data can be expected to be populated. Data associated with more recent seasons don’t appear to be present, despite being broadcasted already.</li>
+<li>Introduction of an ETL timestamp.</li>
+</ul></li>
+<li><strong>Generate a data dictionary page</strong>
+<ul>
+<li>What tables are available, samples of the data, what the table pertains to, and key columns.</li>
+</ul></li>
+<li><strong>A dashboard on data quality.</strong>
+<ul>
+<li>A highlevel overview of the quality and how recent the data is.</li>
+<li>Can we be proactive in identifying data quality issues and resolve them before users of the data experience them.</li>
+</ul></li>
+</ul>
+</div>
+</div>

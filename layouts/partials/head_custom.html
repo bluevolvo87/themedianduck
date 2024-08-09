@@ -1,0 +1,13 @@
+{{- if isset .Site.Params "subtitle" -}}
+<em><p>{{ .Site.Params.Subtitle | markdownify }}</p></em>
+{{- end -}}
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-61T5JLRMP0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-61T5JLRMP0');
+</script>
