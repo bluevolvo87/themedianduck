@@ -6,6 +6,12 @@ slug: data-quality-musings
 categories: []
 tags: ["Musings", "TdlM"]
 draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+    df_print: "default"
 ---
 
 # Sidenote Introduction

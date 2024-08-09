@@ -2,32 +2,32 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/categories/</link>
+    <link>//localhost:4321/categories/</link>
     <description>Recent content in Categories on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
     <lastBuildDate>Sat, 06 Jul 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:4321/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Test</title>
-      <link>http://localhost:4321/themedianduck/categories/test/</link>
+      <link>//localhost:4321/categories/test/</link>
       <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/test/</guid>
+      <guid>//localhost:4321/categories/test/</guid>
       <description></description>
     </item>
     <item>
       <title>Trial</title>
-      <link>http://localhost:4321/themedianduck/categories/trial/</link>
+      <link>//localhost:4321/categories/trial/</link>
       <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/trial/</guid>
+      <guid>//localhost:4321/categories/trial/</guid>
       <description></description>
     </item>
     <item>
       <title>R</title>
-      <link>http://localhost:4321/themedianduck/categories/r/</link>
+      <link>//localhost:4321/categories/r/</link>
       <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/r/</guid>
+      <guid>//localhost:4321/categories/r/</guid>
       <description></description>
     </item>
   </channel>

@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Strength in Data on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/series/strength-in-data/</link>
+    <link>//localhost:4321/series/strength-in-data/</link>
     <description>Recent content in Strength in Data on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
     <lastBuildDate>Wed, 10 Jul 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/series/strength-in-data/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:4321/series/strength-in-data/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>
-      <link>http://localhost:4321/themedianduck/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</link>
+      <link>//localhost:4321/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</link>
       <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</guid>
+      <guid>//localhost:4321/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</guid>
       <description>Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!&#xA;This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.&#xA;The article will also provide guidance on how to connect to the database from within R.&#xA;Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format.</description>
     </item>
   </channel>
