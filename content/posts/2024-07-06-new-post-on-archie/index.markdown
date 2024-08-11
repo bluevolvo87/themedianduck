@@ -5,7 +5,7 @@ date: '2024-07-06'
 slug: []
 categories: [trial, test]
 tags: [hugo_test]
-draft: no
+draft: yes
 ---
 
 # Intro
@@ -20,7 +20,7 @@ rnorm(5)
 ```
 
 ```
-## [1] -0.3637057 -0.4214060  0.6501004 -0.8329920  1.3021409
+## [1] -1.6798449 -1.1733463  0.7588441  0.4321513  0.4408915
 ```
 
 Here's an image of a duck.

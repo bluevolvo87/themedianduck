@@ -17,7 +17,7 @@ the hit UK TV show [Taskmaster](https://en.wikipedia.org/wiki/Taskmaster_(TV_ser
 This project is in its early stages, but great things are planned; see
 this [vision document](vision) for the ambitious plans that I have in mind.
 
-> **Your Time Starts Now!**
+> [**Your Time Starts Now!**](tasks)
 
 ------------------------------------------------------------------------
 
