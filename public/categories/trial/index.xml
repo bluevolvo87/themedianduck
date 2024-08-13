@@ -14,7 +14,7 @@
       <link>//localhost:4321/2024/07/new-post-on-archie/</link>
       <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
       <guid>//localhost:4321/2024/07/new-post-on-archie/</guid>
-      <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -0.3637057 -0.4214060 0.6501004 -0.8329920 1.3021409 Here&amp;rsquo;s an image of a duck.&#xA;Did I create a html from this?</description>
+      <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -1.6798449 -1.1733463 0.7588441 0.4321513 0.4408915 Here&amp;rsquo;s an image of a duck.&#xA;Did I create a html from this?</description>
     </item>
   </channel>
 </rss>
