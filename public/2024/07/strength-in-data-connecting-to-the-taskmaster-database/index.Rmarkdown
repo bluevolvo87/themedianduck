@@ -41,7 +41,7 @@ The article will also provide guidance on how to connect to the database from wi
 
 The exhaustive nature of the data truly opens the door to potential questions we may want to answer in the Taskmaster universe. For this reasons, I am immensely grateful to the contributors of this project.
 
-For some musings on TdlM, data quality and assumptions made, see this [post](/2024/07/data-quality-musings/).
+For some musings on TdlM, data quality and assumptions made, see this [post](/themedianduck/2024/07/data-quality-musings/).
 
 # Connecting to the Database from `R`
 
