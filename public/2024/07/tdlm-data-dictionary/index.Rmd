@@ -1,0 +1,91 @@
+---
+title: "TdlM: Data Dictionary"
+author: Christopher Nam
+date: '2024-07-31'
+slug: tdlm-data-dictionary
+categories: []
+tags: []
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+    df_print: "default"
+---
+
+# Your Task
+
+> Obtain a good overview of the tables in TdLM, and what these tables contain.
+
+# Don't be a Data Dic (tionary) about this...
+
+
+This article assumes that you are able to connect to the TdlM database successfully (see this [post](/2024/07/database-connection)
+
+```{r download, message = FALSE, include = FALSE}
+library(here) #library to help with identifying the repo working directory
+
+# URL where Database file resides. We will download from here.
+db_url <- "https://tdlm.fly.dev/taskmaster.db"
+
+# Where the data will be stored locally
+db_file_name <- "taskmaster.db"
+data_dir <- here("static", "data")
+
+db_data_location <- file.path(data_dir, db_file_name)
+
+
+# Create Data Directory if does not exist
+if(!file.exists(file.path(data_dir))){
+    dir.create(file.path(data_dir))
+}
+
+# Download file specified by URL, save in the local destination.
+if(!file.exists(db_data_location)){
+    download.file(url = db_url, destfile = db_data_location, mode = "wb")
+}
+
+package_name <- "RSQLite"
+
+# Install packages if does not exist, then load.
+if(!require(package_name, character.only = TRUE)){
+    install.packages(package_name, character.only = TRUE)
+} else{
+    library(package_name, character.only = TRUE)    
+}
+
+
+# Driver used to establish database connection
+sqlite_driver <- dbDriver("SQLite")
+
+# Making the connection 
+tm_db <- dbConnect(sqlite_driver, dbname = db_data_location)
+```
+
+A reminder that these are the tables available to us in TdlM.
+
+```{r }
+tm_db_tables <- dbListTables(tm_db)
+tm_db_tables
+```
+
+We are going to go one by one through these tables, perform a simple query to sample the data and infer what the table and data pertains to.
+
+In the spirit automation, we will be querying each table through a `for` loop, cycling through the tables names provided above.
+
+This means we won't be repeating too much work, and if tables are added or changed in the future, we can re-run the code quickly to obtain new samples for inspection.
+
+```{r}
+
+data_sample_list <- list()
+for(tbl in tm_db_tables){
+    query <- sprintf("SELECT * FROM %s LIMIT 10", tbl)
+    print(query)
+    
+    table_sample <- dbGetQuery(tm_db, query)
+    data_sample_list$tbl <- c(data_sample_list, table_sample)
+}
+
+data_sample
+```

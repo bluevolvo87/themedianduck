@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Wed, 17 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 31 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:4321/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TdlM: Data Dictionary</title>
+      <link>//localhost:4321/2024/07/tdlm-data-dictionary/</link>
+      <pubDate>Wed, 31 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/2024/07/tdlm-data-dictionary/</guid>
+      <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Your Task&#xD;Obtain a good overview of the tables in TdLM, and what these tables contain.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (see this post</description>
+    </item>
     <item>
       <title>Sidenote: Musings on TdlM</title>
       <link>//localhost:4321/2024/07/data-quality-musings/</link>
@@ -28,7 +35,7 @@
       <link>//localhost:4321/2024/07/new-post-on-archie/</link>
       <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
       <guid>//localhost:4321/2024/07/new-post-on-archie/</guid>
-      <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -0.3637057 -0.4214060 0.6501004 -0.8329920 1.3021409 Here&amp;rsquo;s an image of a duck.&#xA;Did I create a html from this?</description>
+      <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -1.6798449 -1.1733463 0.7588441 0.4321513 0.4408915 Here&amp;rsquo;s an image of a duck.&#xA;Did I create a html from this?</description>
     </item>
     <item>
       <title>Hello R Markdown</title>

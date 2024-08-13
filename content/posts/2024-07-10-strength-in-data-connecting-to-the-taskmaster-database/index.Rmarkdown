@@ -3,6 +3,7 @@ title: 'Strength in Data: Connecting to the Taskmaster Database'
 author: Christopher Nam
 date: '2024-07-10'
 keywords: ["intro", "setup"]
+slug: database-connection
 section: 
     - intro
     - setup
