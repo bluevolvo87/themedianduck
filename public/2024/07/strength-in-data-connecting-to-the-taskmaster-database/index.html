@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head lang="en"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+<html><head lang="en"><script src="/themedianduck/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=themedianduck/livereload" data-no-instant defer></script>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Strength in Data: Connecting to the Taskmaster Database - The Median Duck</title><meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!
@@ -7,7 +7,7 @@ This article provides an overview of Trabajo de las Mesas, a pivotal database th
 The article will also provide guidance on how to connect to the database from within R.
 Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format." />
 	<meta property="og:image" content=""/>
-	<meta property="og:url" content="//localhost:4321/2024/07/strength-in-data-connecting-to-the-taskmaster-database/">
+	<meta property="og:url" content="http://localhost:4321/themedianduck/2024/07/strength-in-data-connecting-to-the-taskmaster-database/">
   <meta property="og:site_name" content="The Median Duck">
   <meta property="og:title" content="Strength in Data: Connecting to the Taskmaster Database">
   <meta property="og:description" content="Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!
@@ -28,15 +28,15 @@ Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora 
 This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.
 The article will also provide guidance on how to connect to the database from within R.
 Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format.">
-<script src="//localhost:4321/js/feather.min.js"></script>
+<script src="http://localhost:4321/themedianduck/js/feather.min.js"></script>
 	
 	
-        <link href="//localhost:4321/css/fonts.005298b624c67c53a2c807c4aca45625ce1e4db593dc295c06773b1563c3437c.css" rel="stylesheet">
+        <link href="http://localhost:4321/themedianduck/css/fonts.005298b624c67c53a2c807c4aca45625ce1e4db593dc295c06773b1563c3437c.css" rel="stylesheet">
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="//localhost:4321/css/main.7534bb61a5f169e92170d3cd6a3ecc130e9170759644b8c32e623544c5585844.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="//localhost:4321/css/dark.3d4e84970aad49c6bb5f5a88e4ad85a36308f4ecc2dd0318e94ca36c305666bd.css"  disabled />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.7534bb61a5f169e92170d3cd6a3ecc130e9170759644b8c32e623544c5585844.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:4321/themedianduck/css/dark.3d4e84970aad49c6bb5f5a88e4ad85a36308f4ecc2dd0318e94ca36c305666bd.css"  disabled />
 	
 
 	
@@ -50,24 +50,24 @@ Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora 
 <body>
         <div class="content"><header>
 	<div class="main">
-		<a href="//localhost:4321/">The Median Duck</a>
+		<a href="http://localhost:4321/themedianduck/">The Median Duck</a>
 	</div>
 	<nav>
 		
-		<a href="../../../">Home</a>
+		<a href="/themedianduck/">Home</a>
 		
-		<a href="../../../vision">The Vision</a>
+		<a href="/themedianduck/vision">The Vision</a>
 		
-		<a href="../../../posts">Posts</a>
+		<a href="/themedianduck/posts">Posts</a>
 		
-		<a href="../../../tasks">Tasks</a>
+		<a href="/themedianduck/tasks">Tasks</a>
 		
-		<a href="../../../about">About Me</a>
+		<a href="/themedianduck/about">About Me</a>
 		
-		<a href="../../../resources">Resources</a>
+		<a href="/themedianduck/resources">Resources</a>
 		
 		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
-		<script src="//localhost:4321/js/themetoggle.js"></script>
+		<script src="http://localhost:4321/themedianduck/js/themetoggle.js"></script>
 		
 	</nav>
 </header>
@@ -120,7 +120,7 @@ Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora 
 <h1 id="trabajo-de-las-mesas-database"><em>Trabajo de las Mesas</em> Database</h1>
 <p><a href="https://tdlm.fly.dev/"><em>Trabajo de las Mesas</em></a> (TdlM <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>) provides a plethora of data associated with Taskmaster in a database format. Data included in the database includes information pertaining to a series, episode, conntestant, task attempts, and even profanity uttered by a contestant.</p>
 <p>The exhaustive nature of the data truly opens the door to potential questions we may want to answer in the Taskmaster universe. For this reasons, I am immensely grateful to the contributors of this project.</p>
-<p>For some musings on TdlM, data quality and assumptions made, see this <a href="../../../2024/07/data-quality-musings/">post</a>.</p>
+<p>For some musings on TdlM, data quality and assumptions made, see this <a href="/themedianduck/2024/07/data-quality-musings/">post</a>.</p>
 <h1 id="connecting-to-the-database-from-r">Connecting to the Database from <code>R</code></h1>
 <h2 id="downloading-the-db-file">Downloading the <code>.db</code> file</h2>
 <p>It is possible to view and query these the numerous tables in TdlM from the <a href="https://tdlm.fly.dev/">website itself</a>. However, this does not lead  intuitively to repeatable and reproduceable analysis. Connecting to the database from a (statistical)        programming language such as <code>R</code> or <code>python</code>, naturally leads to repeatablility and reproduceability.</p>
@@ -252,9 +252,9 @@ Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora 
 				<ul class="tags">
 				    Tags: 
 					
-					<a href="../../../tags/strength-in-data">Strength in Data</a> 
+					<a href="/tags/strength-in-data">Strength in Data</a> 
 					
-					<a href="../../../tags/beginner">Beginner</a> 
+					<a href="/tags/beginner">Beginner</a> 
 					
 				</ul>
 			</nav>
