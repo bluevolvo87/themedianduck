@@ -1,5 +1,5 @@
-baseURL: https://bluevolvo87.github.io/themedianduck
-relativeUrls: true
+baseURL: https://bluevolvo87.github.io/themedianduck/
+relativeUrls: false
 languageCode: en-us
 title: The Median Duck
 theme: archie
