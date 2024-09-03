@@ -6,9 +6,11 @@ editor_options:
     wrap: 72
 ---
 
-# Welcome!
+<center>
 
 ![](img/duck_tt.png)
+
+</center>
 
 Welcome to The Median Duck, a self initiated project that aims to
 educate and entertain the general public on data analytic topics through

@@ -7,14 +7,14 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Wed, 17 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 31 Aug 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>TdlM: Data Dictionary</title>
-      <link>//localhost:4321/2024/07/tdlm-data-dictionary/</link>
-      <pubDate>Wed, 31 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2024/07/tdlm-data-dictionary/</guid>
-      <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Your Task&#xD;Obtain a good overview of the tables in TdLM, and what these tables contain.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (see this post</description>
+      <title>A Data Dic(tionary) pic of TdlM</title>
+      <link>http://localhost:4321/themedianduck/2024/08/tdlm-data-dictionary/</link>
+      <pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2024/08/tdlm-data-dictionary/</guid>
+      <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Summary of Findings&#xD;Final Thoughts&#xD;Appendix Details&#xD;Your Task&#xD;Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (database connection post).</description>
     </item>
     <item>
       <title>Sidenote: Musings on TdlM</title>
@@ -25,20 +25,16 @@
     </item>
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>
-      <link>http://localhost:4321/themedianduck/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</link>
+      <link>http://localhost:4321/themedianduck/2024/07/database-connection/</link>
       <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/07/strength-in-data-connecting-to-the-taskmaster-database/</guid>
+      <guid>http://localhost:4321/themedianduck/2024/07/database-connection/</guid>
       <description>Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!&#xA;This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.&#xA;The article will also provide guidance on how to connect to the database from within R.&#xA;Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format.</description>
     </item>
     <item>
       <title>New Post on Archie</title>
       <link>http://localhost:4321/themedianduck/2024/07/new-post-on-archie/</link>
       <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
-<<<<<<< HEAD
-      <guid>//localhost:4321/2024/07/new-post-on-archie/</guid>
-=======
       <guid>http://localhost:4321/themedianduck/2024/07/new-post-on-archie/</guid>
->>>>>>> main
       <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -1.6798449 -1.1733463 0.7588441 0.4321513 0.4408915 Here&amp;rsquo;s an image of a duck.&#xA;Did I create a html from this?</description>
     </item>
     <item>
