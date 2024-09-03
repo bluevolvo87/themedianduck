@@ -1,0 +1,806 @@
+---
+title: "A Data Dic(tionary) pic of TdlM"
+author: Christopher Nam
+date: '2024-08-31'
+slug: tdlm-data-dictionary
+categories: []
+tags: ["TdlM", "Beginner"]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+    number_sections: false
+    df_print: "default"
+    highlighter: tango
+---
+
+# Your Task
+
+> Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.
+
+# Don't be a Data Dic (tionary) about this...
+
+This article assumes that you are able to connect to the TdlM database successfully ([database connection post](/themedianduck/2024/07/database-connection)).
+
+```{r setup, include=FALSE, echo = FALSE}
+knitr::opts_chunk$set(echo = TRUE, root.dir = "../",
+                      tidy = TRUE
+                      )
+options(width = 1000)
+```
+
+```{r download, message = FALSE, include = FALSE}
+library(here) #library to help with identifying the repo working directory
+
+# URL where Database file resides. We will download from here.
+db_url <- "https://tdlm.fly.dev/taskmaster.db"
+
+# Where the data will be stored locally
+db_file_name <- "taskmaster.db"
+data_dir <- here("static", "data")
+
+db_data_location <- file.path(data_dir, db_file_name)
+
+
+# Create Data Directory if does not exist
+if(!file.exists(file.path(data_dir))){
+    dir.create(file.path(data_dir))
+}
+
+# Download file specified by URL, save in the local destination.
+if(!file.exists(db_data_location)){
+    download.file(url = db_url, destfile = db_data_location, mode = "wb")
+}
+
+package_name <- "RSQLite"
+
+# Install packages if does not exist, then load.
+if(!require(package_name, character.only = TRUE)){
+    install.packages(package_name, character.only = TRUE)
+} else{
+    library(package_name, character.only = TRUE)    
+}
+
+
+# Driver used to establish database connection
+sqlite_driver <- dbDriver("SQLite")
+
+# Making the connection 
+tm_db <- dbConnect(sqlite_driver, dbname = db_data_location)
+```
+
+A reminder that these are the tables available to us in `TdlM` database are.
+
+```{r db_tables}
+tm_db_tables <- dbListTables(tm_db)
+tm_db_tables
+```
+
+## A Data Dic(tionary) Pic: An Overview of the Plan
+To formulate our basic data dictionary, we are going to go one by one through these `r length(tm_db_tables)` tables, perform a simple query to sample the data and infer what the table and data pertains to. Basic data summaries will be performed on these tables to get a sense of potential distribution of values, and any missing values.
+
+In the spirit automation, we will be querying each table through a `for` loop, cycling through the tables names provided above. This means we won't be repeating too much work, and if tables are added or changed in the future, we can re-run the code quickly to obtain new samples for inspection.
+
+Fulll details of the deep dive can be found in the [appendix](#appendix-details)
+
+# Summary of Findings
+
+Based on the [deep dive](#appendix-details), here is a brief summary of each table and a heuristic categorisation (`Tier`) of how important they are to this project.
+This categorisation could be used for prioritisation purposes in ensuring that this data is collected in a timely manner, and that we have high quality data for them.[^a]
+
+[^a]: This is definitely the corporate side of me talking. If you've ever experienced with dealing with large scale systems with multiple moving parts,  limited resources and knowing what hard bottlenecks in your work, you'll know what I mean.
+
+-   **Tier 1:** Essential and fundamental to The Median Duck project. High data quality required to make the project successful. Data Collection of these tables should be prioritised in the case of an emergency.
+-   **Tier 2:** Currently not essential, but may be required at a later date, particularly once performing additional investigations and deep dives.
+-   **Tier 3:** Good auxiliary and insights tables, but not essential to The Median Duck.
+
+```{r data_tiers, echo = FALSE, include = TRUE}
+library(jsonlite)
+library(DT)
+
+data_tiers_file <- "data_tiers.json"
+
+data_tiers_json <- fromJSON(file.path(data_dir, data_tiers_file))
+
+data_tiers_df <- as.data.frame(data_tiers_json)
+
+data_tiers_df$Tier <- as.factor(data_tiers_df$Tier)
+
+datatable(data_tiers_df, 
+          rownames = TRUE, 
+          filter = "top", 
+          options = list(paging = FALSE, searching = TRUE, info = TRUE, scrollY = '500px')
+)
+```
+The `series` table indicates, `TdlM` only contains data associated with the UK series of Taskmaste (both regular and New Years Treat).
+
+Through this deep dive, I also observed that the data output obtained from this `R` connection, can be less intuitive and comprehensible than that presented throught the Datasette website interface. It is possible that some front end processing is occurring for the website which uses the intrinsic links between the tables to provide intuitive, comprehensible data records. The use of `REFERENCES <table>(id)` in the `CREATE TABLE` statement is likely an indication of how this data linked together. 
+
+For example compare the output in the `episode_scores` table, when querying through `R` and through the [Datasette website](https://tdlm.fly.dev/taskmaster/episode_scores?_sort=id&id__lte=55&id__gte=51).
+
+The `episode`, `contestant` columns are numerical in the the `R` output, whilst they are meaning strings in the website output; namely the actual episode titles, and contestants full names. 
+
+This indicates some additional work will likely be required in `R` to get data in this in this similarly intuitive and informative manner. Datasette will have the benefit that some of this back end processing has already been performed, and a lower barrier to entry. Saying this, if execute the raw SQL query directly on the Datasette website, we do get the less intuitive data ([link](https://tdlm.fly.dev/taskmaster?sql=select+id%2C+episode%2C+contestant%2C+score%2C+rank%2C+series%2C+srank+from+episode_scores+where+%22id%22+%3E%3D+51+and+%22id%22+%3C%3D+55+order+by+id+limit+101&p1=55&p0=51)).
+
+
+```{r output_diff, eval = TRUE}
+query <- 'SELECT id, episode, contestant, score, rank, series, srank FROM episode_scores WHERE "id" >= 51 AND "id" <= 55 ORDER BY id LIMIT 101'
+```
+
+:::: {style="display: flex;"}
+
+::: {}
+Output from the database file through `R`:
+```{r r_output, echo = FALSE, include = TRUE}
+datatable(dbGetQuery(tm_db, query), 
+          filter = "none",
+          options = list(paging = FALSE, searching = FALSE, info = FALSE), width = '770px', height = '400px')
+```
+:::
+
+::: {}
+Output from Datasette website:
+```{r datasette_ouput, echo = FALSE, include = TRUE}
+
+knitr::include_url("https://tdlm.fly.dev/taskmaster/episode_scores?_sort=id&id__lte=55&id__gte=51", height = '400px')
+```
+:::
+
+::::
+
+# Final Thoughts
+
+```{r tier1_data, echo = FALSE}
+tier_1_df <- data_tiers_df[data_tiers_df$Tier == "Tier 1",]
+```
+
+> There are ``r nrow(tier_1_df)`` tables in the `TdlM` database which we consider to be essential to the The Median Duck project.
+> These tables are  ``r paste(tier_1_df$Table, collapse = ", ")``.
+
+# Appendix Details
+Comprehensive details on how the data dictionary and heuristic ranking came to be. Data samples and summary statistics also provided. 
+
+Be warned, it's very dry and not for the faint heartened! You do however get to see my coding standards and commentary style however.
+
+
+```{r data_samp_summary, message = FALSE, warning=FALSE}
+library(Hmisc) #Library/Function to provide data summaries.
+
+#Initially empty list to contain the data frame samples. 
+data_sample_list <- list()
+sample_size <- 10
+
+# For each table...
+
+# Perform a SELECT * FROM {tbl} query to pull data.
+
+# Randomly sample data using R, and also get summary statistics
+
+# Add data sample to list for easy access.
+for(iter in 1:length(tm_db_tables)){
+    tbl <- tm_db_tables[iter]
+    select_query <- sprintf("SELECT * FROM %s", tbl)
+    
+    set.seed(1234) # Set seed for reproducibility.
+    
+    query_output <- dbGetQuery(tm_db, select_query)
+    
+    # Random sample from table
+    table_sample <- query_output[sample(1:nrow(query_output), size = sample_size), ]
+    
+    # Summary statistics for entire table
+    table_summary<- Hmisc::describe(query_output)
+    
+    # List of two objects
+    table_list <- list(data_sample = table_sample, data_summary = table_summary)
+    
+    data_sample_list[[iter]] <- table_list
+}
+
+
+# Give the list items the table names we have queried from
+data_sample_list <- setNames(data_sample_list, tm_db_tables)
+```
+
+## `attempts`
+
+The [`attempts` table](https://tdlm.fly.dev/taskmaster/attempts) table fundamentally captures each contestants attempt at each task; that is for each `task, contestant` the points awarded from their task attempt (`points`) and their ranking with respect to the other contestants (`rank`).
+
+Information is also provided to the `team` id (if the task is a team task), and the `location` id of where the task was held.
+
+-   N.B. `episode` and `series` here denotes the contestant's cumulative episode and series score respectively.
+-   `adjustment`is present to adjust for series bias??
+-   `PO` denotes the `Presentation Order`, the order in which the contestants attempts was presented in the recording. 0 denotes simultaneous presentation of the attempts.
+
+<details>
+
+<summary>See `attempts` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["attempts"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `attempts` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["attempts"]]$data_summary
+```
+
+</details>
+
+## `discrepancies`
+
+The [`discrepancies` table](https://tdlm.fly.dev/taskmaster/discrepancies) exists
+*"to account for the two whole points that have gone misplaced in the history of TMUK"* [^1]
+
+[^1]: Honestly, I didn't know that points had gone misplaced. I should return my card to the TM fan club...
+
+The table has the `series, episode, contestant, task` that caused the discrepancy, and the discrepancy between observed and official (truth??). The data summary shows that there are only 10 observations so this table is unlikely to be a top priority.
+
+<details>
+
+<summary>See `discrepancies` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["discrepancies"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `discrepancies` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["discrepancies"]]$data_summary
+```
+
+</details>
+
+## `episode_scores`
+
+The [`episode_scores` table](https://tdlm.fly.dev/taskmaster/episode_scores) details the total number of points (`score`) awarded for each contestant in an episode, and their ranking within the episode against other contestants (`rank`). The cumulative series score and rank are also provided (`series` and `srank` respectively).[^2]
+
+[^2]: I'm not a big fan of "1=", etc. being used to denote a tied ranking. It ultimately means the field is no longer an integer and needs additional care to be treated correctly.
+
+<details>
+
+<summary>See `episode_scores` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["episode_scores"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `episode_scores` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["episode_scores"]]$data_summary
+```
+
+</details>
+
+## `episodes`
+
+The [`episodes` table](https://tdlm.fly.dev/taskmaster/episodes) details key information at the `(series, episode)` level. Information includes the episode title (`title`), the winner of the episode (`winner`), total number of judged tasks in the episode (`tasks`) and total number of points awarded in the episode (`points`). Logistical information on the episode such as whether the episode is a finale or not, and the studio and air date are also available.
+
+It is not clear at the moment as to what the `TMI` represents.
+
+<details>
+
+<summary>See `episodes` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["episodes"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `episodes` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["episodes"]]$data_summary
+```
+
+</details>
+
+## `intros`
+
+The [`intros` table](https://tdlm.fly.dev/taskmaster/intros) has information associated with the intro sequence for each series. This intro sequence is assumed to remain the same across all episodes within the same series (except for the end shot which features the episode title).
+
+The intro sequence has been decomposed into which `person` is featured (`person` is not limited to contestants and can include Greg or Little Alex Horne), and the `task` it is taken from. The `clip` field does not seem to have much meaning in its `R` form, but inspecting this data through the Datasette website highlights that this links to a `mp4` of that particular part of the intro on `imgur.com`. [^3]
+
+[^3]: I'm very surprised that such a dataset exists, and someone has gone to the effort of dissecting each intro sequence to such a minutiae. Saying that, this is the TM fan base...
+
+<details>
+
+<summary>See `intros` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["intros"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `intros` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["intros"]]$data_summary
+```
+
+</details>
+
+## `measurements`
+
+The [`measurements` table](https://tdlm.fly.dev/taskmaster/measurements) table details for a particular `task, contestant`, the measurable outcome of their attempt. 
+
+For example, the duration of the time the task lasted for (either to successful completion, or until failure termination) or the longest distance travelled. The `objective` column provides insight into the units of the measurement and the objective (for example most, least, closest).
+
+Care is likely required on the `measurement` field as to how inconclusive measurements are handed (was not observed and thus measured) and disqualifications.
+
+<details>
+
+<summary>See `measurements` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["measurements"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `measurements` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["measurements"]]$data_summary
+```
+
+</details>
+
+## `normalized_scores`
+
+The [`normalized_scores` table](https://tdlm.fly.dev/taskmaster/normalized_scores) attempts to normalise scores across `contestants` for a particular `task` in an episode. This normalisation is required when bonus points are awarded in addition to the main tasak, and to handle ranking ties (two or more contestants achieved the same measurement and/or points in a task attempt), different ranking strategies are employed to handle ties.
+
+Columns: 
+
+-   `base` is the number of points awarded by the Taskmaster without the bonus points. These will typically be valued 0, 1, 2, 3, 4, 5, although the data also suggests it can be negative on a few rare occasions. These are typically when Alex is being particularly mischievous (e.g. lose points if you don't do the tasks correctly).
+-   `points` is the number of points awarded including the bonus points or the Taskmaster going rogue.
+-   `adjustment` is the difference between `points` and `base`.
+-   `rank` is the ranking of contestant according to the `base` column, that is before bonus points are rewarded.
+-   `rigid` is the tidiest normalisation of points where 5 points are awarded for 1st, 4 for 2nd etc.
+-   `spread` evenly distributes the points across the tied contestants.
+-   `scale` scores are normalised such that no score exceed a maximum of 5. Previously tried to scale scores so that the sum was 15.
+-   `5+3`, `3+2` and `3½+2½` are normalisation tactics for team tasks.
+
+
+<details>
+
+<summary>See `normalized_scores` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["normalized_scores"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `normalized_scores` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["normalized_scores"]]$data_summary
+```
+
+</details>
+
+## `objectives`
+
+The [`objectives` table](https://tdlm.fly.dev/taskmaster/objectives) is a supplement of the `measurements` table and explicitly details the `units`, the objective (`target`) of a task. The `label` column appears to be a concatenation of `unit` and `target`.
+
+<details>
+
+<summary>See `objectives` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["objectives"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `objectives` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["objectives"]]$data_summary
+```
+
+</details>
+
+## `people`
+
+The [`people` table](https://tdlm.fly.dev/taskmaster/people) provides a variety information on both contestants, the Taskmaster and Little Alex Horne. Included information is both Taskmaster specific (which `seat` are they in, the `team` they were part of, whether they were a `champion`), and more general information (`dob`, `gender`, left or right handed (`hand`).
+
+`TMI` is an identifier for the on the `taskmaster.info` website that the data is collated from.
+
+<details>
+
+<summary>See `people` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["people"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `people` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["people"]]$data_summary
+```
+
+</details>
+
+## `podcast`
+
+The [`podcast` table](https://tdlm.fly.dev/taskmaster/podcast) provides information regarding the Official Taskmaster Podcast hosted by Ed Gamble (no the People's Taskmaster). Information on who the podcast `guest` was, their `rating` for the podcast episode, and the `topic` is available (topic will typically be the latest episode broadcasted).
+
+<details>
+
+<summary>See `podcast` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["podcast"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `podcast` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["podcast"]]$data_summary
+```
+
+</details>
+
+## `profanity`
+
+The [`profanity` table](https://tdlm.fly.dev/taskmaster/profanity) details the profanity observed on the show. Each record details which `series`, `episode`, `task` the profanity occurred, who was the profanity offender (`speaker`), the offending words (`roots`) and the exact `quote`. Whether the profanity occurred in the studio or not (a pre-recorded task) is also available.
+
+<details>
+
+<summary>See `profanity` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["profanity"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `profanity` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["profanity"]]$data_summary
+```
+
+</details>
+
+## `series`
+
+The [`series` table](https://tdlm.fly.dev/taskmaster/series) details information at a series level. Information includes the number of `episodes` in the series, the `champion`, the total number of brodcasted `tasks`, and the total number of `points` awarded. Logistical information such as dates associated with the airing and studio record, and whether the series is a `special` is also available.
+
+`TMI` is a id for the `taskmaster.info` website.
+
+Further analysis of this table indicates that only information pertaining to the UK series of Taskmaster (regular and New Years Treat specials), are available.
+
+<details>
+
+<summary>See `series` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["series"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `series` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["series"]]$data_summary
+```
+
+</details>
+
+## `series_scores`
+
+The [`series_scores` table](https://tdlm.fly.dev/taskmaster/series_scores) provides (`series`, `contestant` information). Namely, this is the `score` at the end of the series, and their overall `rank` within the series.
+
+<details>
+
+<summary>See `series_scores` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["series_scores"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `series_scores` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["series_scores"]]$data_summary
+```
+
+</details>
+
+## `special_locations`
+
+The [`special_locations` table](https://tdlm.fly.dev/taskmaster/special_locations) has information for the location based tasks outside of the Taskmaster house. This includes the `name` and the latitude and longitude co-ordinates (`latlong`).
+
+<details>
+
+<summary>See `special_locations` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["special_locations"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `series` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["special_locations"]]$data_summary
+```
+
+</details>
+
+## `task_briefs`
+
+The [`task_briefs` table](https://tdlm.fly.dev/taskmaster/task_briefs), as the name suggests provides the exact `brief` that was provided to contestants.
+
+<details>
+
+<summary>See `task_briefs` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["task_briefs"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `task_briefs` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["task_briefs"]]$data_summary
+```
+
+</details>
+
+## `task_readers`
+
+The [`task_readers` table](https://tdlm.fly.dev/taskmaster/task_readers) contains information on which contestant (`reader`) read a particular task, whether the task was a `team` task, and if the task was `live` or not.
+
+Note, that a task can have multiple readers associated with it as it is common for multiple readers to be edited together in a show.
+
+<details>
+
+<summary>See `task_readers` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["task_readers"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `task_readers` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["task_readers"]]$data_summary
+```
+
+</details>
+
+## `task_winners`
+
+The [`task_winners` table](https://tdlm.fly.dev/taskmaster/task_winners) naturally has all the information about the contestant(s) who won the task (`winner`), whether it was a `team` task, and if it was a `live` task or not.
+
+<details>
+
+<summary>See `task_winners` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["task_winners"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `task_winners` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["task_winners"]]$data_summary
+```
+
+</details>
+
+## `tasks`
+
+The [`tasks` table](https://tdlm.fly.dev/taskmaster/tasks) has high level data about tasks that is mostly independent of the contestants and the outcome. This includes the `series` and `episode` that the task featured in, the main `summary` of the task. Categorisation of the task is also available such as whether it is a subjective or objective task, if it is TM UK original, if it was filmed or live.
+
+-    The `location` field in this table is not limited to the `special_locations` but also the whereabouts in the TM house, and the studio.
+-    The `points` field highlights the total number of points distributed to contestants by the Taskmaster.
+-    `std` is a flag to denote whether the task was standard (one having 5 judged attempts)
+-    `YT` is a YouTube link to the corresponding episode and timestamp of that particular task.
+
+<details>
+
+<summary>See `tasks` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["tasks"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `tasks` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["tasks"]]$data_summary
+```
+
+</details>
+
+## `tasks_by_objective`
+
+The [`tasks_by_objective` table](https://tdlm.fly.dev/taskmaster/tasks_by_objective) provides a high level overview of the task and the `objective` (the `measurement` and desired direction to be deemed successful).
+
+<details>
+
+<summary>See `tasks_by_objective` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["tasks_by_objective"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `tasks_by_objective` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["tasks_by_objective"]]$data_summary
+```
+
+</details>
+
+## `team_tasks`
+
+The [`team_tasks` table](https://tdlm.fly.dev/taskmaster/team_tasks) focuses just on team tasks, the teams involved (`team`), and whether that particular team won (`win`).
+
+<details>
+
+<summary>See `team_tasks` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["team_tasks"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `team_tasks` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["team_tasks"]]$data_summary
+```
+
+</details>
+
+## `teams`
+
+The [`teams` table](https://tdlm.fly.dev/taskmaster/teams) provides information on teams, regardless of the tasks themselves. The contestants who make up the team `members`, the `size` of the team, and whether the team is `irregular` or not, are also outlined.
+
+An `irregular` team occurs on the rare occasion when the a team for a live task differs to the previous tasks (pre-recorded or live). This namely occurred in Series 9 when someone wanted to the see rage of Ed Gamble, and Series 10's hippogate.
+
+<details>
+
+<summary>See `teams` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["teams"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `teams` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["teams"]]$data_summary
+```
+
+</details>
+
+## `title_coiners`
+
+The [`title_coiners` table](https://tdlm.fly.dev/taskmaster/title_coiners) archives all episode titles, who was responsible for the title (`coiner`, not limited to contestants and is sometimes blank as it could refer to a general vibe), and during which `task` the title was uttered in.
+
+<details>
+
+<summary>See `title_coiners` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["title_coiners"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `title_coiners` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["title_coiners"]]$data_summary
+```
+
+</details>
+
+## `title_stats`
+
+The [`title_stats` table](https://tdlm.fly.dev/taskmaster/title_stats) is an insights based table providing various on the statistics on the episode titles, namely the number of `words` and `syllables` in the title.
+
+<details>
+
+<summary>See `title_stats` Sample!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+data_sample_list[["title_stats"]]$data_sample
+```
+
+</details>
+
+<details>
+
+<summary>See `title_stats` Summary!</summary>
+
+```{r, echo = TRUE, eval = TRUE}
+    data_sample_list[["title_stats"]]$data_summary
+```
+
+</details>
