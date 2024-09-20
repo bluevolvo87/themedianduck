@@ -7,6 +7,12 @@ description: The Median Duck Vision
 title: The Vision
 ---
 
+<center>
+
+![](../img/teaching_duck.jpg){width=45%}
+
+</center>
+
 # The Mission Statement 
 > To entertain and educate the general public of statistical and analytical concepts through data associated with the hit UK TV show “Taskmaster”.
 

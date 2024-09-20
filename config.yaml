@@ -40,7 +40,7 @@ params:
   highlightjsCDN: "//cdnjs.cloudflare.com/ajax/libs"
   highlightjsLang: ["r", "yaml"]
   highlightjsTheme: "github"
-  logo: "/img/logo.jpg"
+  logo: "img/favicon/favicon.ico"
 menu:
   main:
     - name: Home

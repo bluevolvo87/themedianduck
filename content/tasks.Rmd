@@ -4,6 +4,12 @@ date: 2024-07-17
 draft: false
 ---
 
+<center>
+
+![](../img/pyramid_ducks.jpg){width=25%}
+
+</center>
+
 A site about Taskmaster has got to have some tasks....surely?
 
 

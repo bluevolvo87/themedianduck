@@ -28,7 +28,7 @@
       <link>http://localhost:4321/themedianduck/tasks/</link>
       <pubDate>Wed, 17 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/tasks/</guid>
-      <description>A site about Taskmaster has got to have some tasks….surely?&#xA;The Prize Task&#xD;This project is self initiated and funded. If you&#xD;would like to show your appreciation and gratitude in this project, feel&#xD;free to donate to my buy me a coffee&#xD;page. All donations are welcome.&#xA;Make a donation to the aforementioned Buy Me a Coffee&#xD;page. The Median Donation&#xD;Amount for the calendar month wins!&#xA;The Individual Task&#xD;In order to achieve the desired vision, multiple contributors would be&#xD;appreciated; as of 2024-08-06 it is just myself.</description>
+      <description>A site about Taskmaster has got to have some tasks….surely?&#xA;The Prize Task&#xD;This project is self initiated and funded. If you&#xD;would like to show your appreciation and gratitude in this project, feel&#xD;free to donate to my buy me a coffee&#xD;page. All donations are welcome.&#xA;Make a donation to the aforementioned Buy Me a Coffee&#xD;page. The Median Donation&#xD;Amount for the calendar month wins!&#xA;The Individual Task&#xD;In order to achieve the desired vision, multiple contributors would be&#xD;appreciated; as of 2024-09-16 it is just myself.</description>
     </item>
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>
@@ -42,7 +42,7 @@
       <link>http://localhost:4321/themedianduck/about/</link>
       <pubDate>Mon, 08 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/about/</guid>
-      <description>My Professional Background I obtained a PhD in Statistics from the University of Warwick in 2013, my thesis title was &amp;ldquo;Uncertainty in Changepoints in Time Series&amp;rdquo; 1. I&amp;rsquo;m delighted that Dr Little Alex Horne recently became associated with my alma mater through the Taskmaster Education scheme.&#xA;I have 10 years of industry experience as a Research Scientist/Data Scientist at Amazon and Samsung, predominantly demand forecasting at scale for products. From this experience, I have some experience on running projects at scale, with rigor (automation, repeatability) and compromises that need to be made (whether it be technical, monetary, mental).</description>
+      <description>My Professional Background&#xD;I obtained a PhD in Statistics from the University of Warwick in 2013, my thesis title was “Uncertainty in Changepoints in Time Series” 1. I’m delighted that Dr Little Alex Horne recently became associated with my alma mater through the Taskmaster Education scheme.&#xA;I have 10 years of industry experience as a Research Scientist/Data Scientist at Amazon and Samsung, predominantly demand forecasting at scale for products. From this experience, I have some experience on running projects at scale, with rigor (automation, repeatability) and compromises that need to be made (whether it be technical, monetary, mental).</description>
     </item>
     <item>
       <title>New Post on Archie</title>
@@ -56,14 +56,14 @@
       <link>http://localhost:4321/themedianduck/resources/</link>
       <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/resources/</guid>
-      <description>Here are some of the resources I used as part of The Median Duck.&#xA;(I will tabulate and automate this eventually).&#xA;Taskmaster Related TaskMaster.Info Trabajo de las Mesas Website Related Feather Icons Statistics Related Misc Related </description>
+      <description>&#xD;Here are some of the resources I used as part of The Median Duck.&#xA;(I will tabulate and automate this eventually).&#xA;Taskmaster Related&#xD;TaskMaster.Info&#xD;Trabajo de las Mesas&#xD;Website Related&#xD;Feather Icons&#xD;Statistics Related&#xD;Misc Related&#xD;</description>
     </item>
     <item>
       <title>The Vision</title>
       <link>http://localhost:4321/themedianduck/vision/</link>
       <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/vision/</guid>
-      <description>The Mission Statement To entertain and educate the general public of statistical and analytical concepts through data associated with the hit UK TV show “Taskmaster”.&#xA;The Objective Using data from the UK hit TV show “Taskmaster”, The Median Duck aims to entertain and educate the general public of statistical and analytical concepts. Articles and analysis will be written for a non-technical audience predominantly.&#xA;Types of analysis and content fall under the following umbrellas with some examples.</description>
+      <description>The Mission Statement&#xD;To entertain and educate the general public of statistical and analytical concepts through data associated with the hit UK TV show “Taskmaster”.&#xA;The Objective&#xD;Using data from the UK hit TV show “Taskmaster”, The Median Duck aims to entertain and educate the general public of statistical and analytical concepts. Articles and analysis will be written for a non-technical audience predominantly.&#xA;Types of analysis and content fall under the following umbrellas with some examples.</description>
     </item>
     <item>
       <title>Hello R Markdown</title>
@@ -98,7 +98,7 @@
       <link>http://localhost:4321/themedianduck/archives/</link>
       <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/archives/</guid>
-      <description></description>
+      <description>&#xD;</description>
     </item>
     <item>
       <title>How to test dark mode?</title>
