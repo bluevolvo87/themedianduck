@@ -7,6 +7,12 @@ description: Resources
 title: Resources
 ---
 
+<center>
+
+![](../img/vintage_reading_duck.jpg){width=25%}
+
+</center>
+
 Here are some of the resources I used as part of _The Median Duck_.
 
 (I will tabulate and automate this eventually).
