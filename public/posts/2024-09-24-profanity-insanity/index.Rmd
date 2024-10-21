@@ -1,0 +1,9 @@
+---
+title: profanity_insanity
+author: Christopher Nam
+date: '2024-09-24'
+slug: profanity-insanity
+categories: []
+tags: []
+draft: yes
+---

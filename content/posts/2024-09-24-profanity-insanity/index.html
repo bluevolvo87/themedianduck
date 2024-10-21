@@ -1,0 +1,434 @@
+---
+title: "The Foulest Mouth of Them All"
+author: Christopher Nam
+date: '2024-10-21'
+slug: profanity-insanity
+categories: [analysis, profanity]
+tags: []
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+params:
+  start_date: "Initial Creation Date: 2024-09-24."
+  publish_date: "Published Date: 2024-10-21."
+
+---
+
+<script src="{{< blogdown/postref >}}index_files/kePrint/kePrint.js"></script>
+<link href="{{< blogdown/postref >}}index_files/lightable/lightable.css" rel="stylesheet" />
+
+<div id="TOC">
+<ul>
+<li><a href="#your-task" id="toc-your-task">Your Task</a></li>
+<li><a href="#profanity-insanity" id="toc-profanity-insanity">Profanity Insanity</a></li>
+<li><a href="#the-foulest-mouth-of-them-all" id="toc-the-foulest-mouth-of-them-all">The Foulest Mouth of Them All…</a></li>
+<li><a href="#what-have-we-learnt-today" id="toc-what-have-we-learnt-today">What Have We Learnt Today?</a></li>
+</ul>
+</div>
+
+{{% callout text="Warning This Post Contains Strong Language...Reader Discretion is advised!" %}}
+<div id="your-task" class="section level1">
+<h1>Your Task</h1>
+<blockquote>
+<p>Find the foulest mouthed contestant in UK Taskmaster to date.
+Bonus points for finding the foulest mouth in each series.</p>
+</blockquote>
+<details>
+<summary>
+A Side Amble in the Preamble
+</summary>
+<!-- # Sidenote: Preamble Code -->
+<p>In the spirit of good code practices, namely avoiding duplicating code and centralising common code into a single location were possible, here is a set of preamble scripts that I will be sourcing at the beginning of each post.</p>
+<p>These <code>R</code> scripts:</p>
+<ul>
+<li>Configures some global output settings that I want to make these posts and graphics aesthetically pleasing.</li>
+<li>Establishing the connection to the <code>TdlM</code> database file.</li>
+</ul>
+<p>Contents of this preamble code can be found in this <a href="https://github.com/bluevolvo87/themedianduck">git location</a>.</p>
+<pre class="r"><code>library(here)
+here(&quot;static&quot;)
+## [1] &quot;C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck/static&quot;
+
+preamble_dir &lt;- here(&quot;static&quot;, &quot;code&quot;, &quot;R&quot;, &quot;preamble&quot;)
+preamble_file  &lt;- &quot;post_preamble.R&quot;
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, &quot;database_preamble.R&quot;))
+## [1] &quot;Database Connection, tm_db, is now ready to use.&quot;
+source(file.path(preamble_dir, &quot;graphics_preamble.R&quot;))</code></pre>
+<!-- ## Some Motivation to This Preamble -->
+<p><strong>Some Motivation To This Preamble</strong></p>
+<p>Prior to this preamble code, I copied this code from post to post and executed; this code contains approximately 40 lines. This is okay for quick, one off purposes, but is not a good practice for longer term purposes. For example, if I want to make a change to this preamble code, I would have to change each instance this code is used (as in each markdown associated with each post).</p>
+<p>Going forward, this preamble code file will be sourced within about 5 lines of codes. If I want to change the preamble code, I only have to make this code in one location, and this will naturally propagate to wherever this code is being used.</p>
+</details>
+</div>
+<div id="profanity-insanity" class="section level1">
+<h1>Profanity Insanity</h1>
+<p>To answer our questions of interest, we likely need to access the following tables:</p>
+<ul>
+<li><code>profanity</code>: Table detailing the profanity observed in an episode.</li>
+<li><code>people</code>: High level information on contestants, Greg Davies and Alex Horne (gender, DOB, dominant hand).</li>
+<li><code>series</code>: Snapshot of overall series information.</li>
+</ul>
+<div id="the-rate-of-profanity-caveat" class="section level2">
+<h2>The Rate of Profanity Caveat</h2>
+<p>It is worth reminding ourselves that the number of episodes per series has varied over Taskmaster’s brodcast run. Consequently, to compare the profanity use between series, we cannot compare the total profanity used by a contestant (or speaker in general) in a series as contestants from longer series will likely appear as more foul mouthed.</p>
+<p>In order to allow for valid comparisons between series, we introduce a new metric, namely the profanity rate which normalises the profanity total by the number of episodes in the series.</p>
+<p><span class="math display">\[\texttt{Profanity Rate for Contestant C in series S} = \frac{\sum{\texttt{Profanity by contestant C in series S}}}{\texttt{Number of episodes in series S}} \]</span>
+Profanity Rate can be thought of as the average number of times contestant <code>C</code> will swear in an episode (of series <code>S</code>).</p>
+</div>
+<div id="the-next-level-of-profanity" class="section level2">
+<h2>The Next Level of Profanity</h2>
+<p>To assist our foul mouthed quest, it would be useful to create new temporary subtables which combine, transform and/or aggregate data from the various database tables we outlined above.</p>
+<p>For example, we might want to create:</p>
+<ul>
+<li>an enhanced version of the <code>profanity</code> table which contains interpretable information on the speaker and series rather than numerical ids (they are people with names, not numbers).</li>
+<li>an aggregate of this enhanced <code>profanity</code> table (which is at a <code>series</code>, <code>speaker</code>, <code>task</code> level granularity), such that we have profanity at a series level for a contestant.</li>
+</ul>
+<p>These transformations can be done in <code>SQL</code> or <code>R</code>. Based on personal preference, the former will be used for joins and aggregations, and the latter for more technical transformations (for example calculation of new statistics).</p>
+<div id="enhanced-profanity" class="section level3">
+<h3>Enhanced Profanity</h3>
+<p>The following query combines the data in the <code>profanity</code>, <code>people</code> and <code>series</code> level. The data still remains at low level granularity, namely, the utterance of the profanity by a particular contestant, in a task.</p>
+<p>Output of this query stored directly as an <code>R</code> object name <code>profanity_enh</code>:</p>
+<pre class="sql watch-out"><code>--  Stored as an R dataframe profanity_enh
+
+SELECT 
+pf.series, 
+pf.episode, 
+pf.task,
+pf.speaker as speaker_id,
+pp.name as speaker_name,
+pf.roots,
+pf.quote,
+pf.studio,
+pp.gender,
+pp.hand,
+pp.champion,
+pp.tmi as speaker_tmi,
+sp.name as series_name,
+sp.episodes as num_episodes_in_series,
+sp.champion as series_champion_id,
+sp.special
+FROM profanity pf
+LEFT JOIN people pp
+    ON (pf.speaker = pp.id
+    AND pf.series = pp.series) OR
+(pf.speaker = pp.id)
+LEFT JOIN series sp
+    ON pf.series = sp.id
+</code></pre>
+</div>
+</div>
+<div id="series-profanity" class="section level2">
+<h2>Series Profanity</h2>
+<p>The following table takes the recently created <code>profanity_enh</code> dataframe and performs a number of operation which eventually results in a new dataset, <code>series_profanity</code> at a series, contestant level. Operations include:</p>
+<ol style="list-style-type: decimal">
+<li>Counting the number of profanities uttered in a given quote.</li>
+<li>Aggregating data to a series and speaker level.
+<ol style="list-style-type: lower-alpha">
+<li>Sum of the profanities uttered.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+<li>Number of distinct episodes that the profanities are uttered over.</li>
+<li>Number of episodes in the series.</li>
+</ol></li>
+<li>Adding a new column which calculate the profanity rate.</li>
+</ol>
+<pre class="r watch-out"><code>library(reticulate)
+library(dplyr)
+
+series_profanity &lt;- profanity_enh %&gt;% 
+    rowwise() %&gt;%
+    mutate(num_profanity = length(reticulate::py_eval(roots))) %&gt;%
+    # To count the number of profanities utter in a quote.
+    group_by(series, series_name, special, speaker_id, speaker_name, speaker_tmi, gender, hand) %&gt;%
+    # Aggregating and summarising data at a series, speaker level.
+    summarise(
+        speaker_episode_count = dplyr::n_distinct(episode),
+        sum_profanity_series = sum(num_profanity), 
+        no_episodes_in_series = max(num_episodes_in_series)
+    ) %&gt;%
+    mutate(profanity_per_episode = sum_profanity_series/no_episodes_in_series)</code></pre>
+</div>
+</div>
+<div id="the-foulest-mouth-of-them-all" class="section level1">
+<h1>The Foulest Mouth of Them All…</h1>
+<p>We are nearly there at answering our first foul mouth question! There are few more considerations, that will form the basis our of logic to help answer our question:</p>
+<ul>
+<li>we will be considering only standard series of UK Taskmaster and not specials (no New Years Treats and Champion of Champions).</li>
+<li>we will only consider contestants and not Greg Davies or Alex Horne.</li>
+<li>the foulest mouth contestant will have the <em>largest</em> profanity rate.</li>
+</ul>
+<hr />
+<p>And with that, our foul mouthed winner is…</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:foulest1">Table 1: </span><span id="tab:foulest1">Table 2: </span>The Foulest Mouthed Contestants in UK Taskmaster
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+series_name
+</th>
+<th style="text-align:left;">
+speaker_name
+</th>
+<th style="text-align:left;">
+gender
+</th>
+<th style="text-align:left;">
+hand
+</th>
+<th style="text-align:right;">
+profanity_per_episode
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Series 1
+</td>
+<td style="text-align:left;">
+Romesh Ranganathan
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:right;">
+7.667
+</td>
+</tr>
+</tbody>
+</table>
+<p>And there we have it Romesh Ranganathan<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> from Series 1 is the foulest mouth contestant on UK Taskmaster, with a profanity rate of 7.667; Romesh is expected to swear about 7.667 times in an episode.</p>
+<p>Based on my recollection of Series 1 and Romesh’s angry persona, it is not entirely suprising that he is the most foul mouthed contestant!</p>
+<div id="a-close-finish" class="section level2">
+<h2>A Close Finish?</h2>
+<p>Some of you readers may be interested in knowing wheter it was a close finish into the profanity rate race.</p>
+<p>We can quickly determine this may changing the <code>top_n</code> function to consider 5 rather than 1 say, when selecting based on profanity rate.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:foulest-plot">Table 3: </span><span id="tab:foulest-plot">Table 4: </span>Top 5 Foulest Mouthed Contestants in UK Taskmaster
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+series_name
+</th>
+<th style="text-align:left;">
+speaker_name
+</th>
+<th style="text-align:left;">
+gender
+</th>
+<th style="text-align:left;">
+hand
+</th>
+<th style="text-align:right;">
+profanity_per_episode
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Series 1
+</td>
+<td style="text-align:left;">
+Romesh Ranganathan
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:right;">
+7.667
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Series 6
+</td>
+<td style="text-align:left;">
+Asim Chaudhry
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:right;">
+7.300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Series 6
+</td>
+<td style="text-align:left;">
+Russell Howard
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:right;">
+5.800
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Series 2
+</td>
+<td style="text-align:left;">
+Doc Brown
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:right;">
+4.200
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Series 3
+</td>
+<td style="text-align:left;">
+Rob Beckett
+</td>
+<td style="text-align:left;">
+M
+</td>
+<td style="text-align:left;">
+R
+</td>
+<td style="text-align:right;">
+4.200
+</td>
+</tr>
+</tbody>
+</table>
+<div id="hello" class="greeting message" style="color: darkred; background-color: silver; border: 1px solid #dfe2e5;">
+<p>The profanity race (Table <a href="#tab:foulest-plot">3</a>) indicates that following top 5 positions in a profanity rate race:</p>
+<ul>
+<li>2nd place: Asim Chaudhry from Series 6 with a profanity rate of 7.3. A somewhat close second to Romesh.</li>
+<li>3rd place: Series 6’s Russell Howard with a 5.8 profanity rate, a noticeable drop from 1st and 2nd place.</li>
+<li>Tied 4th place: Doc Brown and Rob Beckett, from Series 2 and 3 respectively, with 4.2 swear words expected to be uttered in an episode. Again a drop from the prior positions.</li>
+</ul>
+</div>
+<p>There are no big surprises in these finishing positions although Asim Chaudhry being a close second is somewhat surprising since I don’t remember him being a particularly angry or foul mouthed incident with him<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. He’s a relatively mild mannered comedy actor who just wants everyone to know he is a vegan.</p>
+<p>Another observation is that the top 5 are all male and right handed. Make of that what you will…</p>
+</div>
+<div id="bonus-task-foulest-mouth-in-each-series" class="section level2">
+<h2>Bonus Task: Foulest Mouth in Each Series</h2>
+<p>To find the foulest mouth in each Taskmaster series, we can continue use the existing data and logic we have used thus far, but introduce an additional line of logic to rank within a series; the <code>group_by</code> function is our friend here. The <code>rank</code> function provides a ranking with respect to profanity rate; for descending order ranking a minus sign is introduced on the variable we want to rank according to.</p>
+<pre class="r watch-out"><code>within_series_profanity &lt;- series_profanity %&gt;%
+    filter(special == 0 &amp; !(speaker_name %in% c(&quot;Greg Davies&quot;, &quot;Alex Horne&quot;))) %&gt;%
+    arrange(series, -profanity_per_episode, -speaker_episode_count) %&gt;%
+    group_by(series, series_name) %&gt;%
+    mutate(profanity_rank = rank(-profanity_per_episode, ties.method = &quot;first&quot;), name_prof_rate = sprintf(&quot;%s (%#.3f)&quot;, speaker_name, profanity_per_episode))</code></pre>
+<hr />
+<p>Performing the filter operation of <code>profanity_rank = 1</code> will provide the foulest contestant by series:</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:foul-plot"></span>
+<p class="caption">
+Figure 1: Foulest Contestant by Series
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/foul-plot-1.png" alt="Foulest Contestant by Series" width="672" />
+</div>
+<div id="hello" class="greeting message" style="color: darkred; background-color: silver; border: 1px solid #dfe2e5;">
+<p>Some insights from Figure <a href="#fig:foul-plot">1</a>:</p>
+<ul>
+<li>Intuitive foul mouthedness:
+<ul>
+<li>Daisy May Cooper (Series 10, hippogate is fresh in my mind),</li>
+<li>Jamali Maddix (Series 11, general angry persona).</li>
+</ul></li>
+<li>Surprising foul mouthedness:
+<ul>
+<li>Joe Thomas (Series 8, a contender for awkwardness for sure but not foul mouthedness)</li>
+<li>Chris Ramsey (Series 13, I would have suspected Judi Love),</li>
+<li>David Baddiel (Series 9, Ed Gamble would be my bet),</li>
+<li>Jenny Eclair (Series 15, Frankie Boyle’s angry persona would have been my bet).</li>
+</ul></li>
+<li>Romesh and Asim really were leading the profanity based pack by quite a margin, with a rate greater than 7.
+<ul>
+<li>All other serieses have profanity rates no greater than 4.5.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="within-series-foul-mouthed-races" class="section level2">
+<h2>Within Series Foul Mouthed Races</h2>
+<p>Similar to the overall foul mouthed analysis, we might be interested in seeing how close the profanity race was in each series. We may also find our surprising insights, less surprising by assessing the profanity race.</p>
+<div id="hello" class="greeting message" style="color: darkred; background-color: silver; border: 1px solid #dfe2e5;">
+<p>Some observations from Figure <a href="#fig:allpr-plot">2</a>:</p>
+<ul>
+<li>Series 2, Series 5, Series 8, Series 9 Series 13, Series 16 were all relatively close races.
+<ul>
+<li>This explains some of our surprising foul mouthed contestants we previously uncovered.</li>
+</ul></li>
+<li>Russell Howard (Series 6) is a pretty foul mouthed contestant overall compared to all other contestants.
+<ul>
+<li>If he was on any other series, he likely would have been the most foul mouthed of that season.</li>
+</ul></li>
+<li>The data sources used also include additional and substitute contestants that were not permanent contestants for that series. For example:
+<ul>
+<li>Josh Widdicombe appearing in Series 2 is due to his involvement in team tasks,</li>
+<li>Katherine Ryan appearing in Series 9 is due to her substituting for Katy Wix for the studio portion of one episode.</li>
+<li>The <code>NA</code> contestant of Series 9 is likely Kerry Godliman’s contribution. A data join discrepancy is likely occurring here as well.</li>
+</ul></li>
+<li>The least foul mouthed permanent contestant of a series is Mike Wozniak with a profanity rate of 0.1. This isn’t a big surprise based on the Geography Teacher persona he provides; we’ve got to set a good example to the kids!
+<ul>
+<li>However there are a handful of other contestants who are potentially as wholesome. For example Victoria Coren Mitchell, Julian Clary, Lolly Adefope.</li>
+</ul></li>
+<li>Series 16 has a low range profanity rates between 0.2 and 2.5 which I found to be surprising. It could be that truly were not foul mouthed, or there is a data issue (not all profanity has been recorded in <code>TdlM</code>).</li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:allpr-plot"></span>
+<p class="caption">
+Figure 2: All Series Contestants Profanity Rates
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/allpr-plot-1.png" alt="All Series Contestants Profanity Rates" width="960" />
+</div>
+</div>
+</div>
+<div id="what-have-we-learnt-today" class="section level1">
+<h1>What Have We Learnt Today?</h1>
+<div style="display: flex;font-size: 20px; text-align: center; vertical-align: middle; align-self: center">
+<div style="flex: 10%">
+<p><img src="https://taskmaster.info/images/people/0048_romesh_ranganathan.png" style="width:75.0%" /></p>
+</div>
+<div style="flex: 85%, align-items: center, justify-content: center; vertical-align: middle; align-self: center;">
+{{% callout text="There was no box mate...            The Tree Wizard is the foulest mouthed contestant! He is expected to drop 7.67 swear words in an episode!" %}}
+</div>
+</div>
+<div style="display: flex;font-size: 16px; text-align: center; vertical-align: middle; align-self: center">
+<div style="flex: 85%, align-items: center, justify-content: center; vertical-align: middle; align-self: center;">
+{{% callout text="Tick-tock it's hemorrhoid o'clock! The Geography teacher is the least foul mouth contestant; he is only expected to swear 0.1 times an episode! Good thing he is the assistant on Taskmaster Junior!" %}}
+</div>
+<div style="flex: 10%">
+<p><img src="https://taskmaster.info/images/people/0176_mike_wozniak_1.png" style="width:75.0%" /></p>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>To count the number of profanities, we rely on the <code>roots</code> column and the library <code>reticulate</code> has been employed. An example value in the <code>roots</code> column might be <code>["little", "alex", "horne"]</code> which is the form a <code>python</code> <code>list</code> object. <code>reticulate</code> and the <code>py_eval</code> function allows use to interpret this as a <code>list</code> object from within <code>R</code>, convert it to its <code>R</code> equivalent (an <code>R</code> vector), and manipulate it as an <code>R</code> object (namely taking the <code>length</code> of it to count number of profanity occurrences). It’s a convenient way for me to deal with these data types which may not be natural in <code>R</code>, but natural in another language.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>aka tree wizard<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I’m looking at you Ed Gamble and Daisy May Cooper for these sorts of outbursts.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
