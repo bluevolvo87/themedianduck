@@ -38,7 +38,7 @@ These `R` scripts:
 -   Configures some global output settings that I want to make these posts and graphics aesthetically pleasing.
 -   Establishing the connection to the `TdlM` database file.
 
-Contents of this preamble code can be found in this [git location](https://github.com/bluevolvo87/themedianduck). 
+Contents of this preamble code can be found in this [git location](https://github.com/bluevolvo87/themedianduck/tree/main/static/code/R/preamble). 
 
 ```{r preamble, warning = FALSE, message = FALSE, error=FALSE, collapse = TRUE}
 library(here)
