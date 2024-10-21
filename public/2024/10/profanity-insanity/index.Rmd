@@ -38,7 +38,7 @@ These `R` scripts:
 -   Configures some global output settings that I want to make these posts and graphics aesthetically pleasing.
 -   Establishing the connection to the `TdlM` database file.
 
-Contents of this preamble code can be found in this [git location](https://github.com/bluevolvo87/themedianduck). 
+Contents of this preamble code can be found in this [git location](https://github.com/bluevolvo87/themedianduck/tree/main/static/code/R/preamble). 
 
 ```{r preamble, warning = FALSE, message = FALSE, error=FALSE, collapse = TRUE}
 library(here)
@@ -320,7 +320,7 @@ blogdown::shortcode("callout", text = "There was no box mate...            The T
 
 ::: {style="flex: 85%, align-items: center, justify-content: center; vertical-align: middle; align-self: center;"}
 ```{r, echo = FALSE}
-blogdown::shortcode("callout", text = "Tick-tock it's hemorrhoid o'clock! The Geography teacher is the least foul mouth contestant who is only expected to swear 0.1 times an episode! Good thing he is the assistant on Taskmaster Junior!")
+blogdown::shortcode("callout", text = "Tick-tock it's hemorrhoid o'clock! The Geography teacher is the least foul mouth contestant; he is only expected to swear 0.1 times an episode! Good thing he is the assistant on Taskmaster Junior!")
 ```
 :::
 
