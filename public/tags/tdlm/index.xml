@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>TdlM on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/tags/tdlm/</link>
+    <link>https://bluevolvo87.github.io/themedianduck/tags/tdlm/</link>
     <description>Recent content in TdlM on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
     <lastBuildDate>Sat, 31 Aug 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/tags/tdlm/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/tags/tdlm/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A Data Dic(tionary) pic of TdlM</title>
-      <link>http://localhost:4321/themedianduck/2024/08/tdlm-data-dictionary/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</link>
       <pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/08/tdlm-data-dictionary/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</guid>
       <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Summary of Findings&#xD;Final Thoughts&#xD;Appendix Details&#xD;Your Task&#xD;Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (database connection post).</description>
     </item>
     <item>
       <title>Sidenote: Musings on TdlM</title>
-      <link>http://localhost:4321/themedianduck/2024/07/data-quality-musings/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</link>
       <pubDate>Wed, 17 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/07/data-quality-musings/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</guid>
       <description>Sidenote Introduction&#xD;Data Quality&#xD;Why This Datasource?&#xD;Potential Articles to Explore in the Future&#xD;Sidenote Introduction&#xD;A few remarks and musings on the Trabajo de las Mesas database (TdlM).&#xA;Data Quality&#xD;As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.&#xA;I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from taskmaster.</description>
     </item>
   </channel>
