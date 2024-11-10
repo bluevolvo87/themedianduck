@@ -317,7 +317,7 @@ Some observations (but not all):
     -    Conversely, Series 9 is positively skewed, the median closer to the bottom of the box, and a greater concentration of observations are in the bottom of the box.[^1]
 :::
 
-[^1]: Readers may be reassured to know that I still get the negative and positive skew mixed up. It might be because I also don't know my left and right instinctively.
+[^1]: Readers may be reassured to know that I still get negative and positive skew mixed up in direction. It might be because I also don't know my left and right instinctively.
 
 # To Mean or Median...
 As we start to conclude this post, we bring it back to two single summary statistics, namely the profanity rate (also known as the mean profanity utterance), and the median profanity utterance. To end, we simply compare the profanity rate and the median profanity to see if there are any substantial differences between the two statistics. 
