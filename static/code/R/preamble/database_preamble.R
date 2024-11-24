@@ -2,6 +2,8 @@ library(here) #library to help with identifying the repo working directory
 
 # URL where Database file resides. We will download from here.
 db_url <- "https://tdlm.fly.dev/taskmaster.db"
+modified_thresh <- 30
+
 
 # Where the data will be stored locally
 db_file_name <- "taskmaster.db"
@@ -16,7 +18,20 @@ if(!file.exists(file.path(data_dir))){
 }
 
 # Download file specified by URL, save in the local destination.
-if(!file.exists(db_data_location)){
+db_exists <- file.exists(db_data_location)
+
+days_since_modified <- NULL
+
+if(db_exists){
+    # If DB file already exists, calculate the last modified date.
+    last_modified_date <- as.Date(file.info(db_data_location)$mtime)
+    days_since_modified <- as.numeric(Sys.Date() -last_modified_date)
+}else{
+    days_since_modified <- modified_thresh * 2
+    }
+
+# If the DB file doesn't exist OR the db file exceeds the modified threshold, then download.
+if(!(db_exists) | (days_since_modified >= modified_thresh)){
     download.file(url = db_url, destfile = db_data_location, mode = "wb")
 }
 

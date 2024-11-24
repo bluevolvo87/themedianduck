@@ -1,0 +1,291 @@
+---
+title: The Taskmaster Swear Cloud Appreciation Society
+author: Christopher Nam
+date: '2024-11-24'
+slug: taskmaster-swear-cloud
+categories: [analysis, profanity]
+tags: []
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+```{r preamble, echo = FALSE, warning = FALSE, message = FALSE, error=FALSE, collapse = TRUE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+
+```
+
+:::{.callout_tmd}
+This post contains strong lanuage...reader discretion advised! And this time I really mean it...
+:::
+
+
+```{r, out.width = "50%", message = FALSE, tidy = FALSE}
+knitr::include_graphics(path= "https://64.media.tumblr.com/23ab97f15791b782ba727fe854018bde/b846448a08e81179-92/s1280x1920/5fd044f31289d976b453fed8016efea68bf46a61.pnj")
+```
+
+# Your Task
+> Create a swear word cloud which is fit for the Cloud Appreication Society.
+
+# Making it Rain... with Data
+We continue to use the profanity based queries we have developed in the following posts ([Foulest Mouth of Them All ](/themedianduck/2024/10/profanity-insanity/), [The Taskmaster's Potty Mouth](/themedianduck/2024/11/the-taskmaster-s-potty-mouth/)). 
+
+Some data additional data munging was performed to ensure that all profanities uttered were fully accounted for; namely we have to explode a Python array/list containing profanities through `transform` and `unnest` functions.[^1] 
+
+[^1]: Currently, each record row of the `profanity` table represents a single quote from a speaker in which at least one profanity was uttered. These individual profanities are stored in a Python array/list object with each element in the array representing a different profanity utterance. This data design allows for a quotes in which multiple profanities are uttered. For example, if Greg exclaimed `"Fuck Off You Little Shithead"`, the Python array would be `["Fuck", "Shit"]` since two profanity based words were uttered in this single exclaimation. We need to "explode" this single record entry so that `Fuck` and `Shit` are captured as two different records for this single quote. This exploding is achieve throught the `transform` and `unnest` functions in the library `dplyr`.
+
+
+```{sql sql_query, connection = tm_db, output.var = "profanity_enh", echo = FALSE}
+--  Stored as an R dataframe profanity_enh
+
+SELECT 
+pf.series, 
+pf.episode, 
+pf.task,
+pf.speaker as speaker_id,
+pp.name as speaker_name,
+pf.roots,
+pf.quote,
+pf.studio,
+pp.gender,
+pp.hand,
+pp.champion,
+pp.tmi as speaker_tmi,
+sp.name as series_name,
+sp.episodes as num_episodes_in_series,
+sp.champion as series_champion_id,
+sp.special
+FROM profanity pf
+LEFT JOIN people pp
+    ON (pf.speaker = pp.id
+    AND pf.series = pp.series) OR
+(pf.speaker = pp.id)
+LEFT JOIN series sp
+    ON pf.series = sp.id
+
+```
+
+
+```{r, message = FALSE, tidy = FALSE, echo = FALSE}
+library(reticulate)
+library(dplyr)
+
+# To explode the "roots" column into each individual swear word.
+# Each swear word utterance has its own row.
+# Other info is duplicated
+expo_profanity_enh <- profanity_enh %>% 
+    rowwise() %>%
+    mutate(
+        root_clean = paste(reticulate::py_eval(roots), collapse= ", "),
+        swear_word = root_clean
+        ) %>%
+    transform(swear_word = strsplit(swear_word, ", ")) %>%
+    tidyr::unnest(swear_word) %>%
+    mutate(swear_word = stringr::str_to_title(swear_word))
+```
+
+```{r}
+series_swear_summary_df <- expo_profanity_enh %>% 
+    group_by(series, series_name, num_episodes_in_series, series_champion_id, special, swear_word) %>%
+    summarise(
+        num_utterances = n(),
+        num_distinct_speakers  = n_distinct(speaker_name),
+        num_distinct_episodes = n_distinct(episode),
+        num_distinct_tasks = n_distinct(task)
+    )
+
+```
+```{r}
+#install.packages("wordcloud")
+library(wordcloud)
+
+#install.packages("wordcloud2")
+library(wordcloud2)
+
+#install.packages("ggwordcloud")
+library(ggwordcloud)
+```
+```{r}
+regular_series_swear_summary <- series_swear_summary_df %>% filter(special == 0 & series >=1)
+```
+
+
+```{r}
+overall_swear_summary <- regular_series_swear_summary %>% 
+    group_by(swear_word) %>%
+    summarise(freq = sum(num_utterances)) %>% 
+    ungroup() %>%
+    rename(word = swear_word) %>%
+    arrange(-freq)
+```
+
+# The Overall Swear Forecast
+We start with the overall forecast for Series 1 to 16 of UK Taskmaster. As you might assume from the task brief, we will be using the visualisation medium of word clouds to show our appreciation to the swear words uttered.
+
+[Word clouds](https://en.wikipedia.org/wiki/Tag_cloud) are a simple way to visualise word based datasets. We can capture which words are popular and how frequently they are used (more frequent words are larger in font size), and the variety of words in our dataset.
+
+
+```{r overall-swear-wc, fig.cap="Overall Taskmaster Swear Cloud"}
+set.seed(42)
+ggwordcloud(words = overall_swear_summary$word, freq = overall_swear_summary$freq, 
+                         scale = c(10, 0.5),
+                         min.freq = 1, 
+                         colors="#154360", #c("#a04000", "#839192", tm_colour_vec),#"#800000",  
+                         random.order = FALSE, random.color = FALSE, 
+                         rot.per=0, family = "mono")
+```
+
+:::{.insights}
+
+Figure \@ref(fig:overall-swear-wc) indicates that:
+
+-    `Fuck` and `Shit` (which I will now refer to as Tier1 Swears) are the most uttered swear words in the show as they are largest in font size. 
+        -    These two words are comparable in size, but `Fuck` seems slightly bigger of the two and thus more frequently uttered.
+-    `Hell`, `Ass/Arse`, `Christ`, `Piss` (Tier2 Swears) are potential the next most frequently uttered profanities and are all of similar size.  
+        -    Based on how much smaller these Tier2 Swears are compared to Tier1 Swears, I would assume that Tier2 Swear Words  utterance frequency is considerably lower than Tier1 Swears (by many magnitudes perhaps as well).
+-    `Damn`, `Dick`, `Prick`,  `Bastard` and `Bollock` make up a Tier3 Swears which are the next level of font size and frequency.
+        -    Based on how similar the font size of the Tier2 and Tier3 Swear Words are, I would assume that the utterance frequencies are similar in magnitude.
+-    The remaining swear words (Tier+4 Swears) close out our swear word cloud and the variety in profanity. These are uttered in lower frequency and start referring to specific genders and bodily parts (`Bitch`, `Whore`, `Wank`, `Pussy`, `Cunt`). 
+
+:::
+
+Our findings are in line with external stuies concerning the most common swear words in the UK ([Guardian Article](https://www.theguardian.com/media/2024/jan/06/swearing-is-becoming-more-widely-acceptable-linguistics-experts-claim?CMP=share_btn_url)):
+
+-    `Fuck` and `Shit` are the two most commonly used swear words in the UK. 
+-    It is hypothesised that they are frequently used _"to emphasis a point in conversation or to build social bonds, rather than with specific intent to cause offence"_. 
+-    This supports our Tier4 Swears insights; these swears are used in specific contexts and thus not likely to be used frequently. 
+        -    In my opinion, these swears also have a stronger intention to offend behind them (more than `Fuck` and `Shit` at least), and are more directed to an individual or group of people which may also contribute to their low utterance frequency. 
+        -    Despite initial appearances, Taskmaster is less about "offending and insulting people" and more "being entertained and laughing at comedians failures (and successes) in inconsequential tasks".
+
+
+
+# The Series Swear Forecast
+We have the overall Swear Forecast and insights, but we should also check whether these insights are consistently seen across each series, or if particular series(es) is driving `fuck` and `shit` usage.
+
+```{r series-sweard-wc, out.width="90%", fig.cap = "Taskmaster Swear Cloud by Series"}
+set.seed(42)
+series_vec <- sort(unique(regular_series_swear_summary$series))
+
+series_wc_vec <- list() 
+
+for(series_iter in series_vec){
+plot_df <- regular_series_swear_summary %>% 
+    filter(series == series_iter) %>%
+    ungroup() %>%
+    select(swear_word, num_utterances) %>%
+    rename(word = swear_word, freq = num_utterances) %>%
+    arrange(-freq)
+
+#tm_colour_vec <- c("#908023", "#790101", "#000000", "#c20001", "#938c34", "#800000")
+series_wc <- ggwordcloud(words = plot_df$word, freq = plot_df$freq, 
+                         scale = c(1.5, 0.05),
+                         min.freq = 1, 
+                         colors="#154360",  
+                         random.order = FALSE, random.color = FALSE, 
+                         rot.per=0, family = "mono") +
+    labs(title = paste0("Series: ", series_iter), subtitle = paste0("Total Swears: ", sum(plot_df$freq))) +
+    theme(plot.title = element_text(size = 9, face = "bold", ), 
+          plot.subtitle = element_text(size = 6, face = "italic"),
+          panel.background = element_rect(fill = "#efefef")
+          )
+
+
+series_wc_vec <- append(series_wc_vec , list(series_wc))
+}
+
+
+grid.arrange(grobs = series_wc_vec, ncol = min(floor(sqrt(length(series_wc_vec))), 4))
+
+```
+
+:::{.insights}
+Figure \@ref(fig:series-sweard-wc) plots word clouds for each series individually and highlights:
+
+-   `Shit` and `Fuck` are the most uttered swear words for each individual series, in addition to the overall show level. However, there are some series which are more lovers of `shit`s than `fuck`s and vice versa.
+    -    Lovers of `shit`s more than `fuck`s: Series 1, 11, 12, and 16.
+    -    Lovers of `fuck`s more than `shit`s: Series 3, 4, 7, 8, 9, 10, 14, and 15.
+    -    Comparable lovers of `shit`s and `fuck`s: Series 2, 5, 6, and 13.
+-   A wide variety of profanity vocabulary was uttered in Series 16. `Bastard`, `Hell`, and `Christ` are evidently used, and their comparable font size to Tier1 Swears suggests they are uttered with similar magnitude to them (at least in comparison to other series).
+-  `Bastard` is also a noticeable favourite swear in Series 3.
+    -    Good to know the impact of Paul Chowdry propogates to the clouds.
+
+:::
+
+```{r, fig.show="hold", out.width = "35%"}
+knitr::include_graphics(c("https://64.media.tumblr.com/2bec0cfe2c28d953e6d0602a2e12c626/4a1fff769f2d6e4e-b5/s500x750/3e6701bccecaa316fbd1383371fd120edc3057d9.png")
+)
+```
+
+# Getting My Head out of the Clouds, and Going to the Bar.
+This is my first time generating word clouds and I thought I would share my personal experience with them (so far). I am using the `ggwordcloud` function from the package of the same name to create these plots.
+My first attempt at this post also used the `wordcloud` and `wordcloud2` package, before switching to `ggwordcloud` to stay within the convenient `ggplot` ecosystem.
+
+I would say that care needs to be taken when creating word clouds. There is a random component when these plots are generated, and certain argument options for `ggwordcloud` can greatly affect the plots and conclusions we can draw from them, namely the `scale` argument which represent the (relative) font size of the most and least frequent word.
+
+On many occasions and with certain arguments, words would be excluded from the cloud as they _were too big and did not fit on the plotting area_. These exclusions would be fine if they were infrequent words, but after some digging around, I later discovered that frequent words (Tier1-2 Swears) were being excluded on some instances. *These exclusions are incredibly misleading as to what are the most frequent uttered swear words.* 
+
+Based on this experience, I would advocate that a barplot[^2] may be the safer option in displaying the same, if not more, information as that on a word cloud. 
+
+[^2]: Other plots are available... Particularly those which are equally simple, but still effective, as bar plots.
+
+
+```{r overall-swear-bar, fig.cap = "Barplot of Swear Word Utterances over Taskmaster Series 1 to 16."}
+ggplot(overall_swear_summary, aes(x = reorder(word, freq), y= freq), stat= identity) +
+    geom_col(fill = "#154360") +
+    coord_flip() +
+    scale_y_continuous(breaks = seq(0, 1000, 100)) +
+    labs(title = "Barplot of Swear Word Utterances in Taskmaster",
+         x = "Swear Word", y= "Utterance Frequency"
+    )
+```
+
+Figure \@ref(fig:overall-swear-bar) is the barplot equivalent of the word cloud presented in Figure \@ref(fig:overall-swear-wc). Minimal additional arguments were used in generating the barplot compared to the word cloud. By having the utterance frequency explicitly stated on the graph,  we can glean that:
+
+-  `Fuck` and `Shit` are the two most popular swear words (as also concluded from the word cloud), with `Fuck` being the most favoured profanity.
+    -   This latter remark was harder to deduce from the word cloud. 
+-   These Tier1 Swears are uttered approximately `r 600/100` times more than Tier2 Swears (`Hell`, `Piss`, `Christ`).
+    -   We would not be able to estimate this magnitude from a word cloud directly.
+-   We are able to clearly distinguish the leading swear words in the Tiers we have created. For example `Hell` is the most popular of the Tier2 Swears.
+-   We are able to reassess and redefine our Tier Swear classification, and which profanities belong to it. For example we can clearly deduce that the following Tiers for the lesser uttered profanities.
+    -   Tier4 Swears: `Cock`, `Bugger`, `Bitch`, `Wank`, `Tits`, `Twat`.
+        -  The last three could be their own mid Tier Swears.
+    -   Tier5 Swears: `Pussy`, `Cunt`, `Whore`, `Slut`.
+        
+        
+But I get it, word clouds are very in vogue and are certainly less intimidating and overwhelming for those who do not enjoy data or numbers. Ultimately, I suspect that word clouds suffer the same fate as pie charts which are notorious for being bad graphs for conveying information ([one of many pie chart criticism articles](https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts)).
+
+
+
+But then again, a "Bar Appreciation Society" wasn't presented as a prize task in the show so it doesn't fit in with the narrative of this post. I'm sure a Bar (or Pub, Drinking Establishment) Appreciation Society does exist though and may be even more well received by the Taskmaster than the Cloud Appreciation Society.
+
+
+# What Have we Learnt Today?
+
+:::{.infobox}
+```{r, figures-side, fig.show = "hold", out.width="25%", fig.align = "center", echo = FALSE}
+knitr::include_graphics(path = file.path(here(), "img", "fucks_ducks.jpg"), error = FALSE)
+```
+
+I couldn't give a `Fuck` or `Shit` about what we've learnt today; stop being lazy and do your own conclusion summary for once!
+
+These `Fuck`s and `Shit`s have all been used by each series of Taskmaster as popular profanities to use and are forecasted to be in horizon for the foreseeable future. There will occasionally be showers of `Hell`, `Piss`, `Christ` and `Arses` and other colourful profanities, but there will (likely) always be a `Fuck` and `Shit` foundation.
+
+```{r, out.width="25%"}
+blogdown::shortcode("youtube", "FlzR28r_5QY")
+```
+:::
+
+
+
+

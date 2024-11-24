@@ -2,25 +2,53 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on The Median Duck</title>
-    <link>https://bluevolvo87.github.io/themedianduck/categories/</link>
+    <link>http://localhost:4321/themedianduck/categories/</link>
     <description>Recent content in Categories on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Mon, 21 Oct 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 09 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:4321/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Analysis</title>
-      <link>https://bluevolvo87.github.io/themedianduck/categories/analysis/</link>
-      <pubDate>Mon, 21 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/categories/analysis/</guid>
+      <link>http://localhost:4321/themedianduck/categories/analysis/</link>
+      <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/categories/analysis/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Greg Davies</title>
+      <link>http://localhost:4321/themedianduck/categories/greg-davies/</link>
+      <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/categories/greg-davies/</guid>
       <description></description>
     </item>
     <item>
       <title>Profanity</title>
-      <link>https://bluevolvo87.github.io/themedianduck/categories/profanity/</link>
-      <pubDate>Mon, 21 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/categories/profanity/</guid>
+      <link>http://localhost:4321/themedianduck/categories/profanity/</link>
+      <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/categories/profanity/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Test</title>
+      <link>http://localhost:4321/themedianduck/categories/test/</link>
+      <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/categories/test/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Trial</title>
+      <link>http://localhost:4321/themedianduck/categories/trial/</link>
+      <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/categories/trial/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>R</title>
+      <link>http://localhost:4321/themedianduck/categories/r/</link>
+      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
+      <guid>http://localhost:4321/themedianduck/categories/r/</guid>
       <description></description>
     </item>
   </channel>

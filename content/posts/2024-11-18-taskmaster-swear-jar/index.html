@@ -1,0 +1,159 @@
+---
+title: The Taskmaster Swear Cloud Appreciation Society
+author: Christopher Nam
+date: '2024-11-24'
+slug: taskmaster-swear-cloud
+categories: [analysis, profanity]
+tags: []
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#your-task" id="toc-your-task">Your Task</a></li>
+<li><a href="#making-it-rain-with-data" id="toc-making-it-rain-with-data">Making it Rain… with Data</a></li>
+<li><a href="#the-overall-swear-forecast" id="toc-the-overall-swear-forecast">The Overall Swear Forecast</a></li>
+<li><a href="#the-series-swear-forecast" id="toc-the-series-swear-forecast">The Series Swear Forecast</a></li>
+<li><a href="#getting-my-head-out-of-the-clouds-and-going-to-the-bar." id="toc-getting-my-head-out-of-the-clouds-and-going-to-the-bar.">Getting My Head out of the Clouds, and Going to the Bar.</a></li>
+<li><a href="#what-have-we-learnt-today" id="toc-what-have-we-learnt-today">What Have we Learnt Today?</a></li>
+</ul>
+</div>
+
+<div class="callout_tmd">
+<p>This post contains strong lanuage…reader discretion advised! And this time I really mean it…</p>
+</div>
+<p><img src="https://64.media.tumblr.com/23ab97f15791b782ba727fe854018bde/b846448a08e81179-92/s1280x1920/5fd044f31289d976b453fed8016efea68bf46a61.pnj" width="50%" style="display: block; margin: auto;" /></p>
+<div id="your-task" class="section level1">
+<h1>Your Task</h1>
+<blockquote>
+<p>Create a swear word cloud which is fit for the Cloud Appreication Society.</p>
+</blockquote>
+</div>
+<div id="making-it-rain-with-data" class="section level1">
+<h1>Making it Rain… with Data</h1>
+<p>We continue to use the profanity based queries we have developed in the following posts (<a href="/themedianduck/2024/10/profanity-insanity/">Foulest Mouth of Them All</a>, <a href="/themedianduck/2024/11/the-taskmaster-s-potty-mouth/">The Taskmaster’s Potty Mouth</a>).</p>
+<p>Some data additional data munging was performed to ensure that all profanities uttered were fully accounted for; namely we have to explode a Python array/list containing profanities through <code>transform</code> and <code>unnest</code> functions.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+</div>
+<div id="the-overall-swear-forecast" class="section level1">
+<h1>The Overall Swear Forecast</h1>
+<p>We start with the overall forecast for Series 1 to 16 of UK Taskmaster. As you might assume from the task brief, we will be using the visualisation medium of word clouds to show our appreciation to the swear words uttered.</p>
+<p><a href="https://en.wikipedia.org/wiki/Tag_cloud">Word clouds</a> are a simple way to visualise word based datasets. We can capture which words are popular and how frequently they are used (more frequent words are larger in font size), and the variety of words in our dataset.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:overall-swear-wc"></span>
+<p class="caption">
+Figure 1: Overall Taskmaster Swear Cloud
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/overall-swear-wc-1.png" alt="Overall Taskmaster Swear Cloud" width="672" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:overall-swear-wc">1</a> indicates that:</p>
+<ul>
+<li><code>Fuck</code> and <code>Shit</code> (which I will now refer to as Tier1 Swears) are the most uttered swear words in the show as they are largest in font size.
+<ul>
+<li>These two words are comparable in size, but <code>Fuck</code> seems slightly bigger of the two and thus more frequently uttered.</li>
+</ul></li>
+<li><code>Hell</code>, <code>Ass/Arse</code>, <code>Christ</code>, <code>Piss</code> (Tier2 Swears) are potential the next most frequently uttered profanities and are all of similar size.
+<ul>
+<li>Based on how much smaller these Tier2 Swears are compared to Tier1 Swears, I would assume that Tier2 Swear Words utterance frequency is considerably lower than Tier1 Swears (by many magnitudes perhaps as well).</li>
+</ul></li>
+<li><code>Damn</code>, <code>Dick</code>, <code>Prick</code>, <code>Bastard</code> and <code>Bollock</code> make up a Tier3 Swears which are the next level of font size and frequency.
+<ul>
+<li>Based on how similar the font size of the Tier2 and Tier3 Swear Words are, I would assume that the utterance frequencies are similar in magnitude.</li>
+</ul></li>
+<li>The remaining swear words (Tier+4 Swears) close out our swear word cloud and the variety in profanity. These are uttered in lower frequency and start referring to specific genders and bodily parts (<code>Bitch</code>, <code>Whore</code>, <code>Wank</code>, <code>Pussy</code>, <code>Cunt</code>).</li>
+</ul>
+</div>
+<p>Our findings are in line with external stuies concerning the most common swear words in the UK (<a href="https://www.theguardian.com/media/2024/jan/06/swearing-is-becoming-more-widely-acceptable-linguistics-experts-claim?CMP=share_btn_url">Guardian Article</a>):</p>
+<ul>
+<li><code>Fuck</code> and <code>Shit</code> are the two most commonly used swear words in the UK.</li>
+<li>It is hypothesised that they are frequently used <em>“to emphasis a point in conversation or to build social bonds, rather than with specific intent to cause offence”</em>.</li>
+<li>This supports our Tier4 Swears insights; these swears are used in specific contexts and thus not likely to be used frequently.
+<ul>
+<li>In my opinion, these swears also have a stronger intention to offend behind them (more than <code>Fuck</code> and <code>Shit</code> at least), and are more directed to an individual or group of people which may also contribute to their low utterance frequency.</li>
+<li>Despite initial appearances, Taskmaster is less about “offending and insulting people” and more “being entertained and laughing at comedians failures (and successes) in inconsequential tasks”.</li>
+</ul></li>
+</ul>
+</div>
+<div id="the-series-swear-forecast" class="section level1">
+<h1>The Series Swear Forecast</h1>
+<p>We have the overall Swear Forecast and insights, but we should also check whether these insights are consistently seen across each series, or if particular series(es) is driving <code>fuck</code> and <code>shit</code> usage.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:series-sweard-wc"></span>
+<p class="caption">
+Figure 2: Taskmaster Swear Cloud by Series
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/series-sweard-wc-1.png" alt="Taskmaster Swear Cloud by Series" width="90%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:series-sweard-wc">2</a> plots word clouds for each series individually and highlights:</p>
+<ul>
+<li><code>Shit</code> and <code>Fuck</code> are the most uttered swear words for each individual series, in addition to the overall show level. However, there are some series which are more lovers of <code>shit</code>s than <code>fuck</code>s and vice versa.
+<ul>
+<li>Lovers of <code>shit</code>s more than <code>fuck</code>s: Series 1, 11, 12, and 16.</li>
+<li>Lovers of <code>fuck</code>s more than <code>shit</code>s: Series 3, 4, 7, 8, 9, 10, 14, and 15.</li>
+<li>Comparable lovers of <code>shit</code>s and <code>fuck</code>s: Series 2, 5, 6, and 13.</li>
+</ul></li>
+<li>A wide variety of profanity vocabulary was uttered in Series 16. <code>Bastard</code>, <code>Hell</code>, and <code>Christ</code> are evidently used, and their comparable font size to Tier1 Swears suggests they are uttered with similar magnitude to them (at least in comparison to other series).</li>
+<li><code>Bastard</code> is also a noticeable favourite swear in Series 3.
+<ul>
+<li>Good to know the impact of Paul Chowdry propogates to the clouds.</li>
+</ul></li>
+</ul>
+</div>
+<p><img src="https://64.media.tumblr.com/2bec0cfe2c28d953e6d0602a2e12c626/4a1fff769f2d6e4e-b5/s500x750/3e6701bccecaa316fbd1383371fd120edc3057d9.png" width="35%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="getting-my-head-out-of-the-clouds-and-going-to-the-bar." class="section level1">
+<h1>Getting My Head out of the Clouds, and Going to the Bar.</h1>
+<p>This is my first time generating word clouds and I thought I would share my personal experience with them (so far). I am using the <code>ggwordcloud</code> function from the package of the same name to create these plots.
+My first attempt at this post also used the <code>wordcloud</code> and <code>wordcloud2</code> package, before switching to <code>ggwordcloud</code> to stay within the convenient <code>ggplot</code> ecosystem.</p>
+<p>I would say that care needs to be taken when creating word clouds. There is a random component when these plots are generated, and certain argument options for <code>ggwordcloud</code> can greatly affect the plots and conclusions we can draw from them, namely the <code>scale</code> argument which represent the (relative) font size of the most and least frequent word.</p>
+<p>On many occasions and with certain arguments, words would be excluded from the cloud as they <em>were too big and did not fit on the plotting area</em>. These exclusions would be fine if they were infrequent words, but after some digging around, I later discovered that frequent words (Tier1-2 Swears) were being excluded on some instances. <em>These exclusions are incredibly misleading as to what are the most frequent uttered swear words.</em></p>
+<p>Based on this experience, I would advocate that a barplot<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> may be the safer option in displaying the same, if not more, information as that on a word cloud.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:overall-swear-bar"></span>
+<p class="caption">
+Figure 3: Barplot of Swear Word Utterances over Taskmaster Series 1 to 16.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/overall-swear-bar-1.png" alt="Barplot of Swear Word Utterances over Taskmaster Series 1 to 16." width="672" />
+</div>
+<p>Figure <a href="#fig:overall-swear-bar">3</a> is the barplot equivalent of the word cloud presented in Figure <a href="#fig:overall-swear-wc">1</a>. Minimal additional arguments were used in generating the barplot compared to the word cloud. By having the utterance frequency explicitly stated on the graph, we can glean that:</p>
+<ul>
+<li><code>Fuck</code> and <code>Shit</code> are the two most popular swear words (as also concluded from the word cloud), with <code>Fuck</code> being the most favoured profanity.
+<ul>
+<li>This latter remark was harder to deduce from the word cloud.</li>
+</ul></li>
+<li>These Tier1 Swears are uttered approximately 6 times more than Tier2 Swears (<code>Hell</code>, <code>Piss</code>, <code>Christ</code>).
+<ul>
+<li>We would not be able to estimate this magnitude from a word cloud directly.</li>
+</ul></li>
+<li>We are able to clearly distinguish the leading swear words in the Tiers we have created. For example <code>Hell</code> is the most popular of the Tier2 Swears.</li>
+<li>We are able to reassess and redefine our Tier Swear classification, and which profanities belong to it. For example we can clearly deduce that the following Tiers for the lesser uttered profanities.
+<ul>
+<li>Tier4 Swears: <code>Cock</code>, <code>Bugger</code>, <code>Bitch</code>, <code>Wank</code>, <code>Tits</code>, <code>Twat</code>.
+<ul>
+<li>The last three could be their own mid Tier Swears.</li>
+</ul></li>
+<li>Tier5 Swears: <code>Pussy</code>, <code>Cunt</code>, <code>Whore</code>, <code>Slut</code>.</li>
+</ul></li>
+</ul>
+<p>But I get it, word clouds are very in vogue and are certainly less intimidating and overwhelming for those who do not enjoy data or numbers. Ultimately, I suspect that word clouds suffer the same fate as pie charts which are notorious for being bad graphs for conveying information (<a href="https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts">one of many pie chart criticism articles</a>).</p>
+<p>But then again, a “Bar Appreciation Society” wasn’t presented as a prize task in the show so it doesn’t fit in with the narrative of this post. I’m sure a Bar (or Pub, Drinking Establishment) Appreciation Society does exist though and may be even more well received by the Taskmaster than the Cloud Appreciation Society.</p>
+</div>
+<div id="what-have-we-learnt-today" class="section level1">
+<h1>What Have we Learnt Today?</h1>
+<div class="infobox">
+<p><img src="../../../img/fucks_ducks.jpg" width="25%" style="display: block; margin: auto;" /></p>
+<p>I couldn’t give a <code>Fuck</code> or <code>Shit</code> about what we’ve learnt today; stop being lazy and do your own conclusion summary for once!</p>
+<p>These <code>Fuck</code>s and <code>Shit</code>s have all been used by each series of Taskmaster as popular profanities to use and are forecasted to be in horizon for the foreseeable future. There will occasionally be showers of <code>Hell</code>, <code>Piss</code>, <code>Christ</code> and <code>Arses</code> and other colourful profanities, but there will (likely) always be a <code>Fuck</code> and <code>Shit</code> foundation.</p>
+{{% youtube "FlzR28r_5QY" %}}
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Currently, each record row of the <code>profanity</code> table represents a single quote from a speaker in which at least one profanity was uttered. These individual profanities are stored in a Python array/list object with each element in the array representing a different profanity utterance. This data design allows for a quotes in which multiple profanities are uttered. For example, if Greg exclaimed <code>"Fuck Off You Little Shithead"</code>, the Python array would be <code>["Fuck", "Shit"]</code> since two profanity based words were uttered in this single exclaimation. We need to “explode” this single record entry so that <code>Fuck</code> and <code>Shit</code> are captured as two different records for this single quote. This exploding is achieve throught the <code>transform</code> and <code>unnest</code> functions in the library <code>dplyr</code>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Other plots are available… Particularly those which are equally simple, but still effective, as bar plots.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>

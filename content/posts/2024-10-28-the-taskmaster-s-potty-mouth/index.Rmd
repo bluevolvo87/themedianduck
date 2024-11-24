@@ -20,7 +20,8 @@ blogdown::shortcode("callout", text="Warning This Post Contains Strong Language.
 # Your Task
 
 > Find out whether the Taskmaster (Greg Davies) has become more or less foul mouth over time.
-```{r, echo = FALSE, out.width = "25%", fig.align='center', error = FALSE, warning=FALSE}
+
+```{r, echo = FALSE, out.width = "5%", fig.align='center'}
 knitr::include_graphics(path = "https://static1.colliderimages.com/wordpress/wordpress/wp-content/uploads/2024/03/greg-davies-from-taskmaster.jpg")
 ```
 
