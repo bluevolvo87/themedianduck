@@ -27,7 +27,7 @@ source(file.path(preamble_dir, "graphics_preamble.R"))
 ```
 
 :::{.callout_tmd}
-This post contains strong lanuage...reader discretion advised! And this time I really mean it...
+This post contains strong lanuage...reader discretion advised! And this time, I really mean it...
 :::
 
 
@@ -36,7 +36,7 @@ knitr::include_graphics(path= "https://64.media.tumblr.com/23ab97f15791b782ba727
 ```
 
 # Your Task
-> Create a swear word cloud which is fit for the Cloud Appreication Society.
+> Create a swear word cloud which is fit for the Cloud Appreciation Society.
 
 # Making it Rain... with Data
 We continue to use the profanity based queries we have developed in the following posts ([Foulest Mouth of Them All ](/themedianduck/2024/10/profanity-insanity/), [The Taskmaster's Potty Mouth](/themedianduck/2024/11/the-taskmaster-s-potty-mouth/)). 
