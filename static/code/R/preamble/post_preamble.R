@@ -1,11 +1,16 @@
 
 
-knitr::opts_chunk$set(echo = TRUE, root.dir = "../",
-                      tidy = TRUE,
+knitr::opts_chunk$set(echo = FALSE, 
+                      error = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      root.dir = "../",
+                      tidy = FALSE,
                       class.source = "watch-out",
                       class.output = "watch-out",
                       fig.align = "center",
                       fig.topcaption=TRUE
+                      
 )
 
 

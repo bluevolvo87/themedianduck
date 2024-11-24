@@ -1,0 +1,132 @@
+---
+title: The Taskmaster Swear Cloud
+author: Christopher Nam
+date: '2024-11-18'
+slug: taskmaster-swear-cloud
+categories: []
+tags: []
+draft: yes
+---
+
+
+```{r preamble, echo = FALSE, warning = FALSE, message = FALSE, error=FALSE, collapse = TRUE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+
+```
+
+:::{.callout_tmd}
+This post contains strong lanuage...reader discretion advised!
+:::
+
+# Your Task
+
+> Find the top 5 most common swear words for each series of Taskmaster.
+
+```{r}
+knitr::include_graphics(path= "https://64.media.tumblr.com/23ab97f15791b782ba727fe854018bde/b846448a08e81179-92/s1280x1920/5fd044f31289d976b453fed8016efea68bf46a61.pnj")
+```
+
+
+```{sql sql_query, connection = tm_db, output.var = "profanity_enh", echo = FALSE}
+--  Stored as an R dataframe profanity_enh
+
+SELECT 
+pf.series, 
+pf.episode, 
+pf.task,
+pf.speaker as speaker_id,
+pp.name as speaker_name,
+pf.roots,
+pf.quote,
+pf.studio,
+pp.gender,
+pp.hand,
+pp.champion,
+pp.tmi as speaker_tmi,
+sp.name as series_name,
+sp.episodes as num_episodes_in_series,
+sp.champion as series_champion_id,
+sp.special
+FROM profanity pf
+LEFT JOIN people pp
+    ON (pf.speaker = pp.id
+    AND pf.series = pp.series) OR
+(pf.speaker = pp.id)
+LEFT JOIN series sp
+    ON pf.series = sp.id
+
+```
+
+
+```{r, message = FALSE, tidy = FALSE, echo = FALSE}
+library(reticulate)
+library(dplyr)
+
+# To explode the "roots" column into each individual swear word.
+# Each swear word utterance has its own row.
+# Other info is duplicated
+expo_profanity_enh <- profanity_enh %>% 
+    rowwise() %>%
+    mutate(
+        root_clean = paste(reticulate::py_eval(roots), collapse= ", "),
+        swear_word = root_clean
+        ) %>%
+    transform(swear_word = strsplit(swear_word, ", ")) %>%
+    tidyr::unnest(swear_word) %>%
+    mutate(swear_word = stringr::str_to_title(swear_word))
+```
+
+```{r}
+series_swear_summary_df <- expo_profanity_enh %>% 
+    group_by(series, series_name, num_episodes_in_series, series_champion_id, special, swear_word) %>%
+    summarise(
+        num_utterances = n(),
+        num_distinct_speakers  = n_distinct(speaker_name),
+        num_distinct_episodes = n_distinct(episode),
+        num_distinct_tasks = n_distinct(task)
+    )
+
+```
+```{r}
+#install.packages("wordcloud")
+library(wordcloud)
+
+#install.packages("wordcloud2")
+library(wordcloud2)
+```
+
+```{r}
+wordcloud(series_swear_summary_df$swear_word, series_swear_summary_df$num_utterances, min.freq = 1, max.words = 100, colors=brewer.pal(8, "Dark2"))
+```
+
+```{r}
+regular_series_swear_summary <- series_swear_summary_df %>% filter(special == 0 & series >=1)
+
+
+series_vec <- sort(unique(regular_series_swear_summary$series))
+
+
+for(series_iter in series_vec){
+plot_df <- regular_series_swear_summary %>% 
+    filter(series == series_iter) %>%
+    ungroup() %>%
+    select(swear_word, num_utterances) %>%
+    rename(word = swear_word, freq = num_utterances)
+
+wordcloud2(data=plot_df, size=1.6, color='random-dark', shape = "cardioid", shuffle = FALSE, fontFamily = "Courier")
+}
+```
+
+
+
+
+# What Have we Learnt Today?
+

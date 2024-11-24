@@ -2,18 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Profanity on The Median Duck</title>
-    <link>https://bluevolvo87.github.io/themedianduck/categories/profanity/</link>
+    <link>http://localhost:4321/themedianduck/categories/profanity/</link>
     <description>Recent content in Profanity on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Mon, 21 Oct 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/profanity/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 09 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:4321/themedianduck/categories/profanity/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Taskmaster&#39;s Potty Mouth</title>
+      <link>http://localhost:4321/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</link>
+      <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</guid>
+      <description>Your Task&#xD;The Profanity Rate Approach&#xD;Case of the Missing Profanities&#xD;Putting on a Spread&#xD;To Mean or Median…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find out whether the Taskmaster (Greg Davies) has become more or less foul mouth over time.&#xD;This post is an extension of this profanity based post.&#xA;The Profanity Rate Approach&#xD;One way to answer our question is to use Profanity Rate that we previously defined in the aforementioned post.</description>
+    </item>
     <item>
       <title>The Foulest Mouth of Them All</title>
-      <link>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</link>
+      <link>http://localhost:4321/themedianduck/2024/10/profanity-insanity/</link>
       <pubDate>Mon, 21 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</guid>
+      <guid>http://localhost:4321/themedianduck/2024/10/profanity-insanity/</guid>
       <description>Your Task&#xD;Profanity Insanity&#xD;The Foulest Mouth of Them All…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find the foulest mouthed contestant in UK Taskmaster to date.&#xD;Bonus points for finding the foulest mouth in each series.&#xA;A Side Amble in the Preamble&#xD;In the spirit of good code practices, namely avoiding duplicating code and centralising common code into a single location were possible, here is a set of preamble scripts that I will be sourcing at the beginning of each post.</description>
     </item>
   </channel>
