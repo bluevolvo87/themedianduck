@@ -1,10 +1,18 @@
+<!DOCTYPE html>
+<html>
 {{ partial "header.html" . }}
+<body>
+    <div class="content">
 {{ partial "head.html" . }}
 
 <!-- <div class="container"> -->
 <main>
-<article>
+<div class = "article">
 <h1>WHOOPSIE! ERROR 404: PAGE NOT FOUND</h1>
+
+<center>
+<p><img src="img/Failed_Ducks.jpg" width="25%" /></p>
+</center>
 
 <p>
 Oh dear...something has gone wrong on our end; we didn't mean for this to happen.
@@ -17,8 +25,14 @@ If you want to report the error, that would be greatly appreciated: <a href="mai
 <p>Please provide details of how you encountered this error (what page you were on before the error, and what you clicked on to get the error)!
 </p>
 
-</article>
+</div>
 </main>
+
+
+
 <!-- </div> -->
 
 {{ partial "footer.html" . }}
+</div>
+</body>
+</html>

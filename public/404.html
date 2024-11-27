@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <head lang="en"><script src="/themedianduck/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=themedianduck/livereload" data-no-instant defer></script>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>404 Page not found - The Median Duck</title><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +22,7 @@
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.3ae6fd8851781267c131c80df405e96f814cccbbb6f8d30e31c10a41b0082cd0.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:4321/themedianduck/css/main.d8f988594eb5487598b149bffd5641c986bb3e7ea4372ac8be55ff6cad157011.css" />
 		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:4321/themedianduck/css/dark.9bca7b70337ef889bc346f0587e01b6ab1747aa3a79f8a5fe0d9d32e1378068b.css"  disabled />
 	
 
@@ -33,11 +35,13 @@
 	
 </head>
 
+<body>
+    <div class="content">
 <header>
 	<div class="main">
 		<a href="http://localhost:4321/themedianduck/">The Median Duck</a>
 	</div>
-	<nav>
+	<div class="navbar">
 		
 		<a href="/themedianduck/">Home</a>
 		
@@ -51,10 +55,10 @@
 		
 		<a href="/themedianduck/resources">Resources</a>
 		
-		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<span id="dark-mode-toggle" onclick="toggleTheme()" style="padding:1%;position:relative;height:1vh;" /span>
 		<script src="http://localhost:4321/themedianduck/js/themetoggle.js"></script>
 		
-	</nav>
+	</div>
 </header>
 
 <em><p>vires in notitia</p></em>
@@ -76,8 +80,12 @@
 
 
 <main>
-<article>
+<div class = "article">
 <h1>WHOOPSIE! ERROR 404: PAGE NOT FOUND</h1>
+
+<center>
+<p><img src="img/Failed_Ducks.jpg" width="25%" /></p>
+</center>
 
 <p>
 Oh dear...something has gone wrong on our end; we didn't mean for this to happen.
@@ -90,11 +98,15 @@ If you want to report the error, that would be greatly appreciated: <a href="mai
 <p>Please provide details of how you encountered this error (what page you were on before the error, and what you clicked on to get the error)!
 </p>
 
-</article>
+</div>
 </main>
 
 
+
+
+
 <footer>
+
   <div style="display:flex"><a class="soc" href="https://github.com/bluevolvo87/themedianduck" rel="me" title="GitHub"><i data-feather="github"></i></a>
     <a class="border"></a><a class="soc" href="https://youtube.com/naanbread87/" rel="me" title="YouTube Channel"><i data-feather="tv"></i></a>
     <a class="border"></a><a class="soc" href="https://buymeacoffee.com/bluevolvo87" rel="me" title="BuyMeACoffee"><i data-feather="coffee"></i></a>
@@ -105,7 +117,12 @@ If you want to report the error, that would be greatly appreciated: <a href="mai
     2024  © Christopher Nam |  <a
       href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
   </div>
+
 </footer>
 <script>
   feather.replace()
 </script>
+
+</div>
+</body>
+</html>
