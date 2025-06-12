@@ -1,0 +1,19 @@
+---
+title: Odds in Your Favour
+author: Christopher Nam
+date: '2025-05-17'
+slug: odds-in-your-favour
+categories: [series_19, simulation]
+tags: [series_19, simulation]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+Hello
+
+Wow I have forgot how to do this.121
+
+Why aren't your working

@@ -2,19 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://localhost:4321/themedianduck/tags/analysis/</loc>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:4321/themedianduck/categories/analysis/</loc>
-    <lastmod>2024-11-24T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/categories/</loc>
-    <lastmod>2024-11-24T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</loc>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/tags/hypothesis/</loc>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/categories/hypothesis/</loc>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/posts/</loc>
-    <lastmod>2024-11-24T00:00:00+00:00</lastmod>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/categories/profanity/</loc>
-    <lastmod>2024-11-24T00:00:00+00:00</lastmod>
+    <loc>http://localhost:4321/themedianduck/tags/</loc>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/</loc>
+    <lastmod>2024-12-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/categories/profanity/</loc>
     <lastmod>2024-11-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/2024/11/taskmaster-swear-cloud/</loc>
@@ -33,9 +48,6 @@
     <lastmod>2024-08-31T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/beginner/</loc>
-    <lastmod>2024-08-31T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:4321/themedianduck/tags/</loc>
     <lastmod>2024-08-31T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/tdlm/</loc>

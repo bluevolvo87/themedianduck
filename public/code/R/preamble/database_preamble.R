@@ -52,3 +52,6 @@ sqlite_driver <- dbDriver("SQLite")
 tm_db <- dbConnect(sqlite_driver, dbname = db_data_location)
 
 print("Database Connection, tm_db, is now ready to use.")
+
+
+library(tidyverse)

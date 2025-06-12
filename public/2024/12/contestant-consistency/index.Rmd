@@ -1,0 +1,366 @@
+---
+title: Contestant Consistency
+author: Christopher Nam
+date: '2024-12-09'
+slug: contestant-consistency
+categories: [analysis, hypothesis]
+tags: [analysis, hypothesis]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+# Your Task
+
+> Validate (or invalidate) the hypothesis that a Taskmaster champion, is one that is a consistent Taskmaster contestant. 
+
+## Some Background
+In many episodes of the Taskmaster Podcast (example episodes and timestamps) , it is hypothesised that a key to becoming a Taskmaster Champion is that the contestants are consistent in the task points that they receive, compared to those who are more inconsistent and volatile in their points. Example episodes:
+
+
+```{=html}
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/3vpWIYlrmhLqBtwvGeJpOy?utm_source=generator" width="75%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5Uf8NI24izmcxK5ZI1UmRp?utm_source=generator&t=14099.800305604935" width="75%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/076ajayJpAA0Q47e17ayy2?utm_source=generator" width="75%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/4AGlflnXeo8xhRzzbQkejC?utm_source=generator" width="75%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/39U4kXuxMvvr2YtSWTUtY1?utm_source=generator" width="75%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+```
+
+In fact, it is hypothesised that simply completing the task successfully, and not being disqualified from them and consequently being award zero, is a key trait to being a champion. 
+
+I am not sure how what data and analysis has been performed to support this (I'm sure some analysis has been performed at Taskmaster HQ), but thought it would be good to validate it myself.
+
+This post aims to provide data analysis as to whether this hypothesis is true or not.
+
+
+```{r preamble, echo = FALSE, warning = FALSE, message = FALSE, error=FALSE, collapse = TRUE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+
+```
+
+# The Data
+
+Key data tables:
+
+
+-  `attempts`: Each contestants attempt at a task, the points awarded and the ranking.
+-  `tasks`: Highlevel information regarding a task (Location, points awarded, type of task).
+-  `people`: High level information on contestants, Greg Davies and Alex Horne (gender, DOB, dominant hand).
+-  `series`: Snapshot of overall series information.
+-  `episodes`: Snapshot of episode information (episode of title, winner, number of tasks, number of points awarded).
+
+
+Maybes:
+
+-   `task_winners`: Information on who the winner of a task was.
+-   `task_briefs`: Information on the exact task (long form) that was provided to contestants.
+
+
+
+```{sql, connection=tm_db, output.var = "task_attempts_info"}
+SELECT
+at.id as attempt_id,
+at.task as task_id,
+t_ta.summary as task_summary,
+t_ta.series as series_id,
+se.name as series_name, 
+se.special as special_series_flag,
+t_ta.episode as episode_id,
+ep.title as ep_title,
+t_ta.tags as task_tags,
+
+CASE WHEN t_ta.tags LIKE '%"solo"%' THEN 1
+ELSE 0 END as solo_task_flag,
+CASE WHEN t_ta.tags LIKE '%"team"%' THEN 1
+ELSE 0 END as team_task_flag_alt,
+
+CASE WHEN t_ta.tags LIKE '%"prize"%' THEN 1
+ELSE 0 END as prize_task_flag,
+CASE WHEN t_ta.tags LIKE '%"filmed"%' THEN 1
+ELSE 0 END as filmed_task_flag,
+CASE WHEN t_ta.tags LIKE '%"live"%' THEN 1
+ELSE 0 END as studio_task_flag,
+CASE WHEN t_ta.tags LIKE '%"homework"%' THEN 1
+ELSE 0 END as homework_task_flag,
+
+CASE WHEN t_ta.tags LIKE '%"objective"%' THEN 1
+ELSE 0 END as objective_task_flag,
+CASE WHEN t_ta.tags LIKE '%"subjective"%' THEN 1
+ELSE 0 END as subjective_task_flag,
+
+CASE WHEN t_ta.tags LIKE '%"creative"%' THEN 1
+ELSE 0 END as creative_task_flag,
+CASE WHEN t_ta.tags LIKE '%"physical"%' THEN 1
+ELSE 0 END as physical_task_flag,
+CASE WHEN t_ta.tags LIKE '%"mental"%' THEN 1
+ELSE 0 END as mental_task_flag,
+CASE WHEN t_ta.tags LIKE '%"social"%' THEN 1
+ELSE 0 END as social_task_flag,
+
+
+t_ta.location as task_location,
+t_ta.std as std_task_flag,
+at.contestant as contestant_id,
+pe.name as contestant_name,
+at.base as attempt_base,
+at.points as attempt_points,
+at.rank as attempt_rank_tmi,
+RANK() OVER (PARTITION BY at.task ORDER BY at.points DESC) as attempt_sql_rank,
+DENSE_RANK() OVER (PARTITION BY at.task ORDER BY at.points DESC) as attempt_sql_drank,
+--at.series as series_cum_points,
+--at.episode as ep_id,
+
+at.team as team_id,
+CASE WHEN at.team IS NOT NULL THEN 1
+ELSE 0 END as team_task_flag,
+at.location as special_location_id,
+CASE WHEN at.location IS NOT NULL THEN 1
+ELSE 0 END as special_location_flag
+
+
+FROM attempts at
+LEFT JOIN people pe
+    ON at.contestant = pe.id
+LEFT JOIN tasks t_ta
+    ON at.task = t_ta.id
+LEFT JOIN episodes ep
+   ON t_ta.episode = ep.id
+LEFT JOIN series se
+    ON t_ta.series = se.id
+```
+
+
+```{sql, connection = tm_db, output.var = "enh_series_scores"}
+SELECT 
+t_ss.id as series_score_id,
+t_ss.series as series_id,
+t_se.name as series_name,
+t_se.special as special_series_flag,
+t_se.episodes as series_num_episodes,
+t_ss.contestant as contestant_id,
+t_pe.name as contestant_name,
+t_pe.seat as contestant_seat,
+t_pe.gender as contestant_gender,
+t_pe.hand as contestant_hand,
+t_ss.score as contestant_series_score,
+t_ss.rank as contestant_series_tmi_rank,
+RANK() OVER (PARTITION BY t_ss.series ORDER BY t_ss.score DESC) as contestant_series_sql_rank,
+DENSE_RANK() OVER (PARTITION BY t_ss.series ORDER BY t_ss.score DESC) as contestant_series_sql_drank
+FROM series_scores t_ss
+LEFT JOIN series t_se
+    ON t_ss.series = t_se.id
+LEFT JOIN people t_pe
+    ON t_ss.contestant = t_pe.id
+
+```
+
+
+
+```{r}
+task_attempts_summary <- task_attempts_info %>% filter(std_task_flag == 1) %>%
+    group_by(series_id, series_name, contestant_id, contestant_name) %>%
+    summarise(
+              num_tasks  = n_distinct(task_id),
+              num_episodes = n_distinct(episode_id),
+              num_dq_tasks = sum(attempt_points<=0),
+              points_var = var(attempt_points),
+              points_mean = mean(attempt_points),
+              points_median = median(attempt_points),
+              points_mad = mad(attempt_points),
+              rank_var = var(attempt_sql_rank),
+              rank_mean = mean(attempt_sql_rank),
+              rank_median = median(attempt_sql_rank),
+              rank_mad = mad(attempt_sql_rank)
+              ) %>%
+    ungroup()
+```
+```{r}
+series_scores_info <- task_attempts_summary %>% left_join(enh_series_scores,
+                                    by = c("series_id", "series_name", "contestant_id", "contestant_name")
+                                    ) %>%
+    mutate(gg_contestant_name = str_replace_all(contestant_name, " ", "\n")
+           )
+```
+
+# No Sh*t Sherlock
+To start our analysis, we consider looking at the average (mean) points to a contestant over their series. This is defined as: 
+
+$$ 
+\texttt{Mean Points for Contestant i in Series j} = \frac{\sum_k{\texttt{Points awarded to Contestant i in Series j in Task k}}}{\texttt{Number of Tasks performed by Contestant i in Series j}}
+$$
+
+Figure \@ref(fig:rank-avg-plot) is a scatterplot of a contestant's series ranking (y-axis) and the average points awarded to the contestant over their series (y-axis). Each point represents a contestant's performance, which has been summarised over all tasks and episodes in the series. 
+
+```{r rank-avg-plot, fig.cap="Contestants Series Ranking and Average Task Points"}
+ggplot(series_scores_info, aes(x=contestant_series_sql_rank, y = points_mean, label = gg_contestant_name)) +
+    geom_point() +
+    labs(y = "Mean Points Award", x = "Series Ranking", title = "Contestants Series Ranking vs Average Task Points") +
+    geom_smooth(method = "lm", se = FALSE) +
+    #geom_jitter() +
+    #geom_text(check_overlap = FALSE, size = 2, angle = 45, position=position_jitter(width=0.1,height=0.1)) +
+    facet_grid(special_series_flag~., labeller = as_labeller(c("0" = "Regular Series", "1" = "Special")))
+    
+```
+
+
+The plot shows that there is a clear negative linear relationship between these two variables; contestants having a higher series ranking (1st place), will have been awarded  more points on average and vice versa. This can be seen in both regular and special series. 
+
+This is not a surprising discovery;  in order for a contestant to rank highly in a series, they need to perform well in tasks, will be awarded more points more often than not, and thus have a higher mean points statistic. Conversely, those who did not perform well in a series and rank lowly, will not have performed well in tasks, will not have been awarded as many points more often than not, and have a lower mean points statistic. 
+
+The negative relationship between series ranking and means points awarded seems to be stronger (steeper line) when focused on "Special" episodes. This is likely due to the limited episode run (only 1 or 2 episodes), and the variablility between episodes being non-existent. Consequently, this inter episode variability has no/little influence on the series ranking. 
+
+The mean statistic is not a suitable measure of a contestant's consistency in their performance, and thus does not help us answer our hypothesis. 
+
+
+# Volatility Volcano
+
+To assess how consistent a contestant is in their task performance over a series, we use the well understood variance statistic.
+
+$$
+\texttt{Points Variance for Contestant i in Series j} = \frac{1}{\texttt{Number of Tasks performed by Contestant i in Series k -1 }} \sum{(\texttt{Points awarded to Contestant i in Series j in Task k} - \texttt{Mean Points for Contestant i in Series j})^2} \\
+= \frac{1}{\texttt{Number of Tasks performed by Contestant i in Series k -1 }} \sum{(\texttt{Deviation from Mean Points for Contestant i in Series j in Task k})^2}
+$$
+
+-    A high variance value indicates a large amount of spread in points awarded, and volatility in a contestant's task performance.
+        -   A contestant's performance varies greatly; they sometimes perform well, and sometimes perform badly. 
+-    A low variance value indicates a small amount of spread in points award, and minimal volatility in a contestant's task performance. 
+        -   A contestant's performance does not vary greatly and is consistent. Note, this does not indicate how they perform (well, badly or middling).
+
+If the hypothesis stands, we should see that contestants who rank highly in a series, also have a low variance. 
+
+If we are to assume a linear relationship, then contestants who rank lowly in a series, will have a high variance. 
+
+Figure \@ref(fig:rank-var-plot) shows the relationship between a contestant's ranking in a series, and the variance of awarded points.
+
+```{r rank-var-plot, fig.cap = "Contestant Series Ranking and Variance of Points Awarded"}
+ggplot(series_scores_info, aes(x=contestant_series_sql_rank, y = points_var, label = gg_contestant_name)) +
+    geom_point() +
+    labs(y = "Variance of Points Award", x = "Series Ranking", title = "Contestants Series Ranking vs Variance of Task Points") +
+    geom_smooth(method = "lm", se = FALSE) +
+    #geom_jitter() +
+    #geom_text(check_overlap = FALSE, size = 2, angle = 45, position=position_jitter(width=0.1,height=0.1)) +
+    facet_grid(special_series_flag~., labeller = as_labeller(c("0" = "Regular Series", "1" = "Special")))
+    
+```
+
+ Based on the plot, it appears that there is no linear relationship between series ranking and contestants variability. This is inferred from the slope of the linear regression line being incredibly flat. A high ranking contestant does not necessarily have a low variance in points awarded, and similarly, a low ranking contestant does not have a high variance.
+
+Consequently, the hypothesis as it stands, does not hold. 
+```{r}
+series_scores_info %>% group_by(special_series_flag) %>%
+    summarise(
+        corr_points_mean_rank = cor(points_mean, contestant_series_sql_rank),
+        corr_points_var_rank = cor(points_var, contestant_series_sql_rank)
+    )
+```
+
+But is a linear relationship valid for this hypotheis?
+
+#Quadratic polynomial
+If we assume the line of best fit should take the form of a quadratic polynomial ($y \sim x^2 + x$). A quadratic polynomial may be a valid relationship form for special series of Taskmaster.
+
+Contestants who rank either 1st or 5th, tend of be more consistent and have lower points variability, whereas those in the middle, tend to be less consistent and have greater variability.
+
+This relationship makes more sense than a linear one. A contestant consistent can be equally bad, middling or good.
+
+
+```{r rank-var-plot-lm-poly2, fig.cap = "Contestant Series Ranking and Variance of Points Awarded"}
+ggplot(series_scores_info, aes(x=contestant_series_sql_rank, y = points_var, label = gg_contestant_name)) +
+    geom_point() +
+    labs(y = "Variance of Points Award", x = "Series Ranking", title = "Contestants Series Ranking vs Variance of Task Points") +
+    geom_smooth(method = "lm", se = FALSE, formula = y~ poly(x, 2)) +
+    #geom_jitter() +
+    #geom_text(check_overlap = FALSE, size = 2, angle = 45, position=position_jitter(width=0.1,height=0.1)) +
+    facet_grid(special_series_flag~., labeller = as_labeller(c("0" = "Regular Series", "1" = "Special")))
+    
+```
+
+
+# 
+```{r rank-var-plot-loess, fig.cap = "Contestant Series Ranking and Variance of Points Awarded"}
+ggplot(series_scores_info, aes(x=contestant_series_sql_rank, y = points_var, label = gg_contestant_name)) +
+    geom_point() +
+    labs(y = "Variance of Points Award", x = "Series Ranking", title = "Contestants Series Ranking vs Variance of Task Points") +
+    geom_smooth(method = "loess", se = FALSE) +
+    #geom_jitter() +
+    #geom_text(check_overlap = FALSE, size = 2, angle = 45, position=position_jitter(width=0.1,height=0.1)) +
+    facet_grid(special_series_flag~., labeller = as_labeller(c("0" = "Regular Series", "1" = "Special")))
+    
+```
+
+
+* Affect of outliers on the variance. Do we need to remove this?
+
+
+::: {.infobox .today data-latex="{today}"}
+Point variability is not correlated to series ranking for contestants.
+Hypothesis, as currently stated does not stand.
+:::
+
+
+# A Different perspective
+
+Are there clear clusters or quadrants?
+
+It's clear that you can split average points respect to ranking. Not a surprise 
+```{r}
+ggplot(series_scores_info, aes(x=points_mean, y = points_var, colour = as.factor(contestant_series_sql_rank))) +
+    geom_point(alpha = 0.75, size = 2) +
+    #labs(y = "Variance of Points Award", x = "Series Ranking", title = "Contestants Series Ranking vs Variance of Task Points") +
+    #geom_smooth(se = FALSE) +
+    #geom_jitter() +
+    #geom_text(check_overlap = FALSE, size = 2, angle = 45, position=position_jitter(width=0.1,height=0.1)) +
+    facet_grid(.~special_series_flag, scales = "free_x", labeller = as_labeller(c("0" = "Regular Series", "1" = "Special"))) +
+    theme(legend.position = "bottom")
+    
+```
+```{r}
+ggplot(series_scores_info, aes(x=points_median, y = points_mad, colour = as.factor(contestant_series_sql_rank))) +
+    geom_point() +
+    #labs(y = "Variance of Points Award", x = "Series Ranking", title = "Contestants Series Ranking vs Variance of Task Points") +
+    #geom_smooth(method = "lm", se = FALSE) +
+    #geom_jitter() +
+    #geom_text(check_overlap = FALSE, size = 2, angle = 45, position=position_jitter(width=0.1,height=0.1)) +
+    facet_grid(special_series_flag~., labeller = as_labeller(c("0" = "Regular Series", "1" = "Special")))
+    
+```
+
+```{sql, connection=tm_db}
+SELECT * FROM episodes
+```
+
+```{sql, connection=tm_db}
+SELECT * FROM attempts
+```
+
+```{sql, connection=tm_db}
+SELECT * FROM people
+```
+
+```{sql, connection=tm_db}
+SELECT * FROM series
+```
+
+```{sql, connection=tm_db}
+SELECT * FROM task_briefs
+```
+
+```{sql, connection=tm_db}
+SELECT DISTINCT rank FROM normalized_scores
+```

@@ -1,0 +1,238 @@
+---
+title: "Profanity Analysis"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r }
+dbListTables(tm_db)
+```
+
+```{r querying}
+
+dbGetQuery(tm_db, 'SELECT * FROM profanity LIMIT 5')
+```
+
+```{r}
+teams_tbl <- dbGetQuery(tm_db, 'SELECT * FROM profanity')
+teams_tbl
+
+dim(teams_tbl)
+
+summary(teams_tbl)
+
+```
+
+```{r}
+
+library(tidyverse)
+
+series_profanity <- teams_tbl %>% 
+    group_by(series) %>%
+    summarise(no_episodes = dplyr::n_distinct(episode),
+    sum_profanity_series = dplyr::n()
+                                   ) %>%
+    mutate(profanity_per_episode = sum_profanity_series/no_episodes)
+
+
+dbWriteTable(tm_db, "series_profanity", series_profanity)
+
+#dbWriteTable(tm_db, "teams", teams)
+#head(teams)
+```
+
+
+```{r}
+dbListTables(tm_db)
+```
+
+
+```{r}
+
+
+dbGetQuery(tm_db, "SELECT sp.*,
+           ts.name, 
+           ts.champion,
+           tp.name as champion_name,
+           ts.special,
+           ts.episodes
+           FROM series_profanity sp 
+           LEFT JOIN series ts 
+           ON sp.series = ts.id
+           LEFT JOIN people tp
+           ON sp.series = tp.series
+           AND ts.champion = tp.id
+          ")
+```
+
+```{r}
+people_df <- dbGetQuery(tm_db, "SELECT * FROM people")
+```
+## Future Ideas
+* Standard queries to join data into the most exhaustive/comprehensive dataset 
+ ** Data at the (series, episode, task, contestant) level.
+* Dashboard to provide insight as to when the database was last updated.
+** What is the latest episode that we have data for?
+** What is the latest ETL stamp.
+
+You can also embed plots, for example:
+
+
+```{r}
+base_image_url <- "https://taskmaster.info/images/people/%s_%s.png"
+
+#{tmi}_{name}.png
+
+sprintf(base_image_url, 
+sprintf("%04d", within_series_profanity$speaker_tmi),
+gsub(" ", "_", tolower(within_series_profanity$speaker_name))
+)
+
+
+#0019_greg_davies_3.png"
+
+
+```
+
+```{r}
+people_df
+```
+
+```{r}
+base_image_url <- "https://taskmaster.info/images/people/%s_%s.png"
+
+#{tmi}_{name}.png
+
+contestant_base_url <- 
+sprintf(base_image_url, 
+sprintf("%04d", people_df$TMI),
+gsub(" |-", "_", tolower(iconv(people_df$name, to = "ASCII//TRANSLIT")))
+)
+
+
+image_url_counter_gen <- function(x){
+    gsub(".png", paste("_", x, ".png", sep =""), contestant_base_url)
+}
+    
+
+image_url_counter_gen(5)
+
+
+image_url_counter_matrix <- sapply(1:2, FUN = image_url_counter_gen)
+
+
+
+#0019_greg_davies_3.png"
+
+
+# https://taskmaster.info/images/people/0032_alex_horne_3.png
+
+# https://taskmaster.info/images/people/0069_josh_widdicombe.png
+# 
+# 
+# https://taskmaster.info/images/people/0049_jon_richardson.png
+# 
+# https://taskmaster.info/images/people/0052_katherine_ryan.png
+# 
+# https://taskmaster.info/images/people/0393_jenny_eclair_1.png
+# 
+# https://taskmaster.info/images/people/0394_kiell_smith_bynoe_1.png
+# https://taskmaster.info/images/people/0378_dara_o_briain_1.png
+
+```
+
+```{r}
+urls <-   c("http://www.amazon.com",
+            "http://this.isafakelink.biz",
+            "https://stackoverflow.com")
+
+valid_url <- function(url_in,t=1){
+  con <- url(url_in)
+  check <- suppressWarnings(try(open.connection(con,open="rt",timeout=t),silent=T)[1])
+  suppressWarnings(try(close.connection(con),silent=T))
+  ifelse(is.null(check),TRUE,FALSE)
+}
+
+sapply(urls,valid_url)
+```
+```{r}
+opts <- list(
+     proxy         = "http://*******",
+     proxyusername = "*****", 
+     proxypassword = "*****", 
+     proxyport     = 8080
+)
+
+```
+
+```{r}
+library(httr)
+
+check_tm_url_png <- function(url_str, timeout_sec = 2)
+{
+    head_response <- httr::HEAD(url_str, httr::timeout(timeout_sec))
+    head_status <- httr::http_status(head_response)
+    
+    url_exists <- head_status$message == httr::http_status(200)$message
+    
+    url_exists
+}
+```
+
+
+```{r}
+check_tm_url_png("https://taskmaster.info/images/people/0312_sophie_duker_1.png")
+check_tm_url_png("https://taskmaster.info")
+check_tm_url_png("https://www.google.com")
+```
+
+
+```{r}
+temp <- sapply(image_url_counter_matrix, FUN = check_tm_url_png, USE.NAMES = FALSE)
+```
+#sapplyurl(image_url_counter_matrix[,1], valid_url)
+```
+
+```{r}
+library(httr)
+library(RCurl)
+```
+
+# Greg
+
+```{r}
+greg_profanity <- series_profanity %>% filter(series >= 1 &
+                            speaker_id %in% c(2))
+greg_profanity$image <- "https://taskmaster.info/images/people/0019_greg_davies_3.png"
+
+ggplot(greg_profanity, aes(x=series, y = profanity_per_episode)) +     geom_line() +
+geom_point() +
+    geom_image(aes(image = image), size= 0.1) + 
+    xlab("series") + ylab("Profanity Rate (Profanity per Episode)") +
+    ggtitle("The Taskmaster's Potty Mouth")
+```
+
+
+```{r}
+
+exp_overall_swear <- overall_swear_summary %>% mutate(
+    prop_freq = freq/sum(freq),
+    running_prop = cumsum(prop_freq)
+    )
+
+
+
+ggplot(
+  exp_overall_swear,
+  aes(
+    label = word, size = prop_freq,
+    colour = prop_freq <= 0.50
+  )
+) +
+  geom_text_wordcloud_area() +
+  scale_size_area(max_size = 50) +
+  theme_minimal()
+```

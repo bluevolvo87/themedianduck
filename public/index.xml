@@ -7,8 +7,22 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Sun, 24 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 May 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>May the Odds Be In Your Favour</title>
+      <link>http://localhost:4321/themedianduck/2025/05/odds-in-your-favour/</link>
+      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2025/05/odds-in-your-favour/</guid>
+      <description>Hello&#xA;Wow I have forgot how to do this.121&#xA;Why aren’t your working&#xA;## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──&#xD;## ✔ dplyr 1.1.4 ✔ readr 2.1.5&#xD;## ✔ forcats 1.0.0 ✔ stringr 1.5.1&#xD;## ✔ ggplot2 3.5.1 ✔ tibble 3.2.1&#xD;## ✔ lubridate 1.9.3 ✔ tidyr 1.3.1&#xD;## ✔ purrr 1.0.2 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──&#xD;## ✖ dplyr::filter() masks stats::filter()&#xD;## ✖ dplyr::lag() masks stats::lag()&#xD;## ℹ Use the conflicted package (&amp;lt;http://conflicted.</description>
+    </item>
+    <item>
+      <title>Contestant Consistency</title>
+      <link>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</guid>
+      <description>Your Task&#xD;The Data&#xD;No Sh*t Sherlock&#xD;Volatility Volcano&#xD;A Different perspective&#xD;Your Task&#xD;Validate (or invalidate) the hypothesis that a Taskmaster champion, is one that is a consistent Taskmaster contestant.&#xA;Some Background&#xD;In many episodes of the Taskmaster Podcast (example episodes and timestamps) , it is hypothesised that a key to becoming a Taskmaster Champion is that the contestants are consistent in the task points that they receive, compared to those who are more inconsistent and volatile in their points.</description>
+    </item>
     <item>
       <title>The Taskmaster Swear Cloud Appreciation Society</title>
       <link>http://localhost:4321/themedianduck/2024/11/taskmaster-swear-cloud/</link>
@@ -49,7 +63,7 @@
       <link>http://localhost:4321/themedianduck/tasks/</link>
       <pubDate>Wed, 17 Jul 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/tasks/</guid>
-      <description>A site about Taskmaster has got to have some tasks….surely?&#xA;The Prize Task&#xD;This project is self initiated and funded. If you&#xD;would like to show your appreciation and gratitude in this project, feel&#xD;free to donate to my buy me a coffee&#xD;page. All donations are welcome.&#xA;Make a donation to the aforementioned Buy Me a Coffee&#xD;page. The Median Donation&#xD;Amount for the calendar month wins!&#xA;The Individual Task&#xD;In order to achieve the desired vision, multiple contributors would be&#xD;appreciated; as of 2024-09-16 it is just myself.</description>
+      <description>A site about Taskmaster has got to have some tasks….surely?&#xA;The Prize Task&#xD;This project is self initiated and funded. If you&#xD;would like to show your appreciation and gratitude in this project, feel&#xD;free to donate to my buy me a coffee&#xD;page. All donations are welcome.&#xA;Make a donation to the aforementioned Buy Me a Coffee&#xD;page. The Median Donation&#xD;Amount for the calendar month wins!&#xA;The Individual Task&#xD;In order to achieve the desired vision, multiple contributors would be&#xD;appreciated; as of 2024-12-03 it is just myself.</description>
     </item>
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>

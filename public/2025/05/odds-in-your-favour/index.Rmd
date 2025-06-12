@@ -1,0 +1,117 @@
+---
+title: May the Odds Be In Your Favour
+author: Christopher Nam
+date: '2025-05-17'
+slug: odds-in-your-favour
+categories: [series_19, simulation]
+tags: [series_19, simulation]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+Hello
+
+Wow I have forgot how to do this.121
+
+Why aren't your working
+
+```{r, echo = FALSE}
+library(googlesheets4)
+library(tidyverse)
+```
+
+```{r, echo = FALSE, warning=FALSE}
+task_attempt_df <- range_read("https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing", sheet = "Attempts-Tasks")
+
+contestants_df <- range_read("https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing", sheet = "Contestants")
+```
+
+```{r}
+head(task_attempt_df)
+```
+
+
+```{r}
+num_sim <- 1000 #Number of simulations to perform.
+
+series_length <- 10 #Number of episodes in a series
+
+#Per Episode
+num_prize_tasks <- 1 
+num_prerecorded_tasks <- 3
+num_live_tasks <- 1
+
+num_broadcasted_eps <- length(unique(task_attempt_df$`Episode ID`))
+latest_ep_broadcasted <- max(task_attempt_df$`Episode ID`)
+contestant_list <- unique(contestants_df$`Contestant Name`)
+initials_list <- unique(contestants_df $`Initials`)
+task_type_list <- unique(task_attempt_df$`Task Type`)
+
+```
+
+```{r}
+initials_list
+
+# To simulate one episode
+```
+
+```{r}
+contestant_iter <- contestant_list[1]
+single_sample <- 1 
+
+episode_sample_df <- NULL
+
+for(sample_iter in 1:num_sim){
+
+for(contestant_iter in contestant_list){
+
+    contestant_attempt_df <- task_attempt_df %>% dplyr::filter(Contestant == contestant_iter)
+    
+    # Prize Task Sampling
+    contestant_prize_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = single_sample * num_prize_tasks, replace = TRUE)
+    
+    # Live Task Sampling
+    contestant_prerecord_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Pre-Record" ) %>% slice_sample(n = single_sample * num_prerecorded_tasks, replace = TRUE)
+    contestant_prerecord_samples_df$`Task ID` <- rep(2:4, each = single_sample) 
+    
+    # Live Task Sampling
+    contestant_live_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Live" ) %>% slice_sample(n = single_sample * num_live_tasks, replace = TRUE)
+    
+    contestant_episode_sample <- rbind(contestant_prize_samples_df, contestant_prerecord_samples_df, contestant_live_samples_df)
+    
+    contestant_episode_sample$`Episode ID` <- paste0("Sim ", sample_iter)
+    
+    episode_sample_df <- rbind(episode_sample_df, contestant_episode_sample)
+}
+}
+episode_sample_df
+```
+```{r}
+# Re rank points so that they are from 1-5
+episode_sample_df  %>% mutate (`Observed Points Sample` = Points) %>%
+    group_by(`Episode ID`, `Task ID`, `Task Type`) %>%
+    mutate(Points = rank(`Observed Points Sample`, ties.method = "min")) %>%
+    arrange(`Episode ID`, `Task ID`, `Contestant`)
+```
+
+```{r}
+#Episode summary for each contestant (summed over tasks), and ranked within that episode. 
+episode_summary_df <- episode_sample_df %>% group_by(`Series ID`, `Episode ID`, `Contestant`) %>%
+    summarise(`Episode Points` = sum(Points)) %>%
+    mutate(`Episode Rank` = rank(-`Episode Points`, ties.method = "min"))
+```
+```{r}
+ggplot(episode_summary_df, aes(x= `Episode Rank`)) +
+    geom_bar() + 
+    facet_grid(Contestant~.)
+```
+
+
+```{r}
+task_attempt_df %>% group_by("Contestant", "Task Type") %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = 50, replace = TRUE)
+```
+
+

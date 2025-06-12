@@ -4,7 +4,7 @@ author: Christopher Nam
 date: '2024-11-09'
 slug: the-taskmaster-s-potty-mouth
 categories: [analysis, profanity, greg davies]
-tags: []
+tags: [analysis, profanity, greg davies]
 draft: no
 output:
   blogdown::html_page:

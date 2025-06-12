@@ -9,7 +9,7 @@ title: The Vision
 
 <center>
 
-![](../img/teaching_duck.jpg){width=45%}
+![](../img/teaching_duck.jpg){width=75%}
 
 </center>
 
