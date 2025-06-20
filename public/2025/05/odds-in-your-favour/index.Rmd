@@ -5,18 +5,24 @@ date: '2025-05-17'
 slug: odds-in-your-favour
 categories: [series_19, simulation]
 tags: [series_19, simulation]
-draft: no
+draft: false
 output:
   blogdown::html_page:
     toc: true
     toc_depth: 1
 ---
 
-Hello
+```{r}
+library(here)
+here("static")
 
-Wow I have forgot how to do this.121
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
 
-Why aren't your working
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+```
 
 ```{r, echo = FALSE}
 library(googlesheets4)
@@ -44,6 +50,10 @@ num_prize_tasks <- 1
 num_prerecorded_tasks <- 3
 num_live_tasks <- 1
 
+max_episode_used <- 6 #Threshold for which episodes are used. 
+
+series_id <- unique(task_attempt_df$`Series ID`)
+
 num_broadcasted_eps <- length(unique(task_attempt_df$`Episode ID`))
 latest_ep_broadcasted <- max(task_attempt_df$`Episode ID`)
 contestant_list <- unique(contestants_df$`Contestant Name`)
@@ -59,6 +69,7 @@ initials_list
 ```
 
 ```{r}
+set.seed(2025-05-01)
 contestant_iter <- contestant_list[1]
 single_sample <- 1 
 
@@ -68,7 +79,7 @@ for(sample_iter in 1:num_sim){
 
 for(contestant_iter in contestant_list){
 
-    contestant_attempt_df <- task_attempt_df %>% dplyr::filter(Contestant == contestant_iter)
+    contestant_attempt_df <- task_attempt_df %>% dplyr::filter(Contestant == contestant_iter & `Episode ID` <= max_episode_used)
     
     # Prize Task Sampling
     contestant_prize_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = single_sample * num_prize_tasks, replace = TRUE)
@@ -87,13 +98,15 @@ for(contestant_iter in contestant_list){
     episode_sample_df <- rbind(episode_sample_df, contestant_episode_sample)
 }
 }
-episode_sample_df
+#episode_sample_df
 ```
 ```{r}
 # Re rank points so that they are from 1-5
-episode_sample_df  %>% mutate (`Observed Points Sample` = Points) %>%
+# But retain disqualifications if this was sampled.
+episode_sample_df <- episode_sample_df  %>% mutate (`Observed Points Sample` = Points) %>%
     group_by(`Episode ID`, `Task ID`, `Task Type`) %>%
     mutate(Points = rank(`Observed Points Sample`, ties.method = "min")) %>%
+    mutate(Points = ifelse(`Observed Points Sample` == 0, 0, `Points`)) %>%
     arrange(`Episode ID`, `Task ID`, `Contestant`)
 ```
 
@@ -104,14 +117,47 @@ episode_summary_df <- episode_sample_df %>% group_by(`Series ID`, `Episode ID`, 
     mutate(`Episode Rank` = rank(-`Episode Points`, ties.method = "min"))
 ```
 ```{r}
-ggplot(episode_summary_df, aes(x= `Episode Rank`)) +
-    geom_bar() + 
-    facet_grid(Contestant~.)
+episode_win_summary_df <- episode_summary_df %>%
+    group_by(`Series ID`, Contestant, `Episode Rank`) %>%
+    summarise("Number Episodes" = n()) %>%
+    ungroup() %>%
+    group_by(`Series ID`, `Contestant`) %>%
+    mutate("Proportion Episodes" = `Number Episodes`/sum(`Number Episodes`)) %>%
+    ungroup() %>%
+    left_join(y= contestants_df, by = join_by(`Contestant` == `Contestant Name`))
+
 ```
 
 
 ```{r}
-task_attempt_df %>% group_by("Contestant", "Task Type") %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = 50, replace = TRUE)
+graph_title_label <- glue("Contestant-Within-Episode Ranking Probability for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Task Data up to Episode: {max_ep}. Number of Simulations: {num_sims}.", max_ep = max_episode_used, num_sims = num_sim)
+
+ggplot(episode_win_summary_df, 
+       aes(y = `Proportion Episodes`, x= `Episode Rank`, image = `Image URL`, label = scales::percent(`Proportion Episodes`))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.2), colour = "black", size = 5, family = "elite"
+              ) +
+    theme(
+    text = element_text(family = "elite")
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+
+```
+```{r}
+# How does it compare to the observed reality?
+
 ```
 
 
+Number of simulations should be higher if we want to reduce variability in estimated probabilities.
+However, I need to rewrite the code so sampling can be performed efficiently. 
+This will also be useful for simulating full series behaviour.

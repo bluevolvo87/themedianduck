@@ -1,0 +1,88 @@
+---
+title: The Elephant in the Room
+author: Christopher Nam
+date: '2025-06-20'
+slug: the-elephant-in-the-room
+categories: [update, opinions]
+tags: [update, opinions]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+```{r preamble, echo = FALSE, warning = FALSE, message = FALSE, error=FALSE, collapse = TRUE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+
+```
+
+# The Elephant
+Hello. It's been a while and I apologise to my single digit audience for my absence.
+I would love to say that I had a good excuse for my absence, but the truth is rather more boring than that.
+
+However, it's time embrace the free time the I have regained and reignite this (passion) project. 
+
+
+<details>
+<!-- ## Please Refer to Me as Britney Spears -->
+
+The simple truth is that the Board volunteer position I held for the Housing Association associated with my condominium (a flat for UK readers) took over a significant proportion of my time and energy. I was effectively a project manager for a large construction project for my building to address ongoing water intrusion issues in my building we have had in the last couple of years. I was hopeful (and naive) that by me being a dedicated resource would drive the project to completion and address the issues we have had been having; this project had already had 2 failed attempts and considerable costs associated with it. How wrong I was...
+
+However, in the last couple of months, this volunteer position turned nasty; (false) accusations were made against myself and the other Board members by our neighbours in our building. I was accused of pushing my own personal agenda, making the first half of 2025 unbearable for my neighbours, and was even blackmailed at one point. For our own mental health and that fact there was no way we could please our neighbours (they explicitly said this), the entire Board resigned. The whole ordeal was very reminiscent of the [Handforth Parish Council](https://youtu.be/zy3Kml-F7J0?si=fir6x-FF5C7pQA0C) with egos and personal agendas at play.
+
+It's sad that this situation occurred, particularly when I truly believe I was doing what was best for the long term of my association. However I am relieved that I don't have to perform thankless duties for my ungrateful neighbours, and I can spend time working on this blog again. Time will tell if I actually make the most of this new free time.
+
+</details>
+
+
+
+# The Room: Series 19 Opinion (so far)
+
+At time of writing, the latest episode that has aired is Episode 7 **"Glass half most"**.
+Its the episode with the creepy family video, and Little Alex Horne gets taught Moroccan dancing by one of the contestants, and is subjected to water torture.
+
+Overall, this is a delightfully chaotic series and cast, and potentially one of my favourites. Going into it, I was aware of Fatiha El-Ghorri and the chaos she would likely bring (see her [Off Menu Podcast appearance](https://open.spotify.com/episode/4QscyJhQ6RpqfUKO38vuAq?si=daBI6OJeRQW6_y6e0KcoLA), and this [compilation of TV show appearances by IsThisAStep](https://youtu.be/5HPNQM7rUQ8?si=A2Wi2jpCPNhdjn4F); she has not disappointed at all. However, I did not expect all contestants to be equally chaotic in different manners, and the comradery shared by them all. 
+
+```{=html}
+<iframe align="center" style="border-radius:12px" src="https://open.spotify.com/embed/episode/4QscyJhQ6RpqfUKO38vuAq?utm_source=generator" width="50%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+<iframe align="center" width="560" height="315" src="https://www.youtube.com/embed/5HPNQM7rUQ8?si=Me3kj8QKRAVLSzUb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+```
+
+:::{ .insights}
+My particular highlight (so far) has to be Rosie Ramsey's [*"We were the monsters weren't we?."*](https://youtube.com/clip/UgkxlinoLcB4IgcTytXmGDh_AdZwei3Zrnrj?si=eF-Xww7VELRDI75C) revelation during Episode 5's **"Maybe we're the monsters"**.
+
+Her honest opinion that we (the human race) were actually the monsters she was supposed to draw, and the fellow contestant's reaction to this statement could not have been planned or scripted.[^1]
+
+```{r, out.width = "25%", fig.align='center', error = FALSE, warning=FALSE, echo=FALSE, fig.cap="Episode screenshots can tell a thousand words: The various incredulous contestant reactions of Rosie's 'We were the monsters weren't we?' statement.'"}
+knitr::include_graphics(path = file.path(here::here(), "static", "img", "highlights", "monsters.png"))
+```
+
+:::
+
+```{=html}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NzZkDSPky9Q?si=zb2LZaie9saXbLC_&amp;start=1598" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen align="center"></iframe>
+```
+
+
+:::{ .infobox .today data-latex="{today}"}
+What have we learnt today:
+
+- We've learnt why Christopher has been absent for 6 months or so from this blog.
+    - If this blog was his child, Social Services would have been called for child neglect.
+- We've learnt that during this time, Christopher has forgotten quite a bit on how to use `blogdown` and various `R` fuctions. 
+- We've learnt that Series 19 is potentially one of Christopher's favourite series of Taskmaster based on the delightfully chaotic cast.
+- We've learnt that maybe we, the human race, were the monsters after all!
+    - The cause of Christopher's absence seemingly support this claim.
+:::
+
+[^1]: To be fair to Rosie, the human race has been an awful entity to planet Earth and each other. See my involvment with my HOA as example of this monstrous behaviour, even on a small scale and other recent world events.

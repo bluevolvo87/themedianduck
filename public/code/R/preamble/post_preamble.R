@@ -17,3 +17,6 @@ knitr::opts_chunk$set(echo = FALSE,
 options(width = 1000)
 
 library(kableExtra)
+
+# Variable substituion in strings
+library(glue)
