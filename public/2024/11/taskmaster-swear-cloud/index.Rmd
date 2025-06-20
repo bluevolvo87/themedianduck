@@ -27,7 +27,7 @@ source(file.path(preamble_dir, "graphics_preamble.R"))
 ```
 
 :::{.callout_tmd}
-This post contains strong lanuage...reader discretion advised! And this time, I really mean it...
+This post contains strong language...reader discretion advised! And this time, I really mean it...
 :::
 
 

@@ -1,0 +1,9 @@
+---
+title: The Elephant in the Room
+author: Christopher Nam
+date: '2025-06-12'
+slug: the-elephant-in-the-room
+categories: []
+tags: []
+draft: yes
+---

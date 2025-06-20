@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Analysis on The Median Duck</title>
+    <link>https://bluevolvo87.github.io/themedianduck/tags/analysis/</link>
+    <description>Recent content in Analysis on The Median Duck</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Christopher Nam</copyright>
+    <lastBuildDate>Mon, 09 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/tags/analysis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Contestant Consistency</title>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/12/contestant-consistency/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/12/contestant-consistency/</guid>
+      <description>Your Task&#xD;The Data&#xD;No Sh*t Sherlock&#xD;Volatility Volcano&#xD;A Different perspective&#xD;Your Task&#xD;Validate (or invalidate) the hypothesis that a Taskmaster champion, is one that is a consistent Taskmaster contestant.&#xA;Some Background&#xD;In many episodes of the Taskmaster Podcast (example episodes and timestamps) , it is hypothesised that a key to becoming a Taskmaster Champion is that the contestants are consistent in the task points that they receive, compared to those who are more inconsistent and volatile in their points.</description>
+    </item>
+  </channel>
+</rss>

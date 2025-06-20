@@ -9,7 +9,7 @@ title: Resources
 
 <center>
 
-![](../img/vintage_reading_duck.jpg){width=25%}
+![](../img/vintage_reading_duck.jpg){width=75%}
 
 </center>
 

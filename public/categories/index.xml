@@ -2,53 +2,67 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/categories/</link>
+    <link>https://bluevolvo87.github.io/themedianduck/categories/</link>
     <description>Recent content in Categories on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Sun, 24 Nov 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Opinions</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/opinions/</link>
+      <pubDate>Fri, 20 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/opinions/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Update</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/update/</link>
+      <pubDate>Fri, 20 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/update/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Series_19</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/series_19/</link>
+      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/series_19/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Simulation</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/simulation/</link>
+      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/simulation/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Analysis</title>
-      <link>http://localhost:4321/themedianduck/categories/analysis/</link>
-      <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/analysis/</guid>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/analysis/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/analysis/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Hypothesis</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/hypothesis/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/hypothesis/</guid>
       <description></description>
     </item>
     <item>
       <title>Profanity</title>
-      <link>http://localhost:4321/themedianduck/categories/profanity/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/profanity/</link>
       <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/profanity/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/profanity/</guid>
       <description></description>
     </item>
     <item>
       <title>Greg Davies</title>
-      <link>http://localhost:4321/themedianduck/categories/greg-davies/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/greg-davies/</link>
       <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/greg-davies/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Test</title>
-      <link>http://localhost:4321/themedianduck/categories/test/</link>
-      <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/test/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Trial</title>
-      <link>http://localhost:4321/themedianduck/categories/trial/</link>
-      <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/trial/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>R</title>
-      <link>http://localhost:4321/themedianduck/categories/r/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      <guid>http://localhost:4321/themedianduck/categories/r/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/greg-davies/</guid>
       <description></description>
     </item>
   </channel>

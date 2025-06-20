@@ -1,0 +1,62 @@
+---
+title: May the Odds Be In Your Favour
+author: Christopher Nam
+date: '2025-05-17'
+slug: odds-in-your-favour
+categories: [series_19, simulation]
+tags: [series_19, simulation]
+draft: yes
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+
+<pre class="r"><code>library(here)</code></pre>
+<pre><code>## here() starts at C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck</code></pre>
+<pre class="r"><code>here(&quot;static&quot;)</code></pre>
+<pre><code>## [1] &quot;C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck/static&quot;</code></pre>
+<pre class="r"><code>preamble_dir &lt;- here(&quot;static&quot;, &quot;code&quot;, &quot;R&quot;, &quot;preamble&quot;)
+preamble_file  &lt;- &quot;post_preamble.R&quot;
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, &quot;database_preamble.R&quot;))</code></pre>
+<pre><code>## Loading required package: RSQLite</code></pre>
+<pre><code>## [1] &quot;Database Connection, tm_db, is now ready to use.&quot;</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter()     masks stats::filter()
+## ✖ dplyr::group_rows() masks kableExtra::group_rows()
+## ✖ dplyr::lag()        masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>source(file.path(preamble_dir, &quot;graphics_preamble.R&quot;))</code></pre>
+<pre><code>## 
+## Attaching package: &#39;gridExtra&#39;
+## 
+## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine
+## 
+## Loading required package: sysfonts
+## Loading required package: showtextdb</code></pre>
+<pre class="watch-out"><code>## # A tibble: 6 × 7
+##   `Series ID` `Episode ID` `Task ID` Task                                                      `Task Type` Contestant       Points
+##         &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                                                     &lt;chr&gt;       &lt;chr&gt;             &lt;dbl&gt;
+## 1          19            1         1 The object that most reminds you of school, in a good way Prize       Fatiha El-Ghorri      1
+## 2          19            1         1 The object that most reminds you of school, in a good way Prize       Jason Mantzoukas      5
+## 3          19            1         1 The object that most reminds you of school, in a good way Prize       Mathew Baynton        4
+## 4          19            1         1 The object that most reminds you of school, in a good way Prize       Rosie Ramsey          3
+## 5          19            1         1 The object that most reminds you of school, in a good way Prize       Stevie Martin         2
+## 6          19            1         2 Pour all the vinegar into the fish tank                   Pre-Record  Fatiha El-Ghorri      4</code></pre>
+<pre class="watch-out"><code>## [1] &quot;FEG&quot; &quot;JM&quot;  &quot;MB&quot;  &quot;RR&quot;  &quot;SM&quot;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Number of simulations should be higher if we want to reduce variability in estimated probabilities.
+However, I need to rewrite the code so sampling can be performed efficiently.
+This will also be useful for simulating full series behaviour.</p>

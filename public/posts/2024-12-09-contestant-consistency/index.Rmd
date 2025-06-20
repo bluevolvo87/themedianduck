@@ -1,0 +1,9 @@
+---
+title: Contestant Consistency
+author: Christopher Nam
+date: '2024-12-09'
+slug: contestant-consistency
+categories: []
+tags: []
+draft: yes
+---
