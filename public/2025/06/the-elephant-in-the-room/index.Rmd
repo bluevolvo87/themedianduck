@@ -63,8 +63,8 @@ My particular highlight (so far) has to be Rosie Ramsey's [*"We were the monster
 
 Her honest opinion that we (the human race) were actually the monsters she was supposed to draw, and the fellow contestant's reaction to this statement could not have been planned or scripted.[^1]
 
-```{r, out.width = "25%", fig.align='center', error = FALSE, warning=FALSE, echo=FALSE, fig.cap="Episode screenshots can tell a thousand words: The various incredulous contestant reactions of Rosie's 'We were the monsters weren't we?' statement.'"}
-knitr::include_graphics(path = file.path(here::here(), "static", "img", "highlights", "monsters.png"))
+```{r, out.width = "90%", fig.align='center', error = FALSE, warning=FALSE, echo=FALSE, fig.cap="Episode screenshots can tell a thousand words: The various incredulous contestant reactions of Rosie's 'We were the monsters weren't we?' statement.'"}
+knitr::include_graphics(path = file.path(here::here(), "img", "highlights", "monsters.png"), error = FALSE)
 ```
 
 :::
