@@ -5,42 +5,12 @@ date: '2025-05-17'
 slug: odds-in-your-favour
 categories: [series_19, simulation]
 tags: [series_19, simulation]
-draft: no
+draft: yes
 output:
   blogdown::html_page:
     toc: true
     toc_depth: 1
 ---
-
-
-# The Elephant in the Room
-Hello. It's been a while and I apologise to my single digit audience for my absence.
-I would love to say that I had a good excuse for my absence, but the truth is more boring than that.[^1] But I hope to 
-
-
-
-[^1]: The simple truth is that the Board volunteer work that I perform for the Housing Association associated with my condominium (a flat for UK readers) took over a significant proportion of my time and energy. I was effective a project manager for a large construction project for my building and trying to make sure that the project was progressing along.
-In the last couple of months however, this volunteer position turned nasty, (false) accusations were made against myself and the other Board members by our neighbours in our building. For our own mental health and that fact there was no way we could please our neighbours, the entire Board resigned. The whole ordeal was very reminiscent of the [Handforth Parish Council](https://youtu.be/zy3Kml-F7J0?si=fir6x-FF5C7pQA0C) with egos and personal agendas at play.
-It's sad that I am in this situation, but I am relieved that I don't have to perform thankless duties for my ungrateful neighbours, and I can spend time working on this blog again. Time will tell if I actually make the most of this new free time. 
-
-
-
-# Series 19 Opinion (so far)
-At time of writing, the latest episode that has aired is Episode 6 *"It's got to be obsolete"*.
-It's episode with the creepy family video, and Little Alex Horne gets taught Moroccan dancing by one of the contestants (in addition to be subjected to water torture).
-
-Overall, this is a delightfully chaotic series and cast, and potentially one of my favourites. Going into it, I was aware of Fatiha El-Ghorri and the chaos she would likely bring (see her [Off Menu Podcast appearance](https://open.spotify.com/episode/4QscyJhQ6RpqfUKO38vuAq?si=daBI6OJeRQW6_y6e0KcoLA), and this [compilation of TV show appearances by IsThisAStep](https://youtu.be/5HPNQM7rUQ8?si=A2Wi2jpCPNhdjn4F); she has not disappointed at all. However, I did not expect all contestants to be equally chaotic in different manners, and the comradery shared by them all. 
-
-:::{ .insights}
-My particular highlight so far has to be Rosie Ramsey's "We were the monsters." revelation during Episode 5's **"Maybe we're the monsters"**.
-
-Her honest opinion that we (the human race) were actually the monsters she was supposed to draw, and the fellow contestant's reaction to this statement could not have been planned or scripted.[^2]
-
-
-:::{ .insights}
-
-[^2]: To be fair to Rosie, the human race has been an awful entity to earth, and displayed monstrous behaviour. 
-
 
 ```{r}
 library(here)

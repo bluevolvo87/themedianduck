@@ -5,7 +5,7 @@ date: '2025-05-17'
 slug: odds-in-your-favour
 categories: [series_19, simulation]
 tags: [series_19, simulation]
-draft: false
+draft: yes
 output:
   blogdown::html_page:
     toc: true
