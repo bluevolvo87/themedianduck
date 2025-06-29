@@ -1,0 +1,457 @@
+---
+title: May the Odds Be In Your Favour
+author: Christopher Nam
+date: '2025-06-28'
+slug: odds-in-your-favour
+categories: [Series 19, Simulation, MultiVerse]
+tags: [Series 19, Simulation, MultiVerse]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+```
+
+# Your Task
+
+> For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their ranking in an episode. 
+> 
+> For example, estimate the probability of Fatiha-El Ghorri placing 1st, 2nd, 3rd, 4th and 5th in an episode of Series 19.
+
+
+# A New Dawn, A New Dataset
+With Series 19 well underway (at time of writing, Episode 8 *"Science all your life"* has just broadcasted), and a potential lag in the data being supplied to `TdlM` database[^1], it is time to take data matters into our own piano capable hands.
+
+We are not completely abandoning the `TdlM` database, but for the purpose of the task in hand (it ideally is performed as the series broadcasts), it is useful to create, manage, and control our own dataset. This way we can ensure that the most recent episode data is available, and is of high quality.
+
+[^1]: It is still unclear what the service-level agreement is with this database in terms of when new data is expected to be available after transmission, fits our particular needs, and is of high quality (hopefully at least).
+
+## Google Sheets
+A [Series 19 Google Sheets](https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing) has been created by to track basic information on series of the information. Tabs include:
+
+- **Contestants:** Information on the contestants, including their name, intials, URL to an image of them, and their seat number. 
+- **Attempt-Tasks:** Each contestants task attempt in each episode of the series. This is the most important dataset.
+- **MetaData:** Data used for verification and quality purposes. 
+
+
+Data can be imported into `R` from Google Sheets via the package `googlesheets4`. For the purpose of our task in hand, only the `Attempts-Tasks` and `Contestants` are only required. 
+
+```{r, echo=TRUE}
+library(googlesheets4)
+gs4_auth(email = "themedianduck@gmail.com")
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks")
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+```
+A sample of the `Attempts-Tasks` tab can be found in Table \@ref(tab:gs-sample).
+
+```{r gs-sample, }
+kable(rbind(head(task_attempt_df), tail(task_attempt_df)),
+      caption = "Heads and Tails of the 'Attempts-Tasks' tab of the Google Sheets Dataset, as an `R` object")
+```
+
+
+```{r, echo = FALSE}
+num_sim <- 1000 #Number of simulations to perform.
+
+series_length <- 10 #Number of episodes in a series
+
+#Per Episode
+num_prize_tasks <- 1 
+num_prerecorded_tasks <- 3
+num_live_tasks <- 1
+
+max_episode_used <- 8 #Threshold for which episodes are used. 
+
+series_id <- unique(task_attempt_df$`Series ID`)
+
+num_broadcasted_eps <- length(unique(task_attempt_df$`Episode ID`))
+latest_ep_broadcasted <- max(task_attempt_df$`Episode ID`)
+contestant_list <- unique(contestants_df$`Contestant Name`)
+initials_list <- unique(contestants_df $`Initials`)
+task_type_list <- unique(task_attempt_df$`Task Type`)
+
+```
+
+
+
+# The Observed Reality Timeline Approach (ORT)
+```{r}
+# How does it compare to the observed reality?
+obs_episode_summary <- task_attempt_df %>% 
+    filter(`Episode ID` <= max_episode_used) %>%
+    group_by(`Series ID`, `Episode ID`, Contestant) %>%
+    summarise(
+        Num_Tasks = n_distinct(`Task ID`),
+        Episode_Points = sum(Points)) %>%
+    group_by(`Series ID`, `Episode ID`) %>% 
+    mutate(Ranking = rank(- Episode_Points, ties.method = "min")) %>%
+    ungroup()
+
+```
+```{r}
+obs_series_summary <- obs_episode_summary %>% 
+    group_by(`Series ID`, Contestant, Ranking) %>%
+    summarise(
+        Counts = n() 
+) %>%
+    group_by(`Series ID`, Contestant) %>%
+    mutate(Episode_Count = sum(Counts)) %>%
+ungroup() %>%
+    mutate(Count_Proportion = Counts/Episode_Count) %>%
+    left_join(y= contestants_df, by = join_by(`Contestant` == `Contestant Name`))
+```
+
+A first approach, and most good starting point to estimate the probabilities is to base it off of the *observed* placement of each contestant at the end of each episode. From this, we can count the number of times a contestant has placed in a particular ranking, and normalise with respect to the number of episodes that have transpired so far. We refer to this as the *observed reality timeline (ORT)* method to estimate the probabilities.[^3] That is:
+
+[^3]: The ORT naming will make sense later in this post.
+
+$$
+\texttt{Probability of Fatiha placing 1st in an Episode} = \frac{\texttt{Number of time Fatiha  has placed 1st}}{\texttt{Total Number of Episodes Fatiha has participated in.}}  
+$$
+
+and more generally,
+
+$$
+\texttt{Probability of Contestant $c$ placing $r$ in an Episode} = \frac{\texttt{Number of time Contestant $c$ has placed in $r^{\texttt{th}}$ position}}{\texttt{Total Number of Episodes Contestant $c$ has participated in.}}  (\#eq:ort-prob)
+$$
+The ORT estimates are essentially the empirical proportions of a contestant ranking in that position. 
+
+
+
+```{r obs-win-placement, fig.cap = "Probability Distribution of Contestant Ranking Placement within in a Episode, based on the Observed Reality Timeline method.", out.width = "75%", cache = FALSE}
+graph_title_label <- glue("ORT Probability Distribution of Contestant Within-Episode Ranking for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+ggplot(obs_series_summary, 
+       aes(y = Count_Proportion, x= Ranking, image = `Image URL`, label = scales::percent(Count_Proportion, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.2), colour = "black", size = 7.5, family = "elite"
+              ) +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+
+```
+::: {.insights  style="float: left"} 
+Figure \@ref(fig:obs-win-placement) shows these estimated probabilities under the ORT approach using all data up to an including Episode 8 of Series 19. There are no major surprises in the results and insights generated. In particular:
+
+- Matthew Baynton has a 50% probability of placing 1st in an episode, which makes sense since he has won 4 out of 8 episodes so far. 
+    - He also has only placed 3rd or 4th in the remaining 4 episodes thus far, and has estimated probabilities of 37.50% and 12.50% respectively.
+    - As he has never placed 2nd or 5th so far in the series, he has an estimated probability of 0% for each of these placements respectively.
+- For the other contestants, their probabilities are (unsurprisingly) in line with how they have been performing so far in the series:
+    - Fatiha is most likely to place 2nd with 37.50%, and 5th with 25%. The remaining placements are with equal probabilities of 12.50%.
+    - Jason is most likely to place 2nd, 3rd and 4th with 25%, and the remaining 12.50% either in 1st or 5th.
+    - Rosie has placed 1st, 2nd, 3rd and 5th an equal number of times across the 8 episodes, and thus her estimated probability is 25% on each. She has never placed 4th, and thus has an estimated probability of 0%.
+    - Stevie has placed 3rd 50% of the time and thus has an estimated probability of achieving this placement in an episode. Her remaining placement probabilities are 12.50%.
+    
+:::
+
+
+## Do You Want Me To Stop the Clock?
+
+We have a way of estimating probability distribution for a contestant's placement in a episode! Job done, stop the clock.
+
+One advantage of the ORT approach is the simplicity and intuitive nature of it. It is grounded in reality as it is based on contestant's placement in each episode. Consequently, it is simple to calculate (low computational power) and can be conveyed easily to others. 
+
+```{r, echo = FALSE, out.width = "35%", fig.align='center', cache = TRUE, fig.cap = "Stop the clock Alex!"}
+knitr::include_graphics(path = "https://media1.tenor.com/m/9tmBOQ-19LcAAAAd/little-alex-horne-alex-horne.gif")
+```
+
+
+## The Drawback of the Backdraw
+However, one potential drawback of the ORT approach is that if a contestant has not ended up in a particular place for a episode, our probability estimate of this event occurring is 0%. 
+
+Whilst this is true from the observations we have, it is potentially misleading to assign a probability of 0% with such definitiveness. It could be that this event has not occurred yet (but is still probable and possible), or is an extremely rare event (extremely rare is not the same as  impossible).
+
+One consequence of this approach is that at the beginning of the series when data is limited, many of the probabilities will be 0% since we have not observed that particular (contestant, placement ranking) combination. Consequently, the ORT estimated probabilities are likely not representative of what could occur later in the series. 
+
+
+# The Multiverse Approach (MV)
+In the spirit of seeming hip, cool and aware of popular culture, it is time to introduce the concept of a [multiverse](https://en.wikipedia.org/wiki/Multiverse), and how we can use this analogy to generate a distribution of probabilities which are more representative of all potential timelines and events.   
+
+The multiverse theory speculates that for every instance in which an action, decision or outcome is made, there is an alternative reality and timeline in which the alternative action, decision or outcome prevailed. For example,:
+
+- We currently live in the timeline in which the US Taskmaster version **was not a success**. 
+    - As a result, Little Alex Horne is still heavily involved in UK Taskmaster and writing the [Horne Section TV Show](https://youtu.be/Xkxv6a2k5uw?si=G5MvcaBt8zgeyRCr).
+- However, there is an alternate timeline where the US Taskmaster **was a success**. Who knows what consequences this could have reaped, but I would imagine:
+    - Little Alex Horne is less involved in the UK Taskmaster (he's flying to the US frequently for US Taskmaster) and the quality of each UK series slowly decreases over time.
+    - As a result, we don't get Series 19 of UK Taskmaster (the show has been cancelled before this), and the entertainment provided by the current cast.
+
+In the context of Taskmaster and this task, the ORT is just one realisation of a particular timeline involving the series 19 cast in which a particular set of tasks were performed. There are potentially other timelines and alternate universes involving the Series 19 cast in which the contestants performed a different set of tasks, and the contestant placements are different. These alternative timeline and universes define the multiverse that we operate in.
+
+We can use these alternative timelines and capture more potential outcomes, even if they have yet to be observed (or will ever be). It is these alternative timelines that will also help generate a probability distribution for contestant placement within an episode, which is more informative and potential outcomes of the series. We refer to this method of estimating probabilities as the **MultiVerse Approach (MV)**.
+
+
+## What's the Situation?
+
+I'll go into more detail in a later post of how these alternative timelines are simulated, and the generating the probability distribution of contestant placement within an episode. In short:
+
+- The alternative timelines are generated through sampling and simulation based techniques. 
+- Sampling is performed (with replacement) on existing (contestant, task-attempt) data we have observed to date. 
+- Additional logic is then employed to group, re-rank and reassign points to contestants based on these samples. 
+- Once we have simulated these alternative timelines and outcomes, we can then estimate probabilities based on an equation similar to Equation \@ref(eq:ort-prob). 
+    - However under MV, we would be considering **all alternative timelines** we have simulated for both the numerator and denominator, and not just episodes that have brodcasted and observed.
+
+In the statistical literature, this approach is based on concepts concerning  [sampling](https://statisticsbyjim.com/?s=sampling) (in particular [Bootstrapping](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/)),  and [Monte Carlo simulation](https://statisticsbyjim.com/probability/monte-carlo-simulation) methods. 
+
+## The Customised Inhaler Gang
+
+```{r, cache=TRUE}
+seed_id <- 2025-05-01
+set.seed(seed_id)
+contestant_iter <- contestant_list[1]
+single_sample <- 1 
+
+episode_sample_df <- NULL
+
+for(sample_iter in 1:num_sim){
+
+for(contestant_iter in contestant_list){
+
+    contestant_attempt_df <- task_attempt_df %>% dplyr::filter(Contestant == contestant_iter & `Episode ID` <= max_episode_used)
+    
+    # Prize Task Sampling
+    contestant_prize_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = single_sample * num_prize_tasks, replace = TRUE)
+    
+    # Live Task Sampling
+    contestant_prerecord_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Pre-Record" ) %>% slice_sample(n = single_sample * num_prerecorded_tasks, replace = TRUE)
+    contestant_prerecord_samples_df$`Task ID` <- rep(2:4, each = single_sample) 
+    
+    # Live Task Sampling
+    contestant_live_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Live" ) %>% slice_sample(n = single_sample * num_live_tasks, replace = TRUE)
+    
+    contestant_episode_sample <- rbind(contestant_prize_samples_df, contestant_prerecord_samples_df, contestant_live_samples_df)
+    
+    contestant_episode_sample$`Episode ID` <- paste0("Sim ", sample_iter)
+    
+    episode_sample_df <- rbind(episode_sample_df, contestant_episode_sample)
+}
+}
+#episode_sample_df
+```
+
+```{r}
+# Re rank points so that they are from 1-5
+# But retain disqualifications if this was sampled.
+episode_sample_df <- episode_sample_df  %>% mutate (`Observed Points Sample` = Points) %>%
+    group_by(`Episode ID`, `Task ID`, `Task Type`) %>%
+    mutate(Points = rank(`Observed Points Sample`, ties.method = "min")) %>%
+    mutate(Points = ifelse(`Observed Points Sample` == 0, 0, `Points`)) %>%
+    arrange(`Episode ID`, `Task ID`, `Contestant`)
+```
+
+```{r}
+#Episode summary for each contestant (summed over tasks), and ranked within that episode. 
+episode_summary_df <- episode_sample_df %>% group_by(`Series ID`, `Episode ID`, `Contestant`) %>%
+    summarise(`Episode Points` = sum(Points)) %>%
+    mutate(`Episode Rank` = rank(-`Episode Points`, ties.method = "min"))
+```
+```{r}
+episode_win_summary_df <- episode_summary_df %>%
+    group_by(`Series ID`, Contestant, `Episode Rank`) %>%
+    summarise("Number Episodes" = n()) %>%
+    ungroup() %>%
+    group_by(`Series ID`, `Contestant`) %>%
+    mutate("Proportion Episodes" = `Number Episodes`/sum(`Number Episodes`)) %>%
+    ungroup() %>%
+    left_join(y= contestants_df, by = join_by(`Contestant` == `Contestant Name`))
+
+```
+
+
+```{r mv-prob-plot, fig.cap = "Probability Distribution of a Contestant Placement within an Episode, based on the MultiVerse method.", out.width = "75%"}
+graph_title_label <- glue("MV Probability Distribution of Contestant Within-Episode Ranking for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}. Number of Simulations: {num_sims}, with Seed {seed_id}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+ggplot(episode_win_summary_df, 
+       aes(y = `Proportion Episodes`, x= `Episode Rank`, image = `Image URL`, label = scales::percent(`Proportion Episodes`, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.2), colour = "black", size = 7.5, family = "elite"
+              ) +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+
+```
+
+
+
+
+::: {.insights}
+Figure \@ref(fig:mv-prob-plot) displays the probability distributions under the MultiVerse approach. It is based on using observed data up to and including episode 8 of Series 19, using 1000 simulations (that is 1000 alternative episodes were simulated), and random seed 2019 (based on 2025-05-01, the UK broadcast date of Episode 1 of Series 19)[^2]. 
+
+
+[^2]: The notion of a random seed and the importance of setting it will become discussed in a subsequent post. It is to do with repeatability and controlling randomness.  
+
+- The MV probability distributions are "complete": a non-zero probability is assigned to all contestant ranking combinations, even though these have not been realised.
+- The distributions for each contestant are peaked and skewed to how the contestants are ranking in the series overall (see Figure \@ref(fig:series-tracker)), and loosely to their general task performance (see Figure \@ref(fig:task-performance-summary)):
+    - For Fatiha, the distribution is symmetrical and peaked around 3rd place with a probability of 21.80%. 
+        - She is currently placed 3rd in the series.
+    - For Jason, the distribution is skewed towards the lower rankings, with 5th place being the most probable outcome with 26.10%. 
+        - He is currently placed 5th in the series. 
+    - Matthew's distribution is skewed towards the higher ranking position, with 1st place being the most probable outcome with 44.10%. 
+        - He is currently placed 1st in the series.
+        - The probability of him ranking 5th in an episode is 5.80%.
+    - Rosie also has distribution skewedwed the higher ranking positions, although not as peaked as Matthew's. Her most probable position is 2nd place with 26.40%, although her 1st place probability is a close second place with 25.60%.
+        - She is currently placed 2nd in the Series.
+    - Stevie has a similar distribution to Jason in that it is skewed towards the lower rankings. She is most likely to rank 5th in an episode with a probability of 25%.
+        - She is currently placed 4th in the series, although is only ahead of Jason (current 5th place),  by 6 points. 
+- The MV distributions are noticeably different to the ORT distributions.
+    - This can be see as counter-intuitive in that it differs to the reality we have observed.
+    - However, it does make sense given that the **MV methodology is based on a generalised performance of a contestant** (captured through the simulation of many alternative timelines), whereas the **ORT is based on a single realisation**. This single realisation, could be representative of how a contestant performs in general, or a rarer extreme occurrence (they performed worse).
+    - The ORT distribution can also be misleading due to close finishes that may occur, or ties in placements. 
+    - The generalised nature of how the MV distributions are generated also makes sense as to why it is aligned with the series ranking. The series ranking represents the general performance of a contestant across multiple episodes which have been broadcasted; the MV distributions represent the performance over episodes. These episodes have been simulated rather than broadcasted however. 
+:::
+
+
+```{r}
+series_tracker_df <- obs_episode_summary %>% 
+    group_by(`Series ID`, `Contestant`) %>%
+    arrange(`Episode ID`) %>%
+    mutate(Series_Points = cumsum(Episode_Points)) %>%
+    group_by(`Series ID`, `Episode ID`) %>%
+    mutate(Series_Ranking = rank(-Series_Points, ties.method = "min")) %>%
+    ungroup() %>%
+    left_join(contestants_df, by =  join_by(`Contestant` == `Contestant Name`))
+```
+
+```{r series-tracker, cache = FALSE, out.width = "65%", fig.cap = "Series Performance so far for Series 19."}
+
+graph_title_label <- glue("Series {series_id} Tracker", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+latest_df <- series_tracker_df %>% slice_max(`Episode ID`)
+
+
+ggplot(series_tracker_df, 
+       aes(y= Series_Points, x= `Episode ID`,  group = Initials, image = `Image URL`)) +
+    geom_point(aes(colour = Initials), alpha = 0.5) +
+    geom_line(aes(colour = Initials), alpha = 0.5, size = 2) +
+    #geom_image(data = latest_df, aes_(x = ~(`Episode ID` + (Series_Ranking-1)*0.25), y = ~Series_Points , image = ~`Image URL`), by = "height", size = 0.07) +
+    geom_image(data = latest_df, aes(x = `Episode ID`+(`Series_Ranking`-1)*0.5, y = `Series_Points` , image = `Image URL`), by = "height", size = 0.1, alpha = 0.5) +
+    #geom_image(aes(x = jitter(`Episode ID`)), by = "height", size = 0.07) +
+    theme(
+        text = element_text(family = "elite", size = 20),
+        legend.position = 'bottom'
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Episode") +
+    ylab("Series Points") +
+    scale_y_continuous(breaks = seq(from = 0, to = max(series_tracker_df$Series_Points), by = 25)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 12)) +
+    coord_cartesian(xlim = c(1, 12))
+
+```
+
+```{r}
+task_attempt_summary <- task_attempt_df %>% group_by(`Series ID`, `Episode ID`, `Task ID`) %>%
+    mutate(Task_Ranking = rank(-Points, ties.method ="min")) %>%
+    ungroup() %>%
+    group_by(`Series ID`, Contestant, Task_Ranking) %>%
+    summarise(Task_Count = n()) %>%
+    group_by(`Series ID`, Contestant) %>%
+    mutate(Total_Num_Tasks = sum(Task_Count),
+           Proportion = Task_Count/Total_Num_Tasks
+    ) %>%
+    ungroup() %>%
+    left_join(contestants_df, by =  join_by(`Contestant` == `Contestant Name`))
+```
+
+```{r task-performance-summary, fig.cap = "Distribution of Contestant Task Performance.", out.width = "65%"}
+graph_title_label <- glue("Distribution of Contestant Task Performance for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+ggplot(task_attempt_summary, 
+       aes(y = Proportion, x= Task_Ranking, image = `Image URL`, label = scales::percent(Proportion,  accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.2), colour = "black", size = 7.5, family = "elite"
+              ) +
+    theme(
+    text = element_text(family = "elite", size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Task Ranking") +
+    ylab("Proportion") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+
+```
+
+
+## Where Do we Go From Here?
+One potential benefit of the MV approach is that we are likely able to produce distributions on series outcomes. For example:
+
+- We are likely able to produce distributions on each contestants placement at the end of the series.
+    - For example, the probability of Fatiha finishing in 5th place at the end of series, or Jason winning the series (how improbable is it, or is it simply impossible?).
+- We are able to also produce distributions on each contestants series points.
+    - For example, what is the probability of Jason scoring more than 140 points by the end of the series. 
+
+```{r, echo = FALSE, out.width = "40%", fig.align='center', fig.cap="You have been warned of these plans..."}
+knitr::include_graphics(path = "https://64.media.tumblr.com/5ca4130c6f7976664b6a9a4499eaa34a/c14503e9951cfe41-e4/s400x600/5d03e0de49118b385162aab3cefed31a81836244.gifv")
+```
+
+However, the MV approach to estimate probability distributions of contestant ranking placements within an episode is by no means perfect. There are still some considerations and assumptions that needed to be expanded upon in the future. For example:
+
+- Is 1000 alternate timelines (simulations) sufficient in obtaining the accurate, reliable probability distributions?
+    - Ideally, sufficient simulations have been performed such that the distribution does not drastically between randomness settings.
+    - A study of the number of simulations required to achieve a stable distribution is likely a topic for another post.
+- The proposed MV method does not account for certain Taskmaster idiosyncrasies. 
+    - For example, we do not distinguish between solo and team tasks. Nor do we account for "5 points to the winner, 0 for everyone else" instances, or [Series 18's Joker mechanism](https://taskmaster.info/task.php?id=3520).
+- Greater care and understanding of how ties should be handled. In particular, we do not consider tie breakers when two or more contestants having the highest number of points at the end of the episode. The winner of these tie breakers is officially deemed the winner of the episode (they get to take home the prizes), but does not affect the series points.
+
+
+# What Have We Learnt Today
+::: {.infobox .today data-latex="{today}"}
+We've learnt:
+
+- We have a method to to estimate the probability distributions of each contestant's ranking within a single episode.
+    - This method is a sampling, simulation based method which uses historical episode-contestant-task attempt which has already been observed. We effectively create alternate universes and timelines involving the Series 19 cast in which different task outcomes occurred.
+- The estimated probability distributions are in line with the series rankings to date.
+- The estimated probability distributions also capture realities and events which have not yet been observed.
+    - For example we can estimate the probability of Matthew Baynton ranking 5th in an episode, something that we have not observed so far.
+    
+```{r, echo = FALSE, out.width = "35%", fig.align='center'}
+knitr::include_graphics(path = "https://media1.tenor.com/m/6dhjX1hEMe4AAAAC/greg-davies-taskmaster.gif")
+```
+
+:::
