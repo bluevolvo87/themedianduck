@@ -1,11 +1,11 @@
 ---
 title: May the Odds Be In Your Favour
 author: Christopher Nam
-date: '2025-05-17'
+date: '2025-06-28'
 slug: odds-in-your-favour
-categories: [series_19, simulation]
-tags: [series_19, simulation]
-draft: yes
+categories: [Series 19, Simulation, MultiVerse]
+tags: [Series 19, Simulation, MultiVerse]
+draft: no
 output:
   blogdown::html_page:
     toc: true
@@ -13,50 +13,377 @@ output:
 ---
 
 
+<div id="TOC">
+<ul>
+<li><a href="#your-task" id="toc-your-task">Your Task</a></li>
+<li><a href="#a-new-dawn-a-new-dataset" id="toc-a-new-dawn-a-new-dataset">A New Dawn, A New Dataset</a></li>
+<li><a href="#the-observed-reality-timeline-approach-ort" id="toc-the-observed-reality-timeline-approach-ort">The Observed Reality Timeline Approach (ORT)</a></li>
+<li><a href="#the-multiverse-approach-mv" id="toc-the-multiverse-approach-mv">The Multiverse Approach (MV)</a></li>
+<li><a href="#what-have-we-learnt-today" id="toc-what-have-we-learnt-today">What Have We Learnt Today</a></li>
+</ul>
+</div>
 
-<pre class="r"><code>library(here)</code></pre>
-<pre><code>## here() starts at C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck</code></pre>
-<pre class="r"><code>here(&quot;static&quot;)</code></pre>
-<pre><code>## [1] &quot;C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck/static&quot;</code></pre>
-<pre class="r"><code>preamble_dir &lt;- here(&quot;static&quot;, &quot;code&quot;, &quot;R&quot;, &quot;preamble&quot;)
-preamble_file  &lt;- &quot;post_preamble.R&quot;
+<div id="your-task" class="section level1">
+<h1>Your Task</h1>
+<blockquote>
+<p>For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their ranking in an episode.</p>
+<p>For example, estimate the probability of Fatiha-El Ghorri placing 1st, 2nd, 3rd, 4th and 5th in an episode of Series 19.</p>
+</blockquote>
+</div>
+<div id="a-new-dawn-a-new-dataset" class="section level1">
+<h1>A New Dawn, A New Dataset</h1>
+<p>With Series 19 well underway (at time of writing, Episode 8 <em>“Science all your life”</em> has just broadcasted), and a potential lag in the data being supplied to <code>TdlM</code> database<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, it is time to take data matters into our own piano capable hands.</p>
+<p>We are not completely abandoning the <code>TdlM</code> database, but for the purpose of the task in hand (it ideally is performed as the series broadcasts), it is useful to create, manage, and control our own dataset. This way we can ensure that the most recent episode data is available, and is of high quality.</p>
+<div id="google-sheets" class="section level2">
+<h2>Google Sheets</h2>
+<p>A <a href="https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing">Series 19 Google Sheets</a> has been created by to track basic information on series of the information. Tabs include:</p>
+<ul>
+<li><strong>Contestants:</strong> Information on the contestants, including their name, intials, URL to an image of them, and their seat number.</li>
+<li><strong>Attempt-Tasks:</strong> Each contestants task attempt in each episode of the series. This is the most important dataset.</li>
+<li><strong>MetaData:</strong> Data used for verification and quality purposes.</li>
+</ul>
+<p>Data can be imported into <code>R</code> from Google Sheets via the package <code>googlesheets4</code>. For the purpose of our task in hand, only the <code>Attempts-Tasks</code> and <code>Contestants</code> are only required.</p>
+<pre class="r watch-out"><code>library(googlesheets4)
+gs4_auth(email = &quot;themedianduck@gmail.com&quot;)
+gs_data_link &lt;- &quot;https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing&quot;
 
-source(file.path(preamble_dir, preamble_file))
-source(file.path(preamble_dir, &quot;database_preamble.R&quot;))</code></pre>
-<pre><code>## Loading required package: RSQLite</code></pre>
-<pre><code>## [1] &quot;Database Connection, tm_db, is now ready to use.&quot;</code></pre>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-## ✔ purrr     1.0.2</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter()     masks stats::filter()
-## ✖ dplyr::group_rows() masks kableExtra::group_rows()
-## ✖ dplyr::lag()        masks stats::lag()
-## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>source(file.path(preamble_dir, &quot;graphics_preamble.R&quot;))</code></pre>
-<pre><code>## 
-## Attaching package: &#39;gridExtra&#39;
-## 
-## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     combine
-## 
-## Loading required package: sysfonts
-## Loading required package: showtextdb</code></pre>
-<pre class="watch-out"><code>## # A tibble: 6 × 7
-##   `Series ID` `Episode ID` `Task ID` Task                                                      `Task Type` Contestant       Points
-##         &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                                                     &lt;chr&gt;       &lt;chr&gt;             &lt;dbl&gt;
-## 1          19            1         1 The object that most reminds you of school, in a good way Prize       Fatiha El-Ghorri      1
-## 2          19            1         1 The object that most reminds you of school, in a good way Prize       Jason Mantzoukas      5
-## 3          19            1         1 The object that most reminds you of school, in a good way Prize       Mathew Baynton        4
-## 4          19            1         1 The object that most reminds you of school, in a good way Prize       Rosie Ramsey          3
-## 5          19            1         1 The object that most reminds you of school, in a good way Prize       Stevie Martin         2
-## 6          19            1         2 Pour all the vinegar into the fish tank                   Pre-Record  Fatiha El-Ghorri      4</code></pre>
-<pre class="watch-out"><code>## [1] &quot;FEG&quot; &quot;JM&quot;  &quot;MB&quot;  &quot;RR&quot;  &quot;SM&quot;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Number of simulations should be higher if we want to reduce variability in estimated probabilities.
-However, I need to rewrite the code so sampling can be performed efficiently.
-This will also be useful for simulating full series behaviour.</p>
+task_attempt_df &lt;- range_read(gs_data_link, sheet = &quot;Attempts-Tasks&quot;)
+
+contestants_df &lt;- range_read(gs_data_link, sheet = &quot;Contestants&quot;)</code></pre>
+<p>A sample of the <code>Attempts-Tasks</code> tab can be found in Table <a href="#tab:gs-sample">1</a>.</p>
+<table>
+<caption><span id="tab:gs-sample">Table 1: </span>Heads and Tails of the ‘Attempts-Tasks’ tab of the Google Sheets Dataset, as an <code>R</code> object</caption>
+<colgroup>
+<col width="8%" />
+<col width="9%" />
+<col width="6%" />
+<col width="47%" />
+<col width="9%" />
+<col width="13%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">Series ID</th>
+<th align="right">Episode ID</th>
+<th align="right">Task ID</th>
+<th align="left">Task</th>
+<th align="left">Task Type</th>
+<th align="left">Contestant</th>
+<th align="right">Points</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">The object that most reminds you of school, in a good way</td>
+<td align="left">Prize</td>
+<td align="left">Fatiha El-Ghorri</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">The object that most reminds you of school, in a good way</td>
+<td align="left">Prize</td>
+<td align="left">Jason Mantzoukas</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">The object that most reminds you of school, in a good way</td>
+<td align="left">Prize</td>
+<td align="left">Mathew Baynton</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">The object that most reminds you of school, in a good way</td>
+<td align="left">Prize</td>
+<td align="left">Rosie Ramsey</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">The object that most reminds you of school, in a good way</td>
+<td align="left">Prize</td>
+<td align="left">Stevie Martin</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">19</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="left">Pour all the vinegar into the fish tank</td>
+<td align="left">Pre-Record</td>
+<td align="left">Fatiha El-Ghorri</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">8</td>
+<td align="right">4</td>
+<td align="left">Obey the autocue</td>
+<td align="left">Pre-Record</td>
+<td align="left">Stevie Martin</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">19</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="left">Play your people right</td>
+<td align="left">Live</td>
+<td align="left">Fatiha El-Ghorri</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="left">Play your people right</td>
+<td align="left">Live</td>
+<td align="left">Jason Mantzoukas</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">19</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="left">Play your people right</td>
+<td align="left">Live</td>
+<td align="left">Mathew Baynton</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="left">Play your people right</td>
+<td align="left">Live</td>
+<td align="left">Rosie Ramsey</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="right">19</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="left">Play your people right</td>
+<td align="left">Live</td>
+<td align="left">Stevie Martin</td>
+<td align="right">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="the-observed-reality-timeline-approach-ort" class="section level1">
+<h1>The Observed Reality Timeline Approach (ORT)</h1>
+<p>A first approach, and most good starting point to estimate the probabilities is to base it off of the <em>observed</em> placement of each contestant at the end of each episode. From this, we can count the number of times a contestant has placed in a particular ranking, and normalise with respect to the number of episodes that have transpired so far. We refer to this as the <em>observed reality timeline (ORT)</em> method to estimate the probabilities.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> That is:</p>
+<p><span class="math display">\[
+\texttt{Probability of Fatiha placing 1st in an Episode} = \frac{\texttt{Number of time Fatiha  has placed 1st}}{\texttt{Total Number of Episodes Fatiha has participated in.}}  
+\]</span></p>
+<p>and more generally,</p>
+<p><span class="math display" id="eq:ort-prob">\[
+\texttt{Probability of Contestant $c$ placing $r$ in an Episode} = \frac{\texttt{Number of time Contestant $c$ has placed in $r^{\texttt{th}}$ position}}{\texttt{Total Number of Episodes Contestant $c$ has participated in.}}  \tag{1}
+\]</span>
+The ORT estimates are essentially the empirical proportions of a contestant ranking in that position.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:obs-win-placement"></span>
+<p class="caption">
+Figure 1: Probability Distribution of Contestant Ranking Placement within in a Episode, based on the Observed Reality Timeline method.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/obs-win-placement-1.png" alt="Probability Distribution of Contestant Ranking Placement within in a Episode, based on the Observed Reality Timeline method." width="75%" />
+</div>
+<div class="insights" style="float: left">
+<p>Figure <a href="#fig:obs-win-placement">1</a> shows these estimated probabilities under the ORT approach using all data up to an including Episode 8 of Series 19. There are no major surprises in the results and insights generated. In particular:</p>
+<ul>
+<li>Matthew Baynton has a 50% probability of placing 1st in an episode, which makes sense since he has won 4 out of 8 episodes so far.
+<ul>
+<li>He also has only placed 3rd or 4th in the remaining 4 episodes thus far, and has estimated probabilities of 37.50% and 12.50% respectively.</li>
+<li>As he has never placed 2nd or 5th so far in the series, he has an estimated probability of 0% for each of these placements respectively.</li>
+</ul></li>
+<li>For the other contestants, their probabilities are (unsurprisingly) in line with how they have been performing so far in the series:
+<ul>
+<li>Fatiha is most likely to place 2nd with 37.50%, and 5th with 25%. The remaining placements are with equal probabilities of 12.50%.</li>
+<li>Jason is most likely to place 2nd, 3rd and 4th with 25%, and the remaining 12.50% either in 1st or 5th.</li>
+<li>Rosie has placed 1st, 2nd, 3rd and 5th an equal number of times across the 8 episodes, and thus her estimated probability is 25% on each. She has never placed 4th, and thus has an estimated probability of 0%.</li>
+<li>Stevie has placed 3rd 50% of the time and thus has an estimated probability of achieving this placement in an episode. Her remaining placement probabilities are 12.50%.</li>
+</ul></li>
+</ul>
+</div>
+<div id="do-you-want-me-to-stop-the-clock" class="section level2">
+<h2>Do You Want Me To Stop the Clock?</h2>
+<p>We have a way of estimating probability distribution for a contestant’s placement in a episode! Job done, stop the clock.</p>
+<p>One advantage of the ORT approach is the simplicity and intuitive nature of it. It is grounded in reality as it is based on contestant’s placement in each episode. Consequently, it is simple to calculate (low computational power) and can be conveyed easily to others.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<p class="caption">
+Figure 2: Stop the clock Alex!
+</p>
+<img src="https://media1.tenor.com/m/9tmBOQ-19LcAAAAd/little-alex-horne-alex-horne.gif" alt="Stop the clock Alex!" width="35%" />
+</div>
+</div>
+<div id="the-drawback-of-the-backdraw" class="section level2">
+<h2>The Drawback of the Backdraw</h2>
+<p>However, one potential drawback of the ORT approach is that if a contestant has not ended up in a particular place for a episode, our probability estimate of this event occurring is 0%.</p>
+<p>Whilst this is true from the observations we have, it is potentially misleading to assign a probability of 0% with such definitiveness. It could be that this event has not occurred yet (but is still probable and possible), or is an extremely rare event (extremely rare is not the same as impossible).</p>
+<p>One consequence of this approach is that at the beginning of the series when data is limited, many of the probabilities will be 0% since we have not observed that particular (contestant, placement ranking) combination. Consequently, the ORT estimated probabilities are likely not representative of what could occur later in the series.</p>
+</div>
+</div>
+<div id="the-multiverse-approach-mv" class="section level1">
+<h1>The Multiverse Approach (MV)</h1>
+<p>In the spirit of seeming hip, cool and aware of popular culture, it is time to introduce the concept of a <a href="https://en.wikipedia.org/wiki/Multiverse">multiverse</a>, and how we can use this analogy to generate a distribution of probabilities which are more representative of all potential timelines and events.</p>
+<p>The multiverse theory speculates that for every instance in which an action, decision or outcome is made, there is an alternative reality and timeline in which the alternative action, decision or outcome prevailed. For example,:</p>
+<ul>
+<li>We currently live in the timeline in which the US Taskmaster version <strong>was not a success</strong>.
+<ul>
+<li>As a result, Little Alex Horne is still heavily involved in UK Taskmaster and writing the <a href="https://youtu.be/Xkxv6a2k5uw?si=G5MvcaBt8zgeyRCr">Horne Section TV Show</a>.</li>
+</ul></li>
+<li>However, there is an alternate timeline where the US Taskmaster <strong>was a success</strong>. Who knows what consequences this could have reaped, but I would imagine:
+<ul>
+<li>Little Alex Horne is less involved in the UK Taskmaster (he’s flying to the US frequently for US Taskmaster) and the quality of each UK series slowly decreases over time.</li>
+<li>As a result, we don’t get Series 19 of UK Taskmaster (the show has been cancelled before this), and the entertainment provided by the current cast.</li>
+</ul></li>
+</ul>
+<p>In the context of Taskmaster and this task, the ORT is just one realisation of a particular timeline involving the series 19 cast in which a particular set of tasks were performed. There are potentially other timelines and alternate universes involving the Series 19 cast in which the contestants performed a different set of tasks, and the contestant placements are different. These alternative timeline and universes define the multiverse that we operate in.</p>
+<p>We can use these alternative timelines and capture more potential outcomes, even if they have yet to be observed (or will ever be). It is these alternative timelines that will also help generate a probability distribution for contestant placement within an episode, which is more informative and potential outcomes of the series. We refer to this method of estimating probabilities as the <strong>MultiVerse Approach (MV)</strong>.</p>
+<div id="whats-the-situation" class="section level2">
+<h2>What’s the Situation?</h2>
+<p>I’ll go into more detail in a later post of how these alternative timelines are simulated, and the generating the probability distribution of contestant placement within an episode. In short:</p>
+<ul>
+<li>The alternative timelines are generated through sampling and simulation based techniques.</li>
+<li>Sampling is performed (with replacement) on existing (contestant, task-attempt) data we have observed to date.</li>
+<li>Additional logic is then employed to group, re-rank and reassign points to contestants based on these samples.</li>
+<li>Once we have simulated these alternative timelines and outcomes, we can then estimate probabilities based on an equation similar to Equation <a href="#eq:ort-prob">(1)</a>.
+<ul>
+<li>However under MV, we would be considering <strong>all alternative timelines</strong> we have simulated for both the numerator and denominator, and not just episodes that have brodcasted and observed.</li>
+</ul></li>
+</ul>
+<p>In the statistical literature, this approach is based on concepts concerning <a href="https://statisticsbyjim.com/?s=sampling">sampling</a> (in particular <a href="https://statisticsbyjim.com/hypothesis-testing/bootstrapping/">Bootstrapping</a>), and <a href="https://statisticsbyjim.com/probability/monte-carlo-simulation">Monte Carlo simulation</a> methods.</p>
+</div>
+<div id="the-customised-inhaler-gang" class="section level2">
+<h2>The Customised Inhaler Gang</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:mv-prob-plot"></span>
+<p class="caption">
+Figure 3: Probability Distribution of a Contestant Placement within an Episode, based on the MultiVerse method.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/mv-prob-plot-1.png" alt="Probability Distribution of a Contestant Placement within an Episode, based on the MultiVerse method." width="75%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:mv-prob-plot">3</a> displays the probability distributions under the MultiVerse approach. It is based on using observed data up to and including episode 8 of Series 19, using 1000 simulations (that is 1000 alternative episodes were simulated), and random seed 2019 (based on 2025-05-01, the UK broadcast date of Episode 1 of Series 19)<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
+<ul>
+<li>The MV probability distributions are “complete”: a non-zero probability is assigned to all contestant ranking combinations, even though these have not been realised.</li>
+<li>The distributions for each contestant are peaked and skewed to how the contestants are ranking in the series overall (see Figure <a href="#fig:series-tracker">4</a>), and loosely to their general task performance (see Figure <a href="#fig:task-performance-summary">5</a>):
+<ul>
+<li>For Fatiha, the distribution is symmetrical and peaked around 3rd place with a probability of 21.80%.
+<ul>
+<li>She is currently placed 3rd in the series.</li>
+</ul></li>
+<li>For Jason, the distribution is skewed towards the lower rankings, with 5th place being the most probable outcome with 26.10%.
+<ul>
+<li>He is currently placed 5th in the series.</li>
+</ul></li>
+<li>Matthew’s distribution is skewed towards the higher ranking position, with 1st place being the most probable outcome with 44.10%.
+<ul>
+<li>He is currently placed 1st in the series.</li>
+<li>The probability of him ranking 5th in an episode is 5.80%.</li>
+</ul></li>
+<li>Rosie also has distribution skewedwed the higher ranking positions, although not as peaked as Matthew’s. Her most probable position is 2nd place with 26.40%, although her 1st place probability is a close second place with 25.60%.
+<ul>
+<li>She is currently placed 2nd in the Series.</li>
+</ul></li>
+<li>Stevie has a similar distribution to Jason in that it is skewed towards the lower rankings. She is most likely to rank 5th in an episode with a probability of 25%.
+<ul>
+<li>She is currently placed 4th in the series, although is only ahead of Jason (current 5th place), by 6 points.</li>
+</ul></li>
+</ul></li>
+<li>The MV distributions are noticeably different to the ORT distributions.
+<ul>
+<li>This can be see as counter-intuitive in that it differs to the reality we have observed.</li>
+<li>However, it does make sense given that the <strong>MV methodology is based on a generalised performance of a contestant</strong> (captured through the simulation of many alternative timelines), whereas the <strong>ORT is based on a single realisation</strong>. This single realisation, could be representative of how a contestant performs in general, or a rarer extreme occurrence (they performed worse).</li>
+<li>The ORT distribution can also be misleading due to close finishes that may occur, or ties in placements.</li>
+<li>The generalised nature of how the MV distributions are generated also makes sense as to why it is aligned with the series ranking. The series ranking represents the general performance of a contestant across multiple episodes which have been broadcasted; the MV distributions represent the performance over episodes. These episodes have been simulated rather than broadcasted however.</li>
+</ul></li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:series-tracker"></span>
+<p class="caption">
+Figure 4: Series Performance so far for Series 19.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/series-tracker-1.png" alt="Series Performance so far for Series 19." width="65%" />
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:task-performance-summary"></span>
+<p class="caption">
+Figure 5: Distribution of Contestant Task Performance.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/task-performance-summary-1.png" alt="Distribution of Contestant Task Performance." width="65%" />
+</div>
+</div>
+<div id="where-do-we-go-from-here" class="section level2">
+<h2>Where Do we Go From Here?</h2>
+<p>One potential benefit of the MV approach is that we are likely able to produce distributions on series outcomes. For example:</p>
+<ul>
+<li>We are likely able to produce distributions on each contestants placement at the end of the series.
+<ul>
+<li>For example, the probability of Fatiha finishing in 5th place at the end of series, or Jason winning the series (how improbable is it, or is it simply impossible?).</li>
+</ul></li>
+<li>We are able to also produce distributions on each contestants series points.
+<ul>
+<li>For example, what is the probability of Jason scoring more than 140 points by the end of the series.</li>
+</ul></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<p class="caption">
+Figure 6: You have been warned of these plans…
+</p>
+<img src="https://64.media.tumblr.com/5ca4130c6f7976664b6a9a4499eaa34a/c14503e9951cfe41-e4/s400x600/5d03e0de49118b385162aab3cefed31a81836244.gifv" alt="You have been warned of these plans..." width="40%" />
+</div>
+<p>However, the MV approach to estimate probability distributions of contestant ranking placements within an episode is by no means perfect. There are still some considerations and assumptions that needed to be expanded upon in the future. For example:</p>
+<ul>
+<li>Is 1000 alternate timelines (simulations) sufficient in obtaining the accurate, reliable probability distributions?
+<ul>
+<li>Ideally, sufficient simulations have been performed such that the distribution does not drastically between randomness settings.</li>
+<li>A study of the number of simulations required to achieve a stable distribution is likely a topic for another post.</li>
+</ul></li>
+<li>The proposed MV method does not account for certain Taskmaster idiosyncrasies.
+<ul>
+<li>For example, we do not distinguish between solo and team tasks. Nor do we account for “5 points to the winner, 0 for everyone else” instances, or <a href="https://taskmaster.info/task.php?id=3520">Series 18’s Joker mechanism</a>.</li>
+</ul></li>
+<li>Greater care and understanding of how ties should be handled. In particular, we do not consider tie breakers when two or more contestants having the highest number of points at the end of the episode. The winner of these tie breakers is officially deemed the winner of the episode (they get to take home the prizes), but does not affect the series points.</li>
+</ul>
+</div>
+</div>
+<div id="what-have-we-learnt-today" class="section level1">
+<h1>What Have We Learnt Today</h1>
+<div class="infobox today">
+<p>We’ve learnt:</p>
+<ul>
+<li>We have a method to to estimate the probability distributions of each contestant’s ranking within a single episode.
+<ul>
+<li>This method is a sampling, simulation based method which uses historical episode-contestant-task attempt which has already been observed. We effectively create alternate universes and timelines involving the Series 19 cast in which different task outcomes occurred.</li>
+</ul></li>
+<li>The estimated probability distributions are in line with the series rankings to date.</li>
+<li>The estimated probability distributions also capture realities and events which have not yet been observed.
+<ul>
+<li>For example we can estimate the probability of Matthew Baynton ranking 5th in an episode, something that we have not observed so far.</li>
+</ul></li>
+</ul>
+<p><img src="https://media1.tenor.com/m/6dhjX1hEMe4AAAAC/greg-davies-taskmaster.gif" width="35%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>It is still unclear what the service-level agreement is with this database in terms of when new data is expected to be available after transmission, fits our particular needs, and is of high quality (hopefully at least).<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>The ORT naming will make sense later in this post.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>The notion of a random seed and the importance of setting it will become discussed in a subsequent post. It is to do with repeatability and controlling randomness.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
