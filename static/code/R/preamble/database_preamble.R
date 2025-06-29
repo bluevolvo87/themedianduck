@@ -41,7 +41,7 @@ package_name <- "RSQLite"
 if(!require(package_name, character.only = TRUE)){
     install.packages(package_name, character.only = TRUE)
 } else{
-    library(package_name, character.only = TRUE)    
+    suppressPackageStartupMessages (library(package_name, character.only = TRUE))    
 }
 
 
@@ -54,4 +54,10 @@ tm_db <- dbConnect(sqlite_driver, dbname = db_data_location)
 print("Database Connection, tm_db, is now ready to use.")
 
 
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
+
+
+# Associated with googlesheets interaction
+suppressPackageStartupMessages(library(googlesheets4))
+gmail_acct <- "themedianduck@gmail.com" # Gmail account associated with the project
+gs4_auth(email = gmail_acct)

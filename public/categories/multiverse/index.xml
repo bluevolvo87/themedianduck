@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MultiVerse on The Median Duck</title>
+    <link>https://bluevolvo87.github.io/themedianduck/categories/multiverse/</link>
+    <description>Recent content in MultiVerse on The Median Duck</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Christopher Nam</copyright>
+    <lastBuildDate>Sat, 28 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/multiverse/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>May the Odds Be In Your Favour</title>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</link>
+      <pubDate>Sat, 28 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</guid>
+      <description>Your Task&#xD;A New Dawn, A New Dataset&#xD;The Observed Reality Timeline Approach (ORT)&#xD;The Multiverse Approach (MV)&#xD;What Have We Learnt Today&#xD;Your Task&#xD;For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their ranking in an episode.&#xA;For example, estimate the probability of Fatiha-El Ghorri placing 1st, 2nd, 3rd, 4th and 5th in an episode of Series 19.&#xA;A New Dawn, A New Dataset&#xD;With Series 19 well underway (at time of writing, Episode 8 “Science all your life” has just broadcasted), and a potential lag in the data being supplied to TdlM database1, it is time to take data matters into our own piano capable hands.</description>
+    </item>
+  </channel>
+</rss>

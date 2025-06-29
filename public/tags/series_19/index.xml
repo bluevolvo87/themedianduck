@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Series_19 on The Median Duck</title>
-    <link>https://bluevolvo87.github.io/themedianduck/tags/series_19/</link>
+    <link>http://localhost:4321/themedianduck/tags/series_19/</link>
     <description>Recent content in Series_19 on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
     <lastBuildDate>Sat, 17 May 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://bluevolvo87.github.io/themedianduck/tags/series_19/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:4321/themedianduck/tags/series_19/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>May the Odds Be In Your Favour</title>
-      <link>https://bluevolvo87.github.io/themedianduck/2025/05/odds-in-your-favour/</link>
+      <link>http://localhost:4321/themedianduck/2025/05/odds-in-your-favour/</link>
       <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/2025/05/odds-in-your-favour/</guid>
-      <description>Hello&#xA;Wow I have forgot how to do this.121&#xA;Why aren’t your working&#xA;## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──&#xD;## ✔ dplyr 1.1.4 ✔ readr 2.1.5&#xD;## ✔ forcats 1.0.0 ✔ stringr 1.5.1&#xD;## ✔ ggplot2 3.5.1 ✔ tibble 3.2.1&#xD;## ✔ lubridate 1.9.3 ✔ tidyr 1.3.1&#xD;## ✔ purrr 1.0.2 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──&#xD;## ✖ dplyr::filter() masks stats::filter()&#xD;## ✖ dplyr::lag() masks stats::lag()&#xD;## ℹ Use the conflicted package (&amp;lt;http://conflicted.</description>
+      <guid>http://localhost:4321/themedianduck/2025/05/odds-in-your-favour/</guid>
+      <description>library(here)&#xD;## here() starts at C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck&#xD;here(&amp;quot;static&amp;quot;)&#xD;## [1] &amp;quot;C:/Users/cfhna/Documents/Git_Projects/RStudio/themedianduck/static&amp;quot;&#xD;preamble_dir &amp;lt;- here(&amp;quot;static&amp;quot;, &amp;quot;code&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;preamble&amp;quot;)&#xD;preamble_file &amp;lt;- &amp;quot;post_preamble.R&amp;quot;&#xD;source(file.path(preamble_dir, preamble_file))&#xD;source(file.path(preamble_dir, &amp;quot;database_preamble.R&amp;quot;))&#xD;## Loading required package: RSQLite&#xD;## [1] &amp;quot;Database Connection, tm_db, is now ready to use.&amp;quot;&#xD;## ── Attaching core tidyverse packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──&#xD;## ✔ dplyr 1.1.4 ✔ readr 2.1.5&#xD;## ✔ forcats 1.0.0 ✔ stringr 1.5.1&#xD;## ✔ ggplot2 3.5.1 ✔ tibble 3.2.1&#xD;## ✔ lubridate 1.</description>
     </item>
   </channel>
 </rss>

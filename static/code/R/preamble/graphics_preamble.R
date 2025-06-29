@@ -1,14 +1,18 @@
-library(ggplot2)
-library(ggimage)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(ggimage))
 
-library(ggplotify)
+suppressPackageStartupMessages(library(ggplotify))
 
-library(gridExtra) # For grid of figures
+suppressPackageStartupMessages (library(gridExtra)) # For grid of figures
 
 
 tm_colour_vec <- c("#938c34",  "#800000", "#000000")
 
 # Typewriter font.
-library(showtext)
+suppressPackageStartupMessages(library(showtext))
 font_add_google("Special Elite", "elite")
 showtext_auto()
+
+
+# GGplot specifics
+theme_set(theme_gray(base_size = 18))

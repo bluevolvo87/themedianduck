@@ -7,14 +7,14 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Sat, 17 May 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 28 Jun 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://bluevolvo87.github.io/themedianduck/tags/simulation/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>May the Odds Be In Your Favour</title>
-      <link>https://bluevolvo87.github.io/themedianduck/2025/05/odds-in-your-favour/</link>
-      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/2025/05/odds-in-your-favour/</guid>
-      <description>Hello&#xA;Wow I have forgot how to do this.121&#xA;Why aren’t your working&#xA;## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──&#xD;## ✔ dplyr 1.1.4 ✔ readr 2.1.5&#xD;## ✔ forcats 1.0.0 ✔ stringr 1.5.1&#xD;## ✔ ggplot2 3.5.1 ✔ tibble 3.2.1&#xD;## ✔ lubridate 1.9.3 ✔ tidyr 1.3.1&#xD;## ✔ purrr 1.0.2 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──&#xD;## ✖ dplyr::filter() masks stats::filter()&#xD;## ✖ dplyr::lag() masks stats::lag()&#xD;## ℹ Use the conflicted package (&amp;lt;http://conflicted.</description>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</link>
+      <pubDate>Sat, 28 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</guid>
+      <description>Your Task&#xD;A New Dawn, A New Dataset&#xD;The Observed Reality Timeline Approach (ORT)&#xD;The Multiverse Approach (MV)&#xD;What Have We Learnt Today&#xD;Your Task&#xD;For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their ranking in an episode.&#xA;For example, estimate the probability of Fatiha-El Ghorri placing 1st, 2nd, 3rd, 4th and 5th in an episode of Series 19.&#xA;A New Dawn, A New Dataset&#xD;With Series 19 well underway (at time of writing, Episode 8 “Science all your life” has just broadcasted), and a potential lag in the data being supplied to TdlM database1, it is time to take data matters into our own piano capable hands.</description>
     </item>
   </channel>
 </rss>

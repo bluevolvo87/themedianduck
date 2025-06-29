@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 options(width = 1000)
 
-library(kableExtra)
+suppressPackageStartupMessages(library(kableExtra))
 
 # Variable substituion in strings
-library(glue)
+suppressPackageStartupMessages(library(glue))
