@@ -1,0 +1,9 @@
+---
+title: Take a Chance on Me
+author: Christopher Nam
+date: '2025-07-01'
+slug: take-a-chance-on-me
+categories: []
+tags: []
+draft: yes
+---

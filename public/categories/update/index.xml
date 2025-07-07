@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Update on The Median Duck</title>
-    <link>https://bluevolvo87.github.io/themedianduck/categories/update/</link>
+    <link>http://localhost:4321/themedianduck/categories/update/</link>
     <description>Recent content in Update on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
     <lastBuildDate>Fri, 20 Jun 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/update/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:4321/themedianduck/categories/update/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>The Elephant in the Room</title>
-      <link>https://bluevolvo87.github.io/themedianduck/2025/06/the-elephant-in-the-room/</link>
+      <link>http://localhost:4321/themedianduck/2025/06/the-elephant-in-the-room/</link>
       <pubDate>Fri, 20 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/2025/06/the-elephant-in-the-room/</guid>
+      <guid>http://localhost:4321/themedianduck/2025/06/the-elephant-in-the-room/</guid>
       <description>The Elephant&#xD;The Room: Series 19 Opinion (so far)&#xD;The Elephant&#xD;Hello. It’s been a while and I apologise to my single digit audience for my absence.&#xD;I would love to say that I had a good excuse for my absence, but the truth is rather more boring than that.&#xA;However, it’s time embrace the free time the I have regained and reignite this (passion) project.&#xA;The simple truth is that the Board volunteer position I held for the Housing Association associated with my condominium (a flat for UK readers) took over a significant proportion of my time and energy.</description>
     </item>
   </channel>

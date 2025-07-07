@@ -1,0 +1,536 @@
+---
+title: Series-ly, Take a Chance on Me
+author: Christopher Nam
+date: '2025-07-06'
+slug: take-a-chance-on-me
+categories: [Series 19, Simulation, MultiVerse]
+tags: [Series 19, Simulation, MultiVerse]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+```
+
+
+```{r, echo = FALSE}
+blogdown::shortcode("callout", text="The majority of this post was written before I had watched the Series 19 finale. My results and insights are driven purely from data up to Episode 9, I have not cheated in any way!")
+```
+# Your Task
+
+> For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their **series rank**. Bonus points for also generating proability distribution on each contestant's series points accumulated by the end of series.
+> 
+> For example, estimate the probability of Jason Mantzoukas placing 5th by the end of series, and accumulating 140 or more points by the end of the series. 
+
+```{r, echo = FALSE, out.width = "35%", fig.align='center'}
+knitr::include_graphics(path = "https://media1.tenor.com/m/hq---sEvZbsAAAAC/greg-davies-taskmaster.gif")
+```
+
+# Previously on The Median Duck...
+In a previous post, ['May the Odds Be Your Favour'](/themedianduck/2025/06/odds-in-your-favour/), we proposed a new method to estimate probability distributions associated with a contestants placement within an episode. This approach,  the MultiVerse approach[^prev], was a simulation based sampling method in which we sampled from existing (contestant, task) observations from broadcasted episodes, and created alternative timelines. 
+
+These alternative timelines allowed us to create probability distributions, even for events that have not been observed yet. For example, we estimated the probability of Matthew Baynton placing 5th in a episode was only 5.80% using data up to and including Episode 8. This is despite the fact that so far up to and including Episode 9, Matthew has never placed in 5th position for an episode.[^mb] 
+
+[^prev]: Naming of method was driven by wanting to seem [hip and cool](https://media1.tenor.com/m/w6Ow10J0atMAAAAd/how-do-you-do-fellow-kids-steve-buscemi.gif).
+
+[^mb]: Who knows what will happen in Episode 10? It is still possible that Matthew could place in 5th position, but it is highly unlikely based on our estimated probability which is based on his past performance in tasks to date. 
+
+We can continue to extend this methodology to estimate overall series statistic distributions. For example, a contestant's placement at the end of the series, and the total number of series points accumulated. 
+
+
+
+# The Ultimate Pen ... is the Penultimate
+```{r}
+library(googlesheets4)
+gs4_auth(email = "themedianduck@gmail.com")
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks")
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+```
+```{r, echo = FALSE}
+num_sim <- 1000 #Number of simulations to perform.
+
+series_length <- 10 #Number of episodes in a series
+
+#Per Episode
+num_prize_tasks <- 1 
+num_prerecorded_tasks <- 3
+num_live_tasks <- 1
+
+max_episode_used <- 9 #Threshold for which episodes are used. 
+
+series_id <- unique(task_attempt_df$`Series ID`)
+
+num_broadcasted_eps <- length(unique(task_attempt_df$`Episode ID`))
+latest_ep_broadcasted <- max(task_attempt_df$`Episode ID`)
+contestant_list <- unique(contestants_df$`Contestant Name`)
+initials_list <- unique(contestants_df $`Initials`)
+task_type_list <- unique(task_attempt_df$`Task Type`)
+
+```
+
+```{r}
+series_tracker_df <- task_attempt_df %>% 
+    filter(`Episode ID` <= max_episode_used) %>%
+    group_by(`Series ID`, `Contestant`, `Episode ID`) %>%
+    summarise(Episode_Points = sum(Points)) %>% 
+    arrange(`Episode ID`) %>%
+    mutate(Series_Points = cumsum(Episode_Points)) %>%
+    group_by(`Series ID`, `Episode ID`) %>%
+    mutate(Series_Ranking = rank(-Series_Points, ties.method = "min")) %>%
+    ungroup() %>%
+    left_join(contestants_df, by =  join_by(`Contestant` == `Contestant Name`))
+
+
+latest_df <- series_tracker_df %>% slice_max(`Episode ID`)
+
+```
+
+
+```{r, cache=TRUE}
+seed_id <- 2025-05-01
+set.seed(seed_id)
+contestant_iter <- contestant_list[1]
+single_sample <- 1 
+
+episode_sample_df <- NULL
+
+for(sample_iter in 1:num_sim){
+
+for(contestant_iter in contestant_list){
+
+    contestant_attempt_df <- task_attempt_df %>% dplyr::filter(Contestant == contestant_iter & `Episode ID` <= max_episode_used)
+    
+    # Prize Task Sampling
+    contestant_prize_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = single_sample * num_prize_tasks, replace = TRUE)
+    
+    # Live Task Sampling
+    contestant_prerecord_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Pre-Record" ) %>% slice_sample(n = single_sample * num_prerecorded_tasks, replace = TRUE)
+    contestant_prerecord_samples_df$`Task ID` <- rep(2:4, each = single_sample) 
+    
+    # Live Task Sampling
+    contestant_live_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Live" ) %>% slice_sample(n = single_sample * num_live_tasks, replace = TRUE)
+    
+    contestant_episode_sample <- rbind(contestant_prize_samples_df, contestant_prerecord_samples_df, contestant_live_samples_df)
+    
+    contestant_episode_sample$`Episode ID` <- paste0("Sim ", sample_iter)
+    
+    episode_sample_df <- rbind(episode_sample_df, contestant_episode_sample)
+}
+}
+#episode_sample_df
+```
+
+```{r}
+# Re rank points so that they are from 1-5
+# But retain disqualifications if this was sampled.
+episode_sample_df <- episode_sample_df  %>% mutate (`Observed Points Sample` = Points) %>%
+    group_by(`Episode ID`, `Task ID`, `Task Type`) %>%
+    mutate(Points = rank(`Observed Points Sample`, ties.method = "min")) %>%
+    mutate(Points = ifelse(`Observed Points Sample` == 0, 0, `Points`)) %>%
+    arrange(`Episode ID`, `Task ID`, `Contestant`)
+```
+
+
+```{r}
+#Episode summary for each contestant (summed over tasks), and ranked within that episode. 
+episode_sample_summary_df <- episode_sample_df %>% group_by(`Series ID`, `Episode ID`, `Contestant`) %>%
+    summarise(`Episode Points` = sum(Points)) %>%
+    mutate(`Episode Rank` = rank(-`Episode Points`, ties.method = "min"))
+```
+```{r}
+# Rank Summary across Simulations
+episode_rank_summary_df <- episode_sample_summary_df %>%
+    group_by(`Series ID`, Contestant, `Episode Rank`) %>%
+    summarise("Number Episodes" = n()) %>%
+    ungroup() %>%
+    group_by(`Series ID`, `Contestant`) %>%
+    mutate("Proportion Episodes" = `Number Episodes`/sum(`Number Episodes`)) %>%
+    ungroup() %>%
+    left_join(y= contestants_df, by = join_by(`Contestant` == `Contestant Name`))
+
+```
+
+
+What a difference an episode makes, or has it? Before proceeding with the task in hand, we re-run our MV approach using data up to and including Episode 9; we previously only ran it using data up to Episode 8. 
+
+::: {.insights}
+
+
+The Series 19 Tracker (Figure \@ref(fig:series-tracker)) shows that:
+
+- Matthew continues to dominate this series and has widen his first place advantage compared to the other contestants. Matthew has a good 20 point advantage.  
+    - This looks like a one horse race and has been for a while.
+- For the remaining contestants, Episode 9 definitely tightened up the race for second and below placements.
+    - There are only 5 points separating all four contestants.
+    - The horse race is most likely the most exciting (and uncertain) for the second and below placements.
+    
+From our update probability distributions episode of wins (Figure \@ref(fig:mv-prob-plot), updated with Episode 9 tasks being included): 
+
+- There are some slight changes in the episode win distributions using up to Episode 8 data; [prior distribution](/themedianduck/2025/06/odds-in-your-favour/index_files/figure-html/mv-prob-plot-1.png).
+    - As Jason won Episode 9, his new distribution reflects this. He previously had 12.80% chance of winning an episode (up to Episode 8), but now has 18.00% chance of winning (up to Episode 9).
+    - Rosie placed last in Episode 9. She previously had 11.10% chance of placing 5th in the episode (up to Episode 8), but this has now increased to 15.80% when including the latest episode data. 
+    - Matthew's likelihood of winning an episode has increased from 44.10% (up to Episode 8) to 45.70% (up to Episode 9). Matthew placed third in Episode 9; he  performed poorly in the **"Give Patatas the elixir"** task (he placed last) and was middling elsewhere. This middling performance did not negatively impact his probabilty of winning future episodes.
+    - Fatiha and Stevie however, both saw the probability of them winning future episodes decline. They placed 4th or 5th for the majority of tasks in the episode which evidently has impacted this probability.
+:::
+
+
+```{r series-tracker, cache = FALSE, out.width = "50%", fig.cap = "Series Performance so far for Series 19.", fig.show = "hold"}
+
+graph_title_label <- glue("Series {series_id} Tracker", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+series_tracker_plot <- ggplot(series_tracker_df, 
+       aes(y= Series_Points, x= `Episode ID`,  group = Initials, image = `Image URL`)) +
+    geom_point(aes(colour = Initials), alpha = 0.5) +
+    geom_line(aes(colour = Initials), alpha = 0.5, size = 2) +
+    geom_image(data = latest_df, aes(x = `Episode ID`+(`Series_Ranking`-1)*0.5, y = `Series_Points` , image = `Image URL`), by = "height", size = 0.1, alpha = 0.5) +
+    theme(
+        text = element_text(family = "elite", size = 20),
+        legend.position = 'bottom'
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Episode") +
+    ylab("Series Points") +
+    scale_y_continuous(breaks = seq(from = 0, to = max(series_tracker_df$Series_Points), by = 25)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 12)) +
+    coord_cartesian(xlim = c(1, 12))
+series_tracker_plot
+```
+
+
+```{r mv-prob-plot, fig.cap = "Probability Distribution of a Contestant Placement within an Episode, based on the MultiVerse method.", out.width = "50%", fig.show = "hold"}
+graph_title_label <- glue("MV Probability Distribution of Contestant Within-Episode Ranking for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}. Number of Simulations: {num_sims}, with Seed {seed_id}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+ep_rank_plot <- ggplot(episode_rank_summary_df, 
+       aes(y = `Proportion Episodes`, x= `Episode Rank`, image = `Image URL`, label = scales::percent(`Proportion Episodes`, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.2), colour = "black", size = 7.5, family = "elite"
+              ) +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+ep_rank_plot
+```
+
+```{r, fig.show="hold", out.width="40%", include = FALSE}
+par(mar = c(.1, .1, .1, .1))
+series_tracker_plot
+ep_rank_plot
+```
+
+# Series-ly, What's the Situation?
+Insights on episode wins are all well and good, but insights on the overall series wins and statistics is where the real money is.[^wins]
+
+[^wins]: The number of episodes a contestant wins is not necessarily indicative of whether they will win the series; the points a contestant is awarded are ultimately what determines how you will perform in a series. Of course, performing well in tasks usually means that you win and place higher in an episode. But it is entirely plausible that a contestant who consistently places second but only misses out on the top spot by a few points, could end up as the series winner (if the episode winner is inconsistent in performance, or there is variability in who wins the episode).
+
+
+## Wait, what, what wait?
+To get distribution on series related statistics, we simply combine the observed information we have seen to date for the series, and the episode simulations.
+
+This combined result gives us simulations pertaining to the full series from which we can use to generate probability distributions from. 
+
+:::{.insights}
+Figure \@ref(fig:mv-series-prob-plot) shows the probability distribution of a contestant's series ranking.
+
+- We have estimated that __Matthew will win the series with 100%__. This is not entirely surprising given that:
+    - Matthew has a 20 point lead going into the finale.
+    - Typically, the minimum and maximum number of points a contestant can be awarded is 5 and 25 (assuming no disqualifications or joker mechanics).
+    - Matthew has been one of the stronger contestants in the series in terms of task performance.
+- For the other contestants:
+    - Fatiha has a relatively flat distribution, peaked slightly around placing 3rd; **Fatiha is most likely to place 3rd with a probability of 36.50%**.
+    - Jason has a distribution that is skewed towards the lower rankings. **Jason is most likely to place 5th with a probability of 46.90%**.
+    - Rosie's ranking distribution is skewed to the higher rankings; **Rosie is most like to place 2nd in the series with a probability of 61.60%**.
+    - Stevie's series placement distribution is relatively flat, but peaked around placing 4th. **Steveie is most likely going to place 4th with a probability of 30.10%**.
+
+:::
+```{r}
+# How does it compare to the observed reality?
+series_td_df <- task_attempt_df %>% 
+    filter(`Episode ID` <= max_episode_used) %>%
+    group_by(`Series ID`, Contestant) %>%
+    summarise(
+        Num_Tasks = dplyr::n(),
+        Num_Episode = n_distinct(`Episode ID`), 
+        Series_Points = sum(Points)) %>%
+    ungroup()
+```
+```{r}
+series_sample_df <- episode_sample_summary_df %>%
+    select(-`Episode Rank`) %>%
+    left_join(series_td_df, by =  join_by(`Contestant` == `Contestant`, `Series ID` == `Series ID`)) %>%
+    rename(
+        Rem_Series_Sim_Points = `Episode Points`, 
+        Series_To_Date_Points = Series_Points) %>%
+    mutate(Full_Series_Poins_Sim = Series_To_Date_Points + Rem_Series_Sim_Points) %>%
+    group_by(`Series ID`, `Episode ID`) %>%
+    mutate(`Series Rank` = rank(-Full_Series_Poins_Sim, ties.method = "min")) %>%
+    left_join(contestants_df, by =  join_by(`Contestant` == `Contestant Name`)) %>%
+    ungroup()
+```
+
+```{r}
+series_sample_summary_df <- series_sample_df %>%
+    group_by(`Series ID`, Contestant, Initials, `Image URL`, `Seat`, `Series Rank`) %>%
+    summarise(
+        Count = n()
+    ) %>% 
+    group_by(`Series ID`, Contestant, Initials, `Image URL`, `Seat`) %>%
+    mutate(Sum_Count = sum(Count),
+           Prop_Count = Count/Sum_Count,
+           MAP_Rank = Prop_Count == max(Prop_Count),
+           MAP_fontface = ifelse(MAP_Rank, 'italic', 'plain'),
+           MAP_colour = ifelse(MAP_Rank, 'darkgreen', 'black')
+    ) 
+
+#series_sample_summary_df
+```
+
+
+```{r mv-series-prob-plot, fig.cap = "Probability Distribution of a Contestant Series Ranking, based on the MultiVerse method.", fig.subcap = "The most probable ranking for each contestant are in bold and are green", out.width = "75%"}
+graph_title_label <- glue("MV Probability Distribution of Series Ranking for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}. Number of Simulations: {num_sims}, with Seed {seed_id}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+
+series_sample_summary_df %>% ggplot(aes(x=`Series Rank`, y = Prop_Count, image = `Image URL`, group = Initials, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    facet_grid(Initials~., switch = "both") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.5), size = 7.5, family = "elite", colour = series_sample_summary_df$MAP_colour, fontface = series_sample_summary_df$MAP_fontface) +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Series Ranking") +
+    ylab("Probability") +
+    labs(caption = "The most probable ranking for each contestant are in bold and are green.") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+```{r}
+max_scores_df <- series_sample_df %>% group_by(`Series ID`, Contestant, Initials, `Image URL`) %>%
+    slice_max(Full_Series_Poins_Sim)
+```
+
+```{r}
+series_score_summary_df <- as.data.frame(series_sample_df %>%
+    group_by(Contestant, Initials, `Image URL`, Seat) %>%
+    summarise(Min = min(Full_Series_Poins_Sim),
+            P10 = quantile(Full_Series_Poins_Sim, probs = 0.1),
+            P25 = quantile(Full_Series_Poins_Sim, probs = 0.25),
+            Median = quantile(Full_Series_Poins_Sim, probs = 0.50),
+            Mean = mean(Full_Series_Poins_Sim),
+            P75 = quantile(Full_Series_Poins_Sim, probs = 0.75),
+            P90 = quantile(Full_Series_Poins_Sim, probs = 0.90),
+            StdDev = sd(Full_Series_Poins_Sim)
+    ) %>% ungroup())
+```
+
+:::{.insights}
+Figure \@ref(fig:mv-series-points-hist) presents histograms of each contestant's series points, and Table \@ref(fig:series-score-summary) presents summary statistics of these distributions.
+
+- For all contestants, their series points histograms could plausibly  follow a Normal/Gaussian distribution with different averages. They all exhibit the typical symmetrical bell shape curve which is peaked in the middle.
+    - The actual values of the Mean (average) and Median being within 0.5 of each other also supports this Normal distribution hypothesis.
+    - The relatively small and comparable differences of percentiles to the median also support the symmetrical distribution hypothesis. That is:
+        - (P75-Median) $\approx$ (Median - P25)
+        - (P90-Median) $\approx$ (Median - P10)
+- What the histograms are centered around differ for each contestant, and are in line with the most probable rankings as indicated in Figure \@ref(fig:mv-series-prob-plot).
+    - Matthew's distribution is furthest to the right, and is centered around the highest average series points of 168.98. Matthew's most likely placement was 1st.
+    - Rosie's distribution follows next; her distribution is second furthest to the right and she was most likely to come 2nd. Her series points distribution is centered around an average of 147.84.
+    - Fatiha and Stevie's series points distribution are very similar in what they are centered around (145.28 and 144.40). This similarity in series points distribution is potentially not surprising given their relatively flat and similar series ranking distributions (see Figure \@ref(fig:mv-series-prob-plot))
+    - Jason's series points distribution is furthest to the left and is not surprising given the he was most likely going to place 5th according to our simulations. His series points distribution is centered around 142.42.
+- We have also plotted a vertical line at 140 series points to provide a sense of how likely each contestant will achieve a score which is more than this threshold. 
+    - From eye balling in Figure \@ref(fig:mv-series-points-hist), contestants are likely going to satisfy this event with the following probabilities.
+        - Fatiha: 90-95%
+        - Jason: 80% 
+        - Matthew: 100%
+            - Not surprising given that he ended Episode 9 with 154 points already.
+        - Rosie: 99%
+        - Stevie: 90-95%
+    - A more accurate probability estimate of this event can be inferred from Table \@ref(fig:series-score-summary):
+        - Jason for example, first exceeds 140 points at the P25 percentile. The P25 represents that 25% of Jason's series points will be below 140. Consequently, by taking the complement, we estimate that Jason will score more than 140 points in the series with probability 75%.
+
+:::
+
+```{r mv-series-points-hist, fig.cap = "Series Score Distributions using the MultiVerse Probability Estimation Approach.", out.width = "75%"}
+graph_title_label <- glue("MV Histogram of Series Scores for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}. Number of Simulations: {num_sims}, with Seed {seed_id}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+event_threshold <- 140
+caption_label <- glue("Dotted vertical line at {points} Points represents the JM Event we want to estimate the probability for.", points = event_threshold)
+
+series_sample_df %>% ggplot(aes(x=Full_Series_Poins_Sim, group = Initials)) +
+    geom_histogram(fill = "#FFFFC2", binwidth = 1) + 
+    geom_image(data = series_score_summary_df, aes(image = `Image URL`, x= Median, y = 50), size=0.7, by = "height") +
+    geom_vline(xintercept = event_threshold, linetype = 3, linewidth = 1.5) + 
+    facet_grid(Initials~., switch = "both") +
+    scale_y_continuous() +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    xlab("Series Score") +
+    ylab("Number of Occurrences")
+```
+
+
+
+
+```{r series-score-summary, fig.cap = "Summary Statistics of each Contestant's Series Points Distribution"}
+reactable::reactable(data= series_score_summary_df,
+                     columns = list(
+                                              `Contestant` = reactable::colDef(
+      cell = function(value, index) {
+          img_url <- series_score_summary_df[index, "Image URL"]
+          image <- img(src = img_url, style = "height: 25%;", alt = "Contestant Image")
+      tagList(
+          div(style = list(fontWeight = 600), value),
+        div(style = "display: inline-block; width: 30%;", image)
+        
+      )
+      },
+      minWidth = 125
+      ), 
+                     `Initials` = colDef(show = TRUE, maxWidth = 100), 
+      `Image URL` = colDef(show = FALSE),
+      `Seat` = colDef(format = colFormat(digits=0), maxWidth = 50)
+                )
+      ,
+      
+                     defaultColDef = reactable::colDef(
+                         format = colFormat(digits = 2),
+                         align = "center", 
+                         headerStyle = list(background = "#f7f7f8"),
+                        vAlign = "center",
+                        headerVAlign = "bottom"
+                        
+                         ),
+                     bordered = TRUE,
+                     highlight = TRUE,
+      striped = TRUE,
+      compact = TRUE,
+      theme = reactableTheme(
+          color = "black",
+          backgroundColor = "#FFFFC2",
+          stripedColor = "#ffff94"
+      )
+          )
+```
+
+
+## Load Me ... I'm Locked In
+```{r}
+event_prob_df <- series_sample_df %>% group_by(`Series ID`, Contestant, Initials) %>%
+    summarise(
+        Num_Sim = n(),
+        Event_Second_Occurrence = sum(`Series Rank` == 5),
+        Event_A_Occurrence = sum(Full_Series_Poins_Sim >= event_threshold),
+        Event_B_Occurrence = sum((Full_Series_Poins_Sim >= event_threshold) & (`Series Rank` == 5))
+        ) %>%
+    mutate(
+        Probability_Event_Second = Event_Second_Occurrence/Num_Sim,
+        Probability_Event_A = Event_A_Occurrence/Num_Sim,
+        Probability_Event_B = Event_B_Occurrence/Num_Sim
+    ) %>%
+ungroup()
+```
+But wait, what if want to get an even more accurate probability estimate of Jason Mantzoukas scoring at least `r event_threshold` points by the end of the series?
+
+Well, we can calculate this more precised by counting the number of times this event occurred in our simulation (the event being Jason scoring at least 140 points), divided by the number of simulations that is performed.
+
+That is:
+
+$$
+\texttt{Probability of Jason scoring at least 140 points} = \frac{\texttt{Number of times Jason scored at least 140 points in our Simulations}}{\texttt{Number of Simulations Performed}}
+$$
+Using this equation, we estimate the probability of Jason scoring at least 140 points by the end of the series to be **`r scales::percent(as.numeric(filter(event_prob_df, Initials == "JM") %>% select(Probability_Event_A)), accuracy = 0.01)`**.
+
+```{r, echo = FALSE, out.width = "35%", fig.align='center'}
+knitr::include_graphics(path = "https://media1.tenor.com/m/UqE0Mtr0aUoAAAAC/bosh-kerry-godliman.gif")
+```
+
+In general, we can estimate the probability of any event occurring with the following equation:
+
+$$
+\texttt{Probability of Event Occurring} = \frac{\texttt{Number of times Event occurs in the Simulations}}{\texttt{Number of Simulations Performed}}
+$$
+From this we also have probabilities for the following events:
+
+- Probability of _Jason placing 5th in the series_: *`r scales::percent(as.numeric(filter(event_prob_df, Initials == "JM") %>% select(Probability_Event_Second)), accuracy = 0.01)`*.
+- Probability of _Jason placing 5th in the series **and** scoring at least 140 points in the series_: *`r scales::percent(as.numeric(filter(event_prob_df, Initials == "JM") %>% select(Probability_Event_B)), accuracy = 0.01)`*.
+
+
+## Catch of the Day
+Great, we have a way to estimate probabilities associated with events in Taskmaster. Job done, stop the clock!
+
+
+However, my internal humble self would like to highlight that this is **one way** to estimate probabilities; but it is **not the only way** to estimate probabilities. There are plenty of disclaimers and limitations to this method to be made in case any of my limited number of readers thinks they can use this method to spend all their life savings betting on Taskmaster outcomes. 
+
+- Our insights are rooted in data and what has been observed so far in the status quo.
+    - Whilst we estimated that Matthew would win the series with 100%, there is potentially still a very small chance (very close to 0), that Matthew doesn't comes first in the series.
+    - Cheeky Little Alex Horne could come up with some new, unconventional game mechanic in the final episode (for example, points are worth 10 times as much in a particular task, there's a points switch-a-roo between contestants). 
+    - The MV method would not be able to account for these unforeseen and unconventional if they had not occurred yet.
+- Our approach could be more representative of some Taskmaster mechanics which are common seen across series. This includes:
+    - Accounting for the differences between solo and team tasks.
+    - Accounting for the mix of subjective and objective tasks in an episode.
+        - It would be extremely rare to see an episode full of only subjective or objective tasks. 
+    - Accounting for the mix in task locations that are seen in a single episode.
+        - An episode of Taskmaster rarely features tasks only performed in one location. Task locations are generally varied within a single episode.
+- Limited data: What do we do before a series has even started and we have no data directly associated with how that series of contestants has performed in tasks.
+    - We may have to rely on data from prior series for this. 
+
+# What Have We Learnt Today?
+
+::: {.infobox .today data-latex="{today}"}
+We've learnt:
+
+- We have extended our MultiVerse approach to estimate probability distributions associated with series events, not just episode events. Events include:
+    - A contestant's overall series ranking.
+    - A contestant scoring more (or less) points over the series.
+    - A contestant ranking in a certain position, **and** also satisfying a score criteria.
+    - And many more!
+- If I want to seem relevant with my methods and findings, I should perform this analysis whilst this series was happening ideally.
+    - Time to get my time management act together and work on code refactoring and standardisation! 
+- Whilst our method is in no ways perfect and can be improved to capture more common and intricate mechanics seen in Taskmaster, we do have a method to generate probability distributions and that is at least a starting point.[^odds]
+
+```{r, echo = FALSE, out.width = "35%", fig.align='center'}
+knitr::include_graphics(path = "https://media1.tenor.com/m/vk-feGTsfUAAAAAC/taskmaster-greg-davies.gif")
+```
+:::
+
+[^odds]: And I suppose this could mean that we can take odds and bets associated with Taskmaster now...

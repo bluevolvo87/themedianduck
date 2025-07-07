@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Sections on The Median Duck</title>
-    <link>https://bluevolvo87.github.io/themedianduck/sections/</link>
+    <link>http://localhost:4321/themedianduck/sections/</link>
     <description>Recent content in Sections on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <atom:link href="https://bluevolvo87.github.io/themedianduck/sections/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:4321/themedianduck/sections/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
