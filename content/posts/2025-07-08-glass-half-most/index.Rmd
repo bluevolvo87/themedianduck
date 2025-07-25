@@ -1,0 +1,623 @@
+---
+title: 'Series 19 Retrospective Part 1: Sharing the Same Juice'
+author: Christopher Nam
+date: '2025-07-25'
+slug: glass-half-most
+categories: [Series 19, Retrospective]
+tags: [Series 19, Retrospective]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+```
+
+# Your Task
+
+> With Series 19 having concluded, compare the predictions that were made on Series 19 outcomes (final series contestant rankings, series points accrued by each contestant) with the actual outcomes (those at the end of episode 10 and the end of the series).
+
+The aforementioned Series 19 predictions were discussed in a [prior post](/themedianduck/2025/07/take-a-chance-on-me/). These predictions were made using data up to and including Episode 9 of Series 19, on for standings at the end of the series (after Episode 10).
+
+Predictions using more limited data (that is using fewer[^fewer] broadcasted episodes), could also have been made, but these predictions are likely going to be less accurate. This is a task for another time however...
+
+[^fewer]: I actually googled this to see if it is *fewer or less* as LAH has often made snide remarks about this. Turns out my original hunch of *"fewer"* was correct as the entity, episodes in this case, is countable. Here's to hoping that I spend *less* time in the future trying to appease the Grammar Gods...should that be *fewer* though? Time is a countable entity in some respect... 
+
+```{r}
+library(googlesheets4)
+gs4_auth(email = "themedianduck@gmail.com")
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks")
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+```
+
+```{r, echo = FALSE}
+num_sim <- 1000 #Number of simulations to perform.
+
+series_length <- 10 #Number of episodes in a series
+
+#Per Episode
+num_prize_tasks <- 1 
+num_prerecorded_tasks <- 3
+num_live_tasks <- 1
+
+max_episode_used <- 10 #Threshold for which episodes are used. 
+
+series_id <- unique(task_attempt_df$`Series ID`)
+
+num_broadcasted_eps <- length(unique(task_attempt_df$`Episode ID`))
+latest_ep_broadcasted <- max(task_attempt_df$`Episode ID`)
+contestant_list <- unique(contestants_df$`Contestant Name`)
+initials_list <- unique(contestants_df $`Initials`)
+task_type_list <- unique(task_attempt_df$`Task Type`)
+
+```
+
+```{r}
+series_tracker_df <- task_attempt_df %>% 
+    filter(`Episode ID` <= max_episode_used) %>%
+    group_by(`Series ID`, `Contestant`, `Episode ID`) %>%
+    summarise(Episode_Points = sum(Points)) %>% 
+    arrange(`Episode ID`) %>%
+    mutate(Series_Points = cumsum(Episode_Points)) %>%
+    group_by(`Series ID`, `Episode ID`) %>%
+    mutate(Series_Ranking = rank(-Series_Points, ties.method = "min")) %>%
+    ungroup() %>%
+    left_join(contestants_df, by =  join_by(`Contestant` == `Contestant Name`))
+
+
+latest_df <- series_tracker_df %>% slice_max(`Episode ID`) %>%
+    mutate(Init_Rank = paste0(Initials, ": ", Series_Ranking))
+
+```
+
+# The Current Timeline
+
+```{r series-final-cast-scores, fig.cap="Series 19 Actual Cast Rankings and Series Scores.", out.width = "49%", fig.show='hold'}
+title_label <- "Series 19: Final Series Rankings and Scores"
+subtitle_label <- glue("Using Data up to and including Episode {max_ep}.", max_ep = max_episode_used)
+
+final_standings_plot <- ggplot(latest_df, aes(x = Series_Ranking, y = Series_Points, image = `Image URL`)) +
+    geom_bar(stat = "identity", aes(fill = as.factor(Series_Ranking)), colour = "darkred", linewidth = 2) +
+    geom_image(aes(y = Series_Points + 10, x= Series_Ranking), size = 0.2, by = "height") +
+    geom_text(aes(label = Series_Points), y = 100, size = 16, vjust = 0, hjust = 0.5, family = "elite") +
+    scale_fill_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e5", "5" = "#737473")) + # Official colours
+    ggtitle(label = title_label, subtitle = subtitle_label) +
+        theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20),
+    legend.position = "none"
+        ) +
+    xlab("Series Ranking") + ylab("Series Points") + coord_cartesian(ylim = c(100, 200)) 
+graph_title_label <- glue("Series {series_id} Tracker", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}.", max_ep = max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+series_tracker_plot <- ggplot(series_tracker_df, 
+       aes(y= Series_Points, x= `Episode ID`,  group = Initials, image = `Image URL`)) +
+    geom_point(aes(colour = Initials), alpha = 0.5) +
+    geom_line(aes(colour = Initials), alpha = 0.5, size = 2) +
+    geom_image(data = latest_df, aes(x = `Episode ID`+(`Series_Ranking`-1)*0.5, y = `Series_Points` , image = `Image URL`), by = "height", size = 0.1, alpha = 0.5) +
+    theme(
+        text = element_text(family = "elite", size = 20),
+        legend.position = 'bottom'
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Episode") +
+    ylab("Series Points") +
+    scale_y_continuous(breaks = seq(from = 0, to = max(series_tracker_df$Series_Points), by = 25)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 12)) +
+    coord_cartesian(xlim = c(1, 12))
+
+
+final_standings_plot
+series_tracker_plot
+
+```
+
+After 10 episodes, we can finally crown our Series 19 champion; Figure \@ref(fig:series-final-cast-scores) shows the final scores and standings for each contestant.
+
+::: insights
+Unsurprisingly, **Mathew Baynton continued his winning streak through and ultimately won the series.**
+
+His [personal dignity did however suffer](https://64.media.tumblr.com/34556a3cbf261ea64fd86faa6af34a7f/1c0347d86a020359-20/s540x810/f986e9f875b4eb3bf2280dec7f676bf6c533e234.gifv) but these are the sacrifices one must make to be crowned a champion of a series.
+
+```{r mb-power-pose, out.width = "40%", fig.show='hold', fig.cap="One of Mathew's sacrifices he made along the way to championship."}
+knitr::include_graphics(path = file.path(here::here(), "img", "highlights", "series_19", "mb_powerful_pose.png"), error = FALSE)
+```
+
+
+It is all change for the remaining cast members as their series standings varied quite a bit compared to those at the end of episode 9:
+
+-   Fatiha dropped from 3rd place to 5th place.
+-   Jason ascended from 5th place to 3rd place.
+-   Rosie dropped from 2nd place to 4th place.
+-   Stevie ascended from 4th place to 2nd place.
+
+Stevie and Jason both had strong Episode 10's placing 1st and 2nd respectively, whilst Fatiha and Rosie had disastrous Episode 10's placing 5th and 4th respectively.
+
+Going into Episode 10, we were well aware that the race for 2nd, 3rd, 4th and 5th position was incredibly tight with only 5 points separating the contestant in these rankings. Such a change up in the final series rankings is not an entire surprise, but was still quite surprising in some respect.
+
+By the end of the series, the points separation between 2nd to 5th position was 13 points, which potentially indicates how poorly Fatiha performed in this episode as the point range increased so much. Alternatively, Stevie could have performed extraordinarily well. 
+
+From the Series 19 tracker, it was clear from Episode 2 onwards that Mathew was the leader of this chaotic pack. Interesting, the outcome of Episode 1 would have been deemed sufficient in predicting the final series rankings accurately.
+
+:::
+
+## Wait, What Were the Predictions?
+
+In a [prior post](/themedianduck/2025/07/take-a-chance-on-me/), we generated distributions on a contestants ranking by the end of the series, using data up to and include Episode 9. These distributions are displayed in Figure \@ref(fig:mv-series-prob-plot).
+
+From these distributions, we can also formulate predictions on contestants ranking by the end of the series. For example, we can use the most probable ranking in each contestant's distribution as our prediction for their series ranking.[^1]
+
+[^1]: Other predictions from the distribution could also be made including using the average ranking, the median ranking, or a particular percentile. The prediction logic we employ should be catered to the application and potential downstream effects associated with how our predictions are being used; for example if we get penalised more for being more optimistic than pessimistic in a contestant.
+
+Based on this Most Probable Ranking logic, our predictions are as follows (displayed in green and bold font in Figure \@ref(fig:mv-series-prob-plot)): :
+
+-   Fatiha: 3rd
+-   Jason: 5th
+-   Mathew: 1st
+-   Jason: 2nd
+-   Stevie: 4th
+
+```{r, cache=TRUE}
+seed_id <- 2025-05-01
+set.seed(seed_id)
+
+single_sample <- 1 
+
+episode_sample_df <- NULL
+
+sim_max_episode_used <- 9
+
+for(sample_iter in 1:num_sim){
+
+for(contestant_iter in contestant_list){
+
+    contestant_attempt_df <- task_attempt_df %>% dplyr::filter(Contestant == contestant_iter & `Episode ID` <= sim_max_episode_used)
+    
+    # Prize Task Sampling
+    contestant_prize_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Prize" ) %>% slice_sample(n = single_sample * num_prize_tasks, replace = TRUE)
+    
+    # Live Task Sampling
+    contestant_prerecord_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Pre-Record" ) %>% slice_sample(n = single_sample * num_prerecorded_tasks, replace = TRUE)
+    contestant_prerecord_samples_df$`Task ID` <- rep(2:4, each = single_sample) 
+    
+    # Live Task Sampling
+    contestant_live_samples_df <- contestant_attempt_df %>% dplyr::filter(`Task Type` == "Live" ) %>% slice_sample(n = single_sample * num_live_tasks, replace = TRUE)
+    
+    contestant_episode_sample <- rbind(contestant_prize_samples_df, contestant_prerecord_samples_df, contestant_live_samples_df)
+    
+    contestant_episode_sample$`Episode ID` <- paste0("Sim ", sample_iter)
+    
+    episode_sample_df <- rbind(episode_sample_df, contestant_episode_sample)
+}
+}
+#episode_sample_df
+
+# Re rank points so that they are from 1-5
+# But retain disqualifications if this was sampled.
+episode_sample_df <- episode_sample_df  %>% mutate (`Observed Points Sample` = Points) %>%
+    group_by(`Episode ID`, `Task ID`, `Task Type`) %>%
+    mutate(Points = rank(`Observed Points Sample`, ties.method = "min")) %>%
+    mutate(Points = ifelse(`Observed Points Sample` == 0, 0, `Points`)) %>%
+    arrange(`Episode ID`, `Task ID`, `Contestant`)
+
+#Episode summary for each contestant (summed over tasks), and ranked within that episode. 
+episode_sample_summary_df <- episode_sample_df %>% group_by(`Series ID`, `Episode ID`, `Contestant`) %>%
+    summarise(`Episode Points` = sum(Points)) %>%
+    mutate(`Episode Rank` = rank(-`Episode Points`, ties.method = "min"))
+
+
+# Series to date info
+series_td_df <- task_attempt_df %>% 
+    filter(`Episode ID` <= sim_max_episode_used) %>%
+    group_by(`Series ID`, Contestant) %>%
+    summarise(
+        Num_Tasks = dplyr::n(),
+        Num_Episode = n_distinct(`Episode ID`), 
+        Series_Points = sum(Points)) %>%
+    ungroup()
+
+
+# Combining observed series to date, and hypothetical episodes
+# This creates Series Simulations
+series_sample_df <- episode_sample_summary_df %>%
+    select(-`Episode Rank`) %>%
+    left_join(series_td_df, by =  join_by(`Contestant` == `Contestant`, `Series ID` == `Series ID`)) %>%
+    rename(
+        Rem_Series_Sim_Points = `Episode Points`, 
+        Series_To_Date_Points = Series_Points) %>%
+    mutate(Full_Series_Poins_Sim = Series_To_Date_Points + Rem_Series_Sim_Points) %>%
+    group_by(`Series ID`, `Episode ID`) %>%
+    mutate(`Series Rank` = rank(-Full_Series_Poins_Sim, ties.method = "min")) %>%
+    left_join(contestants_df, by =  join_by(`Contestant` == `Contestant Name`)) %>%
+    ungroup()
+
+
+# Summarise Series Simulations
+series_sample_summary_df <- series_sample_df %>%
+    group_by(`Series ID`, Contestant, Initials, `Image URL`, `Seat`, `Series Rank`) %>%
+    summarise(
+        Count = n()
+    ) %>% 
+    group_by(`Series ID`, Contestant, Initials, `Image URL`, `Seat`) %>%
+    mutate(Sum_Count = sum(Count),
+           Prop_Count = Count/Sum_Count,
+           MAP_Rank = Prop_Count == max(Prop_Count),
+           MAP_fontface = ifelse(MAP_Rank, 'italic', 'plain'),
+           MAP_colour = ifelse(MAP_Rank, 'darkgreen', 'black'),
+        Init_Rank = paste0(Initials, ": ", `Series Rank`)
+    ) %>%    ungroup()
+```
+
+```{r, include = FALSE}
+series_sample_summary_df %>% filter (MAP_Rank) %>%
+    ggplot(aes(x = `Series Rank`, y= Prop_Count, image = `Image URL`)) +
+    geom_bar(stat= "identity") +
+    geom_image(size=0.2, by = "height", y = 0) +
+    geom_text(aes(label = scales::percent(Prop_Count, accuracy = 0.01)), y= 0.25,  family = "elite", size = 15) + coord_flip() + scale_x_reverse()
+    
+```
+
+```{r mv-series-prob-plot, fig.cap = "Probability Distribution of a Contestant's Series Ranking. Our prediction for a contestant's series ranking is the the most probable ranking for each contestant; these are in bold and are green", out.width = "65%", cache = FALSE}
+graph_title_label <- glue("Probability Distribution of Series Ranking for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}. Number of Simulations: {num_sims}, with Seed {seed_id}.", max_ep = sim_max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+
+series_sample_summary_df %>% ggplot(aes(x=`Series Rank`, y = Prop_Count, image = `Image URL`, group = Initials, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    facet_grid(Initials~., switch = "both") +
+    geom_text(stat = "identity", position = position_fill(vjust = 0.5), size = 7.5, family = "elite", colour = series_sample_summary_df$MAP_colour, fontface = series_sample_summary_df$MAP_fontface) +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Series Ranking") +
+    ylab("Probability") +
+    labs(caption = "A Contestant's most probable ranking is displayed in bold and are green; this is our prediction.") +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+```{r}
+actual_outcome_prob_df <- series_sample_summary_df %>% 
+    filter(Init_Rank %in% latest_df$Init_Rank) %>%
+    select(Contestant, Initials, `Series Rank`, Prop_Count) %>%
+    rename(Obs_Series_Ranking = `Series Rank`,
+           Obs_Series_Ranking_Prob = Prop_Count)
+```
+
+So we have predictions on the each contestant's series ranking and we have the actual series rankings for them. The next big question is how do they compare to each other?
+
+## Go Compare.com
+
+Comparisons between our predictions and the actual outcome as presented in Table \@ref(fig:compare-tbl). In addition, we also present the probability of the actual series ranking occurring in our distributions; this gives us a some sense of whether our probability distribution method deemed the actual outcome plausible.
+
+```{r compare-tbl, fig.cap = "Series 19 Comparison Table between Predictions and Actuals."}
+# Predictions we made on series rankings.
+map_rankings_df <- series_sample_summary_df %>% filter (MAP_Rank) %>%
+    select(Contestant, `Image URL`, MAP_Rank, `Series Rank`, Prop_Count) %>%
+    rename(Pred_Series_Rank = `Series Rank`,
+           MAP_Probability = Prop_Count)
+    
+# Preparing the comparison data frame.
+map_compare_df <- latest_df %>% select( -`Episode ID`, - Episode_Points) %>%
+    rename(Obs_Series_Points = Series_Points,
+           Obs_Series_Ranking = Series_Ranking
+    ) %>%
+    left_join(map_rankings_df, by = join_by(`Contestant` == Contestant, `Image URL` == `Image URL`)) %>%
+    left_join(actual_outcome_prob_df, by = join_by(Contestant == Contestant, Initials == Initials, Obs_Series_Ranking == Obs_Series_Ranking)) %>%
+    mutate(Pred_Error = Obs_Series_Ranking - Pred_Series_Rank) %>%
+    select(Contestant, `Image URL`, Obs_Series_Points, Obs_Series_Ranking, Obs_Series_Ranking_Prob, Pred_Series_Rank, MAP_Probability, Pred_Error)
+
+map_compare_df <- as.data.frame(map_compare_df)    
+    
+reactable(map_compare_df, columns = list(
+                                              `Contestant` = colDef(
+      cell = function(value, index) {
+          img_url <- map_compare_df[index, "Image URL"]
+          image <- img(src = img_url, style = "height: 25%;", alt = "Contestant Image")
+      tagList(
+          div(style = list(fontWeight = 600), value),
+        div(style = "display: inline-block; width: 30%;", image)
+
+      )
+      },
+      minWidth = 125
+      ),
+      `Image URL` = colDef(show = FALSE),
+      'MAP_Rank' = colDef(show = FALSE),
+      Obs_Series_Points = colDef(show = TRUE,
+                                 name = "Actual Series Points"
+                                ), 
+      Obs_Series_Ranking = colDef(show = TRUE,
+                                  name = "Actual Series Ranking"
+                                  ),
+      Obs_Series_Ranking_Prob = colDef(show = TRUE,
+                                       name = "Estimated Probability of Actual Series Ranking Occurring", 
+                                       format = colFormat(percent = TRUE, digits = 2)
+                                ),
+      Init_Rank = colDef(show = FALSE),
+      `Pred_Series_Rank` = colDef(show = TRUE, 
+                                  name = "Most Probable Series Ranking Prediction"),
+      'MAP_Probability' = colDef(show = TRUE,
+                                 name = "Estimated Probability of Series Ranking Prediction Occurring",
+                                 format = colFormat(percent = TRUE, digits = 2)
+                                 ),
+      'Series ID' = colDef(show = FALSE),
+      'Seat' = colDef(show = FALSE),
+      'Initials' = colDef(show = FALSE),
+      Pred_Error = colDef(show = TRUE,
+                          name = "Prediction Error",
+                          cell = function(value, index){
+                              ifelse(value == 0, paste0(value, " (The Right Amount of Faith)"), ifelse(value > 0, paste0("+", value, " (Too Much Faith)"), paste0(value, " (Too Little Faith)")))},
+                          style = function(value) {
+        color <- ifelse(value == 0 ,"lightgreen", ifelse(value > 0 , "pink", "lightblue")) 
+        list(fontWeight = 600, background = color, colour = "white")
+      }
+      
+                     )
+      ),
+      defaultColDef = reactable::colDef(
+                         format = colFormat(digits = 0),
+                         align = "center", 
+                         headerStyle = list(background = "#f7f7f8"),
+                        vAlign = "center",
+                        headerVAlign = "bottom"
+                        
+                         ),
+      defaultSorted = "Obs_Series_Points",
+      defaultSortOrder = "desc",
+                     bordered = TRUE,
+                     highlight = TRUE,
+      striped = TRUE,
+      compact = TRUE,
+      theme = reactableTheme(
+          color = "black",
+          backgroundColor = "#FFFFC2",
+          stripedColor = "#ffff94"
+      )
+)
+
+```
+
+::: insights
+-   We were spot on with our prediction with Mathew winning the series.
+    -   Based on our distribution and the mechanics of Taskmaster, this is to be expected (Mathew had a 20+ lead at the end of episode 9). 
+    - Never put it past mischievous Little Alex Horne to introduce some unexpected game mechanic however which could have altered the entire series rankings.
+-   We showed too little faith in Stevie and Jason as they outperformed compared to our prediction.
+    -   Stevie finished in 2nd place when we predicted for her to finish in 4th.
+    -   Jason finished in 3rd place when we expected him to come in last (5th).
+-   We showed too much faith in Rosie and Fatiha as they underperformed compared to our prediction.
+    -   Rosie came in 4th when we predicted her to finish 2nd.
+    -   Fatiha came in 5th when we predicted her to be in 3rd.
+-   For each contestant except for Mathew, the probability of the actual ranking occurring in our probability distribution ranged between 10.50% (Rosie) and 18.70% (Stevie).
+    -   This means the observed ranking would occurred between `r round(num_sim * 10.50/100, 0)` and `r round(num_sim * 18.70/100, 0)` times in the `r num_sim` timelines we simulated.
+    -   The observed outcomes could have be occurred in our distributions and simulations, but they just weren't considered to be the most likely to occur and thus a sensible probable prediction.
+    
+```{r jm-power-pose, out.width = "40%", fig.show='hold', fig.cap = "Jason Mantzoukas destroying all our expectations and predictions."}
+knitr::include_graphics(path = file.path(here::here(), "img", "highlights", "series_19", "jm_powerful_pose.png"), error = FALSE)
+```    
+:::
+
+## Scores on the Doors
+
+We've compared our series ranking predictions, but what about the series scores? Where do the observed series scores fall in the predicted distributions of series scores we generated?
+
+These are explored in Figure \@ref(fig:mv-series-points-hist) where we display the histograms of each contestants predicted series scores. The actual series score is denoted by the vertical line and contestant thumbnail.
+
+```{r}
+sim_cast_summary_df <- series_sample_df %>% 
+    rename(`Sim ID` = `Episode ID`) %>%
+    mutate(Init_Rank = paste0(Initials, ": ", `Series Rank`)) %>%
+    group_by(`Series ID`, `Sim ID`) %>%
+    summarise(
+         Num_Records = n(),
+         Full_Cast_Rank = paste(Init_Rank, collapse = ", ")
+    ) %>% ungroup()
+```
+
+```{r}
+# Calculating the probability associated with the full cast series ranking event
+counts_sim_cast_df  <- sim_cast_summary_df %>% group_by(`Series ID`, Full_Cast_Rank) %>%
+    summarise(
+        Count_Sim = n_distinct(`Sim ID`)
+     )%>%
+    group_by(`Series ID`) %>%
+    mutate(Num_Sims = sum(Count_Sim)) %>%
+    mutate(Sim_Prob = Count_Sim/Num_Sims) %>% 
+    ungroup() %>%
+    arrange(-Sim_Prob)
+```
+
+```{r mv-series-points-hist, fig.cap = "Where do the final Series Scores lie in the Series Score Distributions for each contestant? Dotted vertical line represents actual series points accumulated by end of series by contestants.", out.width = "75%"}
+graph_title_label <- glue("Histogram of Series Scores for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}. Number of Simulations: {num_sims}, with Seed {seed_id}.", max_ep = sim_max_episode_used, num_sims = num_sim, seed_id = seed_id)
+
+caption_label <- glue("Dotted vertical line represents actual series points accumulated by end of series by contestants.", points = event_threshold)
+
+series_sample_df %>% ggplot(aes(x=Full_Series_Poins_Sim, group = Initials)) +
+    geom_histogram(fill = "#FFFFC2", binwidth = 1) + 
+    geom_vline(data = latest_df, aes(xintercept = Series_Points), linetype = 2, linewidth = 1.5, colour = "darkgreen") + 
+    geom_image(data = latest_df, aes(image = `Image URL`, x= Series_Points, y = 100), size=0.5, by = "height") +
+    
+    facet_grid(Initials~., switch = "both") +
+    scale_y_continuous() +
+    theme(
+    text = element_text(family = "elite", size = 20),
+    plot.title = element_text(hjust = 0.5, lineheight = 0.9, size = 20)
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    xlab("Series Score") +
+    ylab("Number of Occurrences")
+```
+
+::: insights
+Overall:
+
+-   *Mathew and Rosie's series scores are in line with our expectations*; their series scores are not too far off from the center of their points distributions.
+-   *Stevie and Jason outperformed our expectations*; their series scores are on the right tail of their distributions.\
+-   *Fatiha underperformed based on our expectations*; her series score is on the left tail of the distribution.
+
+In particular:
+
+-   For Mathew and Rosie, their observed final series score is not too far off from the center of the histograms.
+    -   This suggests that their performance in Episode 10 was as expected and comparable to previous tasks and episodes.
+    -   Mathew scored 15 points in episode 10; prior to this his median and average episode score was 16 and 17.11 respectively.
+    -   Rosie scored 14 points in episode 10; prior to this her median and average episode score was 16 and 15 respectively.
+-   For Stevie and Jason, their observed final series score is in the right tail of the histogram.
+    -   This suggests that their strong performance was not anticipated with high probability based on past episodes.
+    -   For Stevie, she scored 22 points in this episode; her median and average episode score has been 14 and 14.67 respectively up to episode 9. The maximum episode points Stevie received prior to this was 23.
+    -   Jason scored 20 points in episode 10; his median and average episode score has been 16 and 14.44 respectively up to episode 9. The maximum episode points Jason had received prior to this was 23.
+-   Similarly on the opposite side for Fatiha, her final series score is in the left tail of the series score histogram.
+    -   Her weak performance was not anticipated with substantially high probability based on past episodes.
+    -   In fact, Episode 10 was the worst episode for Fatiha and she achieved her lowest episode score to date of 8 points. The lowest episode score prior to this was 10, and her median and average episode score were 14 and 14.77 respectively.
+    
+    
+```{r stevie-jumping, out.width = "40%", fig.show='hold', fig.cap = "Stevie Martin skipping her way into 2nd place for the series."}
+knitr::include_graphics(path = "https://64.media.tumblr.com/95b068cb97f9caecad7da6f740edacd9/37f81d73dc81fd87-32/s1280x1920/04cca4453e1c024d953092aad5607244ede83441.gifv")
+```    
+:::
+
+## The Margins of Error
+
+The contestant series ranking predictions we presented above are based on the [*marginal distributions*](https://statisticsbyjim.com/basics/marginal-distribution/) of each contestants distribution. It does not take into consideration the placement of the other contestants. If we want to consider the rankings of all cast members collectively, and the likelihood of them occurring, the [*joint distribution*](https://statisticsbyjim.com/probability/joint-probability/) needs to be considered.
+
+For example, in the timelines in which Fatiha was placed 2nd overall, it encompasses the 3rd to 5th position being filled by *any of the contestants* (Jason, Rosie and Stevie) in any order[^2]. In some of these timelines Jason could have placed 3rd, other times Stevie may have been placed in this position, and similarly for Rosie. Information of these contestant placements are not conveyed in Fatiha's marginal distribution.
+
+[^2]: Mathew is excluded as Mathew was always simulated to end up in 1st place.
+
+These marginal contestant distributions do have the benefit of being simple to convey, but could also be misleading and lead to counter intuitive predictions when considering the series rankings for the cast jointly. For example, two or more contestants being predicted the same ranking when there are no ties[^3], or cast predictions which are not continuous (for example, jumping from 1st to 3rd position with no ties being present).
+
+[^3]: Technically, this could also feasibly be predicted under a joint distribution due to ties. But shhh...
+
+If we want to ensure we have consistent cast ranking predictions, we must consider the joint distribution of series ranking for all cast members rather than the isolated marginal distributions for each individual contestant; Figure \@ref(fig:cast-joint-dist) shows a subsection of this joint distribution for the full cast rankings of Series 19.
+
+```{r cast-joint-dist, out.width = "75%", cache = FALSE, fig.cap = "Joint Distribution of Series Rankings for the Entire Cast of Series 19"}
+top_casts <- 20 
+
+
+counts_sim_cast_df <- mutate(counts_sim_cast_df,
+                             map_prediction  = ifelse(Sim_Prob == max(Sim_Prob), TRUE, FALSE),
+                            observed_ranking = ifelse(Full_Cast_Rank == paste(latest_df$Init_Rank, collapse = ", "), TRUE, FALSE),
+                            text = ifelse(map_prediction, paste0("Prediction (", scales::percent(Sim_Prob, accuracy = 0.01), ")"),
+                                          ifelse(observed_ranking, paste0("Actual (", scales::percent(Sim_Prob, accuracy = 0.01), ")"), " ")
+                            )
+)
+
+graph_title_label <- glue("Joint Distribution of Series Rankings for the Entire Cast of Series {series_id}. ", series_id = series_id)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only.", n_cast = top_casts)
+
+counts_sim_cast_df %>% mutate(
+        prob_rank = rank(- Sim_Prob)
+        ) %>%
+    filter((prob_rank <= top_casts) | map_prediction | observed_ranking ) %>%
+ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Sim_Prob), y= Sim_Prob)) +
+    geom_bar(stat = "identity", fill = "#e0e5e5", colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0), family = "elite", colour = "darkgreen", nudge_y = 0.001) + 
+    theme(
+    text = element_text(family = "elite", size = 18),
+    plot.title = element_text(hjust = -1, lineheight = 0.9, size = 18),
+    legend.position = "none"
+  ) +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.15)) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+
+
+```
+
+::: insights
+-   The **most probable series ranking combination** is **`r slice_max(counts_sim_cast_df, Count_Sim)$Full_Cast_Rank`**, with an **estimated probability of `r scales::percent(slice_max(counts_sim_cast_df, Count_Sim)$Sim_Prob, accuracy = 0.01)`**.
+    -   This conveniently, and coincidentally, is the same as if we took the most probable series ranking from each contestant's marginal distribution.
+    -   Whilst this is a convenient finding (that the joint cast distribution prediction is the same as considering each contestant's marginal distribution), this is not always true and does not always occur.
+-   For the **observed full cast ranking combination `r paste(latest_df$Init_Rank, collapse = ", ")`**, this has an **estimated probability of `r scales::percent(filter(counts_sim_cast_df, Full_Cast_Rank == paste(latest_df$Init_Rank, collapse = ", "))$Sim_Prob, accuracy = 0.01)`** occurring.
+    -   This means that this particular cast ranking combination was only observed in `r filter(counts_sim_cast_df, Full_Cast_Rank == paste(latest_df$Init_Rank, collapse = ", "))$Sim_Prob * num_sim` timelines in the `r num_sim` timelines we simulated.
+    -   It is entirely plausible that this cast ranking combination was a rare occurrence. However, it is also possible (and more plausible) that `r num_sim` simulations is potentially insufficient in estimating joint distributions of so many dimensions[^4]. Increasing the number of simulations is still on the cards for a future task.
+-   By considering the joint distribution for the full cast ranking combinations, we also see alternative ranking combinations that could have occurred and how likely they may have occurred.
+    -   These alternative cast rankings all occur with less than around 8% probability, which is noticeably less than the most probable cast ranking combination.
+    -   They all feature Mathew Baynton (MB) in 1st place; this is not surprising given his marginal distribution had him placing 1st with 100%.
+    -   For the other contestant, there is variability in their rankings which are in line with their marginal distributions.
+    
+```{r cast-powerful-pose, out.width = "40%", fig.show='hold', fig.cap = "A Joint Distribution considers....EVERYBODY!"}
+knitr::include_graphics(path = file.path(here(), "img", "highlights", "series_19", "cast_powerful_pose.png"), error = FALSE)
+```    
+:::
+
+[^4]: I would estimate that a minimum of `r scales::number(factorial(5) * 100, big.mark  = ",")` simulations are potentially needed to estimate a joint distribution of this size. This is based on the number of cast ranking combinations there are based on the fact there are 5 contestants in a cast, each taking one ranking each (from 1st to 5th) in the simplest case where there are no ties, and seeing 100 occurrences on average across each cast combination.
+
+# The Prophet Nick Mohammed
+
+In [Episode 201, from around 56:30 mark](https://open.spotify.com/episode/2Vcik0TESri5pOroKg4SSf?si=eb70f7b5d235493a) of the Official Taskmaster Podcast, guest Nick Mohammed made the following prediction on the series outcome
+
+> *In the final scores, there will be 6 ones and 1 six.*
+>
+> *...*
+>
+> *I think Stevie (Martin) is going to win.*
+>
+> *...*
+>
+> *I think Matt (Baynton) might crumble eventually, I think Matt's doing very well but I think actually he's going to slowly have a nervous breakdown.*
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/2Vcik0TESri5pOroKg4SSf?utm_source=generator&t=3390" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+::: insights
+-   Nick was scarily on point with his point prediction; the final scores were (169, 154, 150, 149, 151) which does indeed have 6 ones and 1 six.
+-   Nick however was wrong in his prediction that Stevie would win, and that Matt would crumble eventually.
+    -   If only he expressed his predictions in a probability distribution so that he could capture other outcomes and how sure or unsure he was of them.
+-   On the surface, Matt didn't have a nervous breakdown and not become the series champion as a result. But who knows what lies beneath the Baynton surface, he's been through a lot this series...
+
+```{r, out.width = "40%"}
+knitr::include_graphics(path = "https://64.media.tumblr.com/92094dda93182aed78be0ecd80ba4a8a/ef37e419dc5ae963-43/s540x810/6f66a64c2b512346defc2db1873074859611c4f4.gifv")
+
+```
+:::
+
+# What Have We Learnt Today?
+
+::: {.infobox .today data-latex="{today}"}
+We've learnt that:
+
+-   Our series ranking predictions were correct for identifying the champion (Mathew Baynton), but incorrect for all other contestants.
+    -   We should have had more faith in Stevie Martin and Jason Mantzoukas ...
+    -   ... and less faith in Rosie Ramsey and Fatiha El-Ghorri.
+-   From our series score histogram:
+    -   Mathew and Rosie performed as expected in episode 10 and their final series positions.
+    -   Stevie and Jason had particularly strong episode 10's.
+    -   Fatiha had a weak episode 10 and achieved her worst score in the series.
+-   Even thought we did not get our predictions entirely correct, a predictive probability distribution allows us to consider all potential outcomes and how frequent (or infrequent) they are likely to occur.
+-   The importance of joint distributions over marginal distributions when making predictions, particularly if we want to ensure consistency in our ranking predictions.
+-   1000 simulations may not be sufficient in capturing all potential timelines and estimating probability distributions accurately, in particular for joint distributions of many dimensions.
+-   Nick Mohammed is a witch, or maybe a vampire, due to his on point points prediction; that's a [hard fact to Swallow](https://youtu.be/ofVcaQQJlMc?si=sMS6CJbv9X2m8zYn).
+
+```{r hello-kylie, out.width = "40%", fig.show='hold'}
+knitr::include_graphics(path = "https://64.media.tumblr.com/5aa8cd5410cf7a00acc62a56be7089dc/7c076ef734e23b11-b3/s1280x1920/e188737ca1ba7491f06c43a437d64628b884beb4.gifv")
+```
+:::
