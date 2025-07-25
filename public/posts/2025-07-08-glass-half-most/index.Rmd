@@ -1,0 +1,10 @@
+---
+title: Glass Half Most
+author: Christopher Nam
+date: '2025-07-08'
+slug: glass-half-most
+categories: [Series 19, Retrospective]
+tags: [Series 19, Retrospective]
+draft: yes
+---
+
