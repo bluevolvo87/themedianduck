@@ -2,34 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:4321/themedianduck/2025/08/awards-season/</loc>
-    <lastmod>2025-08-01T00:00:00+00:00</lastmod>
+    <loc>http://localhost:4321/themedianduck/categories/</loc>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/posts/</loc>
-    <lastmod>2025-08-01T00:00:00+00:00</lastmod>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/</loc>
-    <lastmod>2025-08-01T00:00:00+00:00</lastmod>
+    <loc>http://localhost:4321/themedianduck/tags/qrstuv-ies/</loc>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/categories/</loc>
-    <lastmod>2025-07-25T00:00:00+00:00</lastmod>
+    <loc>http://localhost:4321/themedianduck/categories/qrstuv-ies/</loc>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/retrospective/</loc>
-    <lastmod>2025-07-25T00:00:00+00:00</lastmod>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/categories/retrospective/</loc>
-    <lastmod>2025-07-25T00:00:00+00:00</lastmod>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/series-19/</loc>
-    <lastmod>2025-07-25T00:00:00+00:00</lastmod>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/categories/series-19/</loc>
-    <lastmod>2025-07-25T00:00:00+00:00</lastmod>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/themedianduck/2025/07/glass-half-most/</loc>
-    <lastmod>2025-07-25T00:00:00+00:00</lastmod>
+    <loc>http://localhost:4321/themedianduck/2025/08/awards-season/</loc>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/</loc>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/</loc>
+    <lastmod>2025-08-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:4321/themedianduck/2025/07/glass-half-most/</loc>
     <lastmod>2025-07-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:4321/themedianduck/tags/multiverse/</loc>
