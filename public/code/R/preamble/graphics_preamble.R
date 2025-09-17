@@ -19,3 +19,4 @@ theme_set(theme_gray(base_size = 18))
 
 library(htmltools)
 library(reactable)
+library(sparkline)

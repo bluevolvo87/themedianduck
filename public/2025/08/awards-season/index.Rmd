@@ -1,16 +1,637 @@
 ---
-title: Awards Season
+title: "Series 19 Retrospecive Part 2: The Qrstuv-ies"
 author: Christopher Nam
-date: '2025-08-01'
+date: '2025-08-16'
 slug: awards-season
-categories: []
-tags: []
-draft: yes
+categories: [Series 19, Retrospective, "Qrstuv-ies"]
+tags: [Series 19, Retrospective, "Qrstuv-ies"]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
 ---
 
-# What's your Favourite Season? Awards Season.
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
 
-- Most volatile contestant.
-- Most consistent contestant.
-- Contestant with the greatest growth
-- Contestant with the greatest decline
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+#  Your Task
+
+> Host the inaugral Qrstuv-ies, an unofficial data-driven Taskmaster Awards ceremony which celebrates the latest series of UK Taskmaster.
+
+
+## What's your Favourite Season? ... Mine is the Awards Season
+```{=html}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_Yf_6LwR5IY?si=VREky9dkgWPOk4D9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+```
+
+
+
+```{r}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1DruoLL3X1HJAfUzE13_ZlAyXzshRvFHMCIVx9ncM6NI/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks")
+
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r}
+task_attempt_df <- left_join(task_attempt_df, contestants_df, by = join_by(Contestant == Contestant.Name))
+                             
+```
+
+```{r}
+series_id <- unique(task_attempt_df$Series.ID)
+
+num_broadcasted_eps <- length(unique(task_attempt_df$Episode.ID))
+latest_ep_broadcasted <- max(task_attempt_df$Episode.ID)
+contestant_list <- unique(contestants_df$Contestant.Name)
+initials_list <- unique(contestants_df $`Initials`)
+task_type_list <- unique(task_attempt_df$`Task.Type`)
+
+seed_id <- 42
+```
+
+# For the tl;dr generation....and the Winners are
+
+```{r}
+awards_df <- tibble(
+    Award = character(),
+    Award_Category = character(),
+    Description = character(),
+    Winner_Initials = character(),
+    Comments = character()
+)
+
+awards_df <- awards_df %>%
+    add_row(Award = "MVP (Most Valuable Player)", 
+            Award_Category = "Best in Class",
+            Description = "Best performance over all tasks",
+            Winner_Initials = "MB",
+            Comments = "Based on highest average points awarded for all task types across the series."
+            ) %>%
+    add_row(Award = "Laminator",
+            Award_Category = "Best in Class",
+            Description = "Best performance in prize tasks",
+            Winner_Initials = "MB",
+            Comments = "Based on highest average points per prize task."
+            ) %>%
+    add_row(Award = "Rosalind", 
+            Award_Category = "Best in Class",
+            Description = "Best performance in pre-recorded tasks.",
+            Winner_Initials = "MB",
+            Comments = "Based on highest average points awarded for pre-recorded tasks; solo and team tasks are combined."
+            ) %>%
+    add_row(Award = "Dungarees", 
+            Award_Category = "Best in Class",
+            Description = "Best performance in live studio tasks.",
+            Winner_Initials = "SM",
+            Comments = "Based on highest average points awarded for live studio tasks; solo and team tasks are combined."
+            ) %>%
+    add_row(Award = "MPP (Most Predictable Player)", 
+            Award_Category = "Vol-au-vent",
+            Description = "Least variability (thus most predictable) in awarded points per task across the series.",
+            Winner_Initials = "MB",
+            Comments = "Based on lowest standard deviation of points awarded for all task types."
+            ) %>%
+    add_row(Award = "LPP (Least Predictable Player)", 
+            Award_Category = "Vol-au-vent",
+            Description = "Most variability (thus least predictable) in awarded points per task across the series.",
+            Winner_Initials = "JM",
+            Comments = "Based on highest standard deviation of points awarded for all task types."
+            ) %>%
+    add_row(Award = "MIP (Most Improved Player)", 
+            Award_Category = "Evolution over Time",
+            Description = "Displayed the greatest improvement in the last quarter of the series compared to first three quarters.",
+            Winner_Initials = "SM",
+            Comments = "Based on greatest positive change in average points per task award between the two time periods."
+            ) %>%
+    add_row(Award = "KUGW (Keep Up the Good Work)",
+            Award_Category = "Evolution over Time",
+            Description = "Maintained performance in the last quarter of the series compared to first three quarters.",
+            Winner_Initials = "MB",
+            Comments = "Based on change in average points per task which is closest to 0% between two time periods."
+            ) %>%
+    add_row(Award = "SMAC (See Me After Class)",
+            Award_Category = "Evolution over Time",
+            Description = "Showed the biggest drop in performance in the last quarter of the series compared to first three quarters.",
+            Winner_Initials = "RR",
+            Comments = "Based on greatest negative change in average points awarded between the two time periods."
+            ) %>%
+        add_row(Award = "The I of the Team ", 
+            Award_Category = "Team Work makes the Dream Work",
+            Description = "Best Performing Team",
+            Winner_Initials = "FEG, MB, RR",
+            Comments = "Based on the highest average points awarded for team tasks."
+            ) %>%
+    add_row(Award = "Free Ride", 
+            Award_Category = "Team Work makes the Dream Work",
+            Description = "Benefitted the most from team task performance; Was carried by the team.",
+            Winner_Initials = "FEG",
+            Comments = "Based on the greatest change (both positive or negative) in averages from solo task performance to team task performance; only non-prize tasks are considered."
+            ) %>%
+    add_row(Award = "Excess Baggage Charge",
+            Award_Category = "Team Work makes the Dream Work",
+            Description = "Benefitted the least from team task performance; was carrying the team.",
+            Winner_Initials = "SM",
+            Comments = "Based on the smallest change (both positive or negative) in averages from solo task performance to team task performance; only non-prize tasks are considered."
+            )
+
+awards_df <- left_join(x = awards_df, y = contestants_df, by = join_by(Winner_Initials == Initials)) %>%
+    mutate(
+        Contestant.Name = replace(Contestant.Name, Winner_Initials == "FEG, MB, RR", "Fatiha El-Ghorri, Mathew Baynton, Rosie Ramsey"),
+        Contestant.Name = replace(Contestant.Name, Winner_Initials == "JM, SM", "Jason Mantzoukas, Stevie Martin"),
+        Image.URL = replace(Image.URL, Winner_Initials == "FEG, MB, RR", "https://64.media.tumblr.com/e5d09e203c3a5ee6fde2c9588f0e1060/5d9ee336b2fbbe5f-ed/s2048x3072/9a772c77d3def926d8f8e1814a4bfc0311cb4dbb.jpg"),
+        Image.URL = replace(Image.URL, Winner_Initials == "JM, SM", "https://64.media.tumblr.com/805d2afa225e508213b8306330f13780/3b87a453e90c159e-91/s1280x1920/a68e31a1e67cf02e98925441e5a6c3b79c1ce2bc.png")
+    )
+
+```
+
+
+
+```{r winners, fig.cap = "Series 19 Qrstuv-ies Winners", fig.topcap = TRUE}
+react_awards_df <- awards_df %>% 
+    select(Award_Category, Award, Description, Winner_Initials, Contestant.Name, Image.URL, Comments)
+
+react_awards_df <-as.data.frame(react_awards_df)
+
+reactable(data = react_awards_df,
+                     columns = list(
+                                              `Contestant.Name` = reactable::colDef(name = "Award Winner",
+      cell = function(value, index) {
+          img_url <- react_awards_df[index, "Image.URL"]
+          image <- img(src = img_url, style = "height: 10%;", alt = "Contestant.Image")
+      tagList(
+          div(style = list(fontWeight = 1000), value),
+        div(style = "display: inline-block; width: 30%;", image)
+
+      )
+      },
+      minWidth = 125
+      ),
+      `Winner_Initials` = colDef(show = FALSE, maxWidth = 100),
+      `Image.URL` = colDef(show = FALSE),
+      `Award_Category` = colDef(name = "Award Category", maxWidth =  200, style = list(fontWeight = 1000)),
+      `Award` = colDef(maxWidth =  200, style = list(fontWeight = 1000)),
+      `Description` = colDef(maxWidth =  500),
+      `Comments` = colDef(maxWidth =  500)
+  ),
+    defaultSortOrder = "asc",
+                     defaultColDef = reactable::colDef(
+                         format = colFormat(digits = 2),
+                         align = "center",
+                         headerStyle = list(background = "#f7f7f8"),
+                        vAlign = "center",
+                        headerVAlign = "bottom"
+                         ),
+  groupBy = "Award_Category",
+        sortable = FALSE, 
+         bordered = TRUE,
+         highlight = TRUE,
+        #height = 750,
+        striped = TRUE,
+        compact = TRUE,
+        pagination = FALSE,
+  theme = reactableTheme(
+      borderColor = "#AA6C39",
+      borderWidth = "5px",
+      color = "black",
+      backgroundColor = "#938c34",
+      stripedColor = "#C0C0C0"
+      )
+          )
+```
+
+# And Here Are My Workings...
+## Your Average and Standard (Deviation) Statistical Analysis
+
+Table \@ref(fig:overall-task-summary) shows overall summary statistics for the points awarded for each contestants task attempt across the series. Each contestant has a boxplot to provide insight into the distribution and spread of the points awarded, and explicitly present the average points awarded (via the mean and median), and variation in points awarded (via the standard deviation and interquartile range). We generate these statistics for all tasks, and each task type (Prize, Pre-Recorded and Live).
+
+```{r}
+overall_summary_df <- task_attempt_df %>%
+    group_by(Series.ID, Contestant) %>%
+    summarise(
+        Num_Records = n(),
+        Num_Tasks = n_distinct(Task),
+        Sum_Points = sum(Points),
+              Mean_Points = mean(Points),
+              Median_Points = median(Points),
+              M2_Points = sqrt(Mean_Points * Median_Points),
+              Var_Points = var(Points),
+              SD_Points = sd(Points),
+              P25_Points = quantile(Points, 0.25),
+              P75_Points = quantile(Points, 0.75),
+              IQR_Points = IQR(Points),#P75_Points - P25_Points,
+        Points_List = list(Points)
+    ) %>%
+    group_by(Series.ID) %>%
+    mutate(Points_Rank = rank(-M2_Points),
+           Vol_Rank = rank(SD_Points),
+           Task.Type = "All Tasks"
+               ) %>%
+    ungroup() %>%
+    left_join(y = contestants_df, by = join_by(Contestant == Contestant.Name))
+
+
+task_type_summary_df <- task_attempt_df %>%
+    group_by(Series.ID, Contestant, Task.Type) %>%
+    summarise(
+        Num_Records = n(),
+        Num_Tasks = n_distinct(Task),
+        Sum_Points = sum(Points),
+              Mean_Points = mean(Points),
+              Median_Points = median(Points),
+              M2_Points = sqrt(Mean_Points * Median_Points),
+              Var_Points = var(Points),
+              SD_Points = sd(Points),
+              P25_Points = quantile(Points, 0.25),
+              P75_Points = quantile(Points, 0.75),
+              IQR_Points = IQR(Points),#P75_Points - P25_Points,
+        Points_List = list(Points)
+    ) %>%
+    group_by(Series.ID, Task.Type) %>%
+    mutate(Points_Rank = rank(-M2_Points),
+           Vol_Rank = rank(SD_Points)
+               ) %>%
+    ungroup() %>%
+    left_join(y = contestants_df, by = join_by(Contestant == Contestant.Name))
+
+task_type_summary_df$Task.Type <- factor(task_type_summary_df$Task.Type, levels = c("Prize", "Pre-Record", "Live"))
+```
+```{r overall-task-summary, fig.cap = "Summary Statistics for Contestant Performances"}
+react_overall_summary_df <- bind_rows(overall_summary_df, task_type_summary_df) %>% 
+    select(Task.Type, Contestant, Initials, Image.URL, Points_List, Points_Rank, M2_Points, Mean_Points, Median_Points, Vol_Rank, SD_Points, IQR_Points)
+
+react_overall_summary_df <-as.data.frame(react_overall_summary_df)
+react_overall_summary_df$Task.Type <- factor(react_overall_summary_df$Task.Type,  levels = c("All Tasks", "Prize", "Pre-Record", "Live"))
+
+reactable(data = react_overall_summary_df,
+                     columns = list(
+                                              `Contestant` = reactable::colDef(
+      cell = function(value, index) {
+          img_url <- react_overall_summary_df[index, "Image.URL"]
+          image <- img(src = img_url, style = "height: 10%;", alt = "Contestant.Image")
+      tagList(
+          div(style = list(fontWeight = 600), value),
+        div(style = "display: inline-block; width: 30%;", image)
+        
+      )
+      },
+      minWidth = 125
+      ), 
+      `Initials` = colDef(show = FALSE, maxWidth = 100), 
+      `Image.URL` = colDef(show = FALSE),
+      Points_Rank = colDef(show = TRUE, name = "Rank in Average Points", format = colFormat(digits= 0)),
+      M2_Points = colDef(show = FALSE, name = "M2 Points = sqrt(Mean Points * Median Points)"),
+      Mean_Points = colDef(show = TRUE, name = "Mean Points"),
+      Median_Points = colDef(show = TRUE, name = "Median Points"),
+      Vol_Rank= colDef(show = TRUE, name = "Rank in Variation Points", format = colFormat(digits = 0)),
+      SD_Points = colDef(show = TRUE, name = "Std Deviation Points"),
+      IQR_Points = colDef(show = TRUE, name = "IQR of Points", format = colFormat(digits = 2)),
+      Points_List = colDef(show = TRUE, name = "Boxplot of Points", 
+                           cell = function(value, index) {
+                               sparkline(react_overall_summary_df$Points_List[[index]], 
+                                         type = "box", width = "80%", height = "50%", 
+                                         chartRangeMin = min(task_attempt_df$Points), 
+                                         chartRangeMax = max(task_attempt_df$Points),
+                                         target = react_overall_summary_df$Mean_Points[[index]],
+                                         targetColor = "darkgreen"
+                                         )
+  }),
+    `Task.Type` = colDef(show = TRUE, name = "Task Type", minWidth = 200)
+     )
+      ,
+    defaultSortOrder = "asc",
+    defaultSorted = c("Task.Type", "Points_Rank"),
+                     defaultColDef = reactable::colDef(
+                         format = colFormat(digits = 2),
+                         align = "center", 
+                         headerStyle = list(background = "#f7f7f8"),
+                        vAlign = "center",
+                        headerVAlign = "bottom"
+                        
+                         ),
+                     bordered = TRUE,
+                     highlight = TRUE,
+      striped = TRUE,
+      compact = TRUE,
+  groupBy = "Task.Type"
+
+  
+          )
+```
+
+
+
+
+
+<!-- The majority of boxplots indicate that contestants point distributions are not symmetical and skewed. This is to be expected as provides a good indication of their series performance. -->
+
+<!-- - Mathew is skewed to the right, towards the higher points range. -->
+<!-- - Rosie is the closest to a symmetical distribution out of the contestants presented. She also has the smallest sized box over all the contestants. This box represents the interquartile range and represents where 50% of the points will lie within. This is one measure of variation of points.  -->
+
+:::{.awards}
+Using on the mean average points awarded per task to determine the best performing contestant:
+
+- **Mathew Baynton** achieved the highest average points across all task types and is thus considered our **Most Valuable Player**.
+    - Mathew was also in fact the **highest average point scorer for both Prize and Pre-Recorded tasks**, and was the **second highest performer for live studio tasks**. His high performance in each of these task types evidently contributed to his high performance across all tasks in the series. 
+    - **Stevie Martin was the highest performer for live studio tasks.**   
+
+Using standard deviation of points awarded as a our measure of how volatile a contestant is and thus how unpredictable a contestant is:
+
+- **Mathew Baynton is the least volatile contestant of Series 19, and thus the most predictable.**
+    - Honourable mention to **Rosie Ramsey** who would have been the least volatile contestant of Series 19, had it not been for the _"Fail the task in the most heartbreakingly spectacular way"_ pre-recorded task in Episode 8 where she was award "-1".
+        - This is further confirmed as **Rosie exhibits the least amount of variability for Prize and Live Tasks**.
+        - **Fatiha El-Ghori** was the least volatile (and most predictable) for Pre-Record tasks. 
+- **Jason Mantzoukas is the most volatile contestant of Series 19, and thus the least predictable**
+    - His high volatility did seem apt seeing as his series motto was *"Destroy, dismantle, and engulf in flames."*[^flames] and he has later remarked that *"I feel like my best mode is chaos."*[^chaos].
+    - **Jason was the most volatile during the pre-record tasks**, and the **second most volatile in live tasks**. Given that pre-recorded tasks account for `r scales::percent(10*3 / (10*5))` of tasks in a series, this  provides insight as to why Jason is the most volatile contestant of the series.
+    - **Stevie is the most volatile contestant for Live tasks.** It's interesting to observe that **Stevie is both the best performer for live tasks and also the most volatile for live tasks**. A true chaotic being!
+    - It's heartwarming to see the dynamic duo of Javie Martzoukas continuing to chaotically rule the volatility leaderboard; **Stevie Martin is the second most volatile contestant after Jason.**
+    
+```{r jv-fast-food, out.width = "50%", fig.cap = "Javie Martzoukas: Chaotically ruling the volatility leaderboard of Series 19.", cache = TRUE}
+knitr::include_graphics("https://64.media.tumblr.com/805d2afa225e508213b8306330f13780/3b87a453e90c159e-91/s1280x1920/a68e31a1e67cf02e98925441e5a6c3b79c1ce2bc.png")
+```
+:::
+
+<details>
+<summary>Some Boring Stats Commentary</summary>
+
+The average points awarded to each contestant (through the mean and median), and the ranking of these averages across the contestants is in line with the final outcome of the series. That is, Mathew has the highest average points (both in mean and median), and was also crowned champion of the series. This is an expectant phenomena as in order for Mathew to be crowned champion, he had to perform the best on average.
+
+Both the mean and median are presented to provide comparison as to potential benefits and drawbacks to these two statistics which both capture the "average" behaviour. The mean is more nuanced and shows greater idiosyncrasies for each contestant (look at those decimal places), where as the median does not vary greatly across contestants (4 out of 5 contestants have a median of 3 points) and may thus not be ideal in definitively ranking contestants performance.
+
+In terms of points variation, Mathew has the smallest variability according to standard deviation, but if we measure this via interquartile range, this would be awarded to Rosie.
+
+But why is this? Well Rosie has one outlier according to the boxplot in the form of a -1. This was awarded in the _"Fail the task in the most heartbreakingly spectacular way"_ task in Episode 8, in which she failed the task by succeeding in it. 
+
+Standard Deviation (and mean) are influenced by the presence of outliers, whereas the IQR is not.
+Hence, Rosie is exhibits more variation according to standard deviation due to this outlier, whereas she is not penalised as much according to the IQR (it is just 1 out of 50 tasks performed in the series).
+
+</details>
+
+[^chaos]: ["I feel like my best mode is chaos." Jason Mantzoukas on his heel turn in Taskmaster, one of his favorite shows](https://petevolk.substack.com/p/hed-i-feel-like-my-best-mode-is-chaos#:~:text=in%20that%20regard%2C-,I%20feel%20like%20my%20best%20mode%20is%20chaos.,-And%20some%20of)
+
+[^flames]: ["Destroy, dismantle, and engulf in flames."](https://www.youtube.com/shorts/ADMPlo2sgRw)
+
+## Ch-ch-changes
+
+
+### Quarter-by-Quarter
+```{r}
+quarters_task_df <- task_attempt_df %>% mutate(
+    Quarter_Flag = ifelse(Episode.ID <= 7, "Q1 to 3", "Q4")
+) %>% group_by(Series.ID, Initials, Contestant, Image.URL, Seat, Quarter_Flag) %>%
+    summarise(
+        Num_Records = n(),
+        Num_Episodes = n_distinct(Episode.ID), 
+        Num_Tasks = n_distinct(Task),
+        Sum_Points = sum(Points),
+        Mean_Points = mean(Points),
+        Median_Points = median(Points),
+        StdDev_Points = sd(Points)
+    ) %>% arrange(Quarter_Flag) %>%
+    mutate(
+        Task.Type = "All Tasks",
+        Curr_Q_Points = Mean_Points,
+        Prev_Q_Points = lag(Mean_Points,1),
+        PerChng_Q_Points = Mean_Points/lag(Mean_Points,1) -1,
+        PerChng_Sign = ifelse(PerChng_Q_Points<=0, "-ve", "ve")
+        )
+
+#quarters_task_df
+```
+
+```{r}
+quarters_task_type_df <- task_attempt_df %>% mutate(
+    Quarter_Flag = ifelse(Episode.ID <= 7, "Q1 to 3", "Q4")
+) %>% group_by(Series.ID, Initials, Contestant, Image.URL, Seat, Task.Type, Quarter_Flag) %>%
+    summarise(
+        Num_Records = n(),
+        Num_Episodes = n_distinct(Episode.ID), 
+        Num_Tasks = n_distinct(Task),
+        Sum_Points = sum(Points),
+        Mean_Points = mean(Points),
+        Median_Points = median(Points),
+        StdDev_Points = sd(Points)
+    ) %>% arrange(Quarter_Flag) %>%
+    mutate(
+        Curr_Q_Points = Mean_Points,
+        Prev_Q_Points = lag(Mean_Points,1),
+        PerChng_Q_Points = Mean_Points/lag(Mean_Points,1) -1,
+        PerChng_Sign = ifelse(PerChng_Q_Points<=0, "-ve", "ve")
+        ) %>%
+    ungroup() %>%
+    mutate(
+        Task.Type = factor(Task.Type, levels = c("Prize", "Pre-Record", "Live"))
+        )
+
+
+```
+
+```{r type-quarter-points, fig.cap= "Change in Average Points Awarded in the last quarter of the series.", out.width = "80%"}
+title_label <- glue("Change in Average Points Awarded by in Q4 of the Series")
+
+rbind(quarters_task_df, quarters_task_type_df) %>%
+    mutate(Task.Type = factor(Task.Type, levels = c("All Tasks", "Prize", "Pre-Record", "Live")),
+        Quarter_Flag = factor(Quarter_Flag, levels = c("Q1 to 3", "Q4"))
+                    ) %>%
+ggplot(aes(x = Quarter_Flag, y= Mean_Points, group = Initials, label = Initials, image = Image.URL)) +
+    geom_point() +
+    geom_line() +
+    geom_text(aes(label = scales::percent(PerChng_Q_Points, accuracy = 0.01), colour = PerChng_Sign) , nudge_x = -0.5, nudge_y = 0.1, size = 7, show.legend = FALSE) +
+    scale_color_manual(values = c("darkred", "darkgreen")) +
+    geom_text(aes(label = scales::number(Mean_Points, accuracy= 0.001)), nudge_y = 0.5, size = 5)+ 
+    geom_image(size = 0.15, alpha = 0.5) +
+    facet_grid(Initials~ Task.Type, switch = "y") +
+    ggtitle(title_label) +
+    xlab("Quarter Based Episode Period") +
+    ylab("Average Task Points Awarded") +
+    quack_theme()
+```
+
+Figure \@ref(fig:type-quarter-points) shows each contestants change in average points awarded between first $\frac{3}{4}$ of the series (episodes 1 to 7, referred to as Q1 to 3) and the last $\frac{1}{4}$ (episodes 8 to 10, referred to as Q4). We consider changes in averages for all tasks and each task type, as an attempt to track progress of contestants over the series. 
+
+:::{.awards}
+- **Stevie Martin showed the most improvement in task performance** when comparing her Q4 performance to Q1 to 3. She achieved 65.93% more average points in Q4.
+    - This improvement is seen in all three task types (prize, pre-record and live).
+    - This improvement is also in line with Stevie surprisingly finishing 2nd in the series.
+- **Mathew Baynton maintained his performance** during Q4 compared to Q1 to 3. His average points awarded changed by only -12.74% and was the closest to 0%. 
+    - Mathew's largest degradation in performance was for prize tasks (-35.63%). One hypothesis to this degradation is that Greg was judging Mathew more harshly in the last quarter (compared to the first three) due to Mathew becoming the clear winner of the series early on. Greg, whether intentionally or not, could have under marked him more in latter prize tasks in order to close Mathew's lead, and provide some jeopardy to the series.
+- **Rosie Ramsey showed the greatest degredation in task performance** and needs to see me (or should that be the Taskmaster) after class. She saw a 25.66% drop in her average points awarded for Q4. 
+    - This degradation is mainly seen in the prize and pre-recorded tasks, with pre-recorded tasks carrying the most weight.
+
+:::
+
+
+:::{.insights}
+Other observations:
+
+- **Jason Mantzoukas was the second contestant to show the most improvement** over the series after Stevie. He saw an increase of 55.56% in his average point awarded for all tasks.
+    - This increase is largely attributed to pre-record and live tasks improvements. He was relatively consistent in his prize task performance and saw minimal (potentially insignificant) changes of 1.28%.
+    - Jason's improvement is also in line with Jason finishing third in the series in a somewhat surprising manner.
+- **Fatiha El-Ghorri was the second contestant to show the most degradation in performance** over the series after Rosie. She saw a degradation of 22.96% in her average points awarded.
+    - This degradation is attributed to pre-recorded tasks (most common task type, and thus greatest influence), and also live tasks. 
+    - Her live task performance degraded by -41.67% which is not surprising given that Fatiha memorably gave up in the live tasks in Episode 1 and 10 such that she ranked last in them.
+:::
+
+### By Episode
+We can also monitor the progress of contestants performance over the series by plotting it by each episode, rather than by quarters.
+
+Figure \@ref(fig:task-episode-plot) shows each individual task attempt point over time (Episode) for each contestant. The flat horizontal green line represents the average task points awarded across the series The varying red line represents the average task points in that episode. Some slight jitter has been added to prevent overlapping of points.
+
+```{r task-episode-plot, fig.cap="Awarded Points over Time", out.width = "80%"}
+set.seed(seed_id)
+title_label <- glue("Task Performance over Time for Series {series_id} Contestants", series_id = series_id)
+
+ggplot(task_attempt_df, aes(x=Episode.ID, y= Points)) +
+    #geom_point(alpha = 0.6) +
+    geom_jitter(alpha = 0.8, height = 0) +
+    #geom_smooth(se = FALSE, alpha = 0.7) +
+    stat_summary(geom = "line", fun = "mean", colour = "darkred", linetype = 2, size = 1, alpha = 0.7) +
+    stat_summary(geom = "point", fun = "mean", colour = "darkred", size = 3, alpha = 0.7, shape = 18) +
+    geom_hline(data = overall_summary_df, aes(yintercept = Mean_Points), colour = "darkgreen", linetype = 4, linewidth = 0.75, alpha = 0.7) +
+    geom_image(data = overall_summary_df, aes(y= Mean_Points, image = Image.URL), x = 0.25, size = 0.5) +
+    facet_grid(Initials ~., switch = "y") +
+    scale_x_continuous(breaks = 1:10) +
+    ggtitle(label = title_label) +
+    xlab("Episode") +
+    ylab("Points Awarded") +
+    quack_theme()
+```
+
+:::{.insights}
+From Figure \@ref(fig:task-episode-plot), we can clearly see each contestants high and low points in the series:
+
+- Fatiha's best episode was in episode 4 or 6. From episode 6 onwards, her performance was on a slow decline, with her episode 10 performance being in line with her episode 1 performance.
+- Jason's worst episode was in episode 7; after this he redeemed himself which concurs with the quarter analysis we previously performed.
+    - Prior to this, he had a small lill in performance from Episode 1 to 4, but not as severe as Episode 7.
+- There are no obvious peaks or troughs in Mathew's performance. Each episode's point average is not deviating too much from the overall series average; this is not particularly surprising given that  Mathew was the least volatile and most predictable contestant.
+    -  If we were to isolate Mathew's peak and trough, Episode 2 and 7 would be the most potential peak candidates, whilst Episodes 3 to 6 are candidates for his lull.
+- Rosie had a high performing streak between episodes 4 to 7; episode 3 was her lowest point in th e series.
+- Stevie shares the same low point as Jason, that being Episode 7.[^jv] However, she immediately followed this with her spectacular redemption arc and performed her best from Episodes 8 to 10. 
+    - This is also supported by her improvement in the quarter based analysis.
+
+[^jv]: Javie Martzoukas forever!
+:::
+
+```{r jv-graduate, out.width = "50%", cache = TRUE}
+knitr::include_graphics("https://64.media.tumblr.com/3d84bfe2d80ca761c1590048983c5eae/43b11ebca53ec16a-00/s1280x1920/59ec9aff3e76425fbd58f9fb71b926abe7bbaa7b.gifv")
+```
+
+
+## There's an I in Team
+```{r}
+solo_team_df <- task_attempt_df %>% filter(Task.Type != "Prize") %>%
+    group_by(Series.ID,  Contestant, Initials, Image.URL, Team.Task.Flag) %>%
+    summarise(
+        Num_Records = n(),
+        Num_Tasks = n_distinct(Task),
+        Num_Episodes = n_distinct(Episode.ID),
+        Sum_Points = sum(Points),
+        Mean_Points = mean(Points),
+        ) %>% group_by(Series.ID, Contestant, Initials, Image.URL) %>%
+    mutate(
+     Num_NP_Tasks = sum(Num_Tasks),
+     Team_Task_Weight = Num_Tasks/Num_NP_Tasks,
+     Sum_NP_Points = sum(Sum_Points),
+     Mean_NP_Points = Sum_NP_Points/Num_NP_Tasks,
+     Pct_from_NP = (Mean_Points - Mean_NP_Points) / (Mean_NP_Points)
+    ) %>% arrange(Team.Task.Flag) %>%
+    mutate(
+        Solo_Mean_Points = lag(Mean_Points, 1),
+        Team_Points_Factor = Mean_Points/Solo_Mean_Points - 1
+    ) %>%
+ungroup()
+
+```
+
+Figure \@ref(fig:team-influence) provides a visualisation of each contestants average task performance for non-prize tasks (contestant image), and the influence of average solo and team task performance on this overall average (ends of the lines). We also presetnt the percentage difference of a contestants team task performance over their solo task performance, to provide insight as to how different their team performance was to their solo performance.
+
+```{r team-influence, fig.cap = "Visualising contestants overall average task performance and how this is influenced by solo and team task performance.", out.width = "80%"}
+title_label <- glue("The Influence of Team and Solo Tasks on Average Points Awarded")
+
+subtitle_label <- "Ends of line indicate average points for solo and team tasks separately. \n Image represents combined average.\nPercentage is the inflation of team point average over solo points average."
+
+caption_label <- "Points awarded are isolated to non-prize tasks"
+
+ggplot(solo_team_df, aes(x = Mean_Points, y= 0)) +
+    geom_point(aes(colour = Team.Task.Flag), size = 2.5) +
+    geom_line() +
+    geom_image(aes(x = Mean_NP_Points, image = Image.URL, y= 0.0), size = 0.4, inherit.aes = FALSE) +
+    geom_text(aes(x = Mean_Points, y = 0.007, label = scales::number(Mean_Points, accuracy = 0.001)), size = 7, colour = "black") +
+    geom_text(aes(x = Mean_Points, y = -0.005, label = scales::percent(Team_Points_Factor, accuracy = 0.1)), size = 7, colour = "darkgreen") +
+    facet_grid(Initials~.,switch = "y") +
+    quack_theme() +
+    ylim(c(-0.01, 0.01)) +
+    ylab("") +
+    xlab("Average Points Awarded") +
+    labs(title = title_label, caption = caption_label) +
+    guides(title = "Team Task Indicator") +
+    theme(axis.text.y=element_blank(),
+          axis.ticks.y=element_blank(),
+          legend.title = element_blank()
+          )
+```
+
+
+:::{.awards}
+- **For all contestants, their team task performance was better than their solo task performance**; the average points awarded were higher in team tasks than solo tasks.
+    - This particular observation (team task performance is better than solo task performance) indicates that **all contestants benefited from team tasks** and raised the average points awarded for all non-prize tasks. 
+    - I would be intrigued to see if this phenomena (that team task performance is greater than solo task performance) is true for all contestants in the history of the show, and if there are any incidents where team task performance was worse than solo task performance. For example, it is entirely plausible that Dara O'Brian (Series 14) or John Robbins (Series 17) were actually hindered by their teams, and thus did not benefit from team tasks.
+- The **team of Fatiha, Mathew and Rosie (Fatosie El-Ramton) were the better performing team**, achieving an average of 3.750 points per team task.[^fmr]
+    - In contrast, Javie Martzoukas were awarded an average of 3.250 per team task. 
+    - Only 0.5 points separates these two teams and so the award of "best team" can be considered a close call. If only Javie Martzoukas were fully locked in...
+- **Fatiha El-Ghorri benefited the most from team tasks.** Her team task performance was 36.4% more than her solo task performance. 
+- **Stevie Martin benefited the least from team tasks.** Her team task performance was only 4.0% more than her solo task performance.
+    
+```{r jv-locked-in, out.width = "30%", fig.cap = "Javie Martzoukas: Locking in a memorable team name", cache = TRUE, fig.show = 'hold'}
+knitr::include_graphics(path = c("https://64.media.tumblr.com/3e34e65eb5882234a2c8ffd1937a9ce0/78f798442f25049b-27/s1280x1920/e8e9a8d106937a152d9784d9569f237218fd9d7d.gifv","https://64.media.tumblr.com/88e2f5b17ea45bea708031ee09323985/78f798442f25049b-eb/s1280x1920/6384de9b4b62a23cce6616666280ca08740e55c7.gifv"))
+```
+
+[^fmr]: But do they have as memorable a team name as Javie Martzoukas?! Fatosie El-Ramton just doesn't have the same ring to it...
+:::
+
+# What Have we Learnt Today?
+
+:::{.infobox .today data-latex="{today}"}
+- We've provided data-driven recognition and awards to those who weren't crowned the champion of Series 19.
+    - Saying this, Mathew did win many of our silly fictional awards and is now proven to be the most consistent and predictable contestants of Series 19.
+
+```{r feg-hearts, out.width = "30%", cache = TRUE, fig.show = 'hold', fig.cap = "Sharing the love and adoration of Series 19 through data driven means."}
+knitr::include_graphics(path = c("https://64.media.tumblr.com/a485b50c11c625d2d4fa267a7991c40a/494bc5556c555266-4f/s1280x1920/ab4ef66dfaff62065d866843148f9632eb760436.gifv"))
+```
+
+- We've learnt that if I am seem more relevant and timely in this world and industry, I need to be more efficient and prompt in performing this analysis and publishing posts about it. This is regardless of what Stevie's best intentions were.
+
+```{r sm-approach, out.width = "30%", cache = TRUE, fig.show = 'hold', fig.cap = "A hopeful approach for Series 20..."}
+sm_vec <- c("https://64.media.tumblr.com/6328d884e46e5e49daa01d7db8200b2e/4c64f0d00d0359fd-98/s1280x1920/0195e90d1da509c0fd55684d95156818a822a2ca.gifv",
+            "https://64.media.tumblr.com/97288eab350525ddb100f6d46af61f91/4c64f0d00d0359fd-12/s1280x1920/6ab195a6201caac330828af494cf33013093da1e.gifv"
+)
+
+knitr::include_graphics(path = sm_vec)
+```
+
+- We've learnt that it is time to take apart this Series 19 (data)set and start looking at Series 20 more seriously...
+```{r jm-fence, out.width = "30%", cache = TRUE, fig.show = 'hold', fig.cap = "A visual representation of taking apart the Series 19 (data)set."}
+knitr::include_graphics(path = c("https://64.media.tumblr.com/a9ddc4670ddc3f27159485e300376435/2b149126f3a2deb8-32/s1280x1920/349a8524e49344bdfee896ff9e0640d860a286d1.gifv"))
+```
+:::
