@@ -1,0 +1,455 @@
+---
+title: 'Series 20, Episode 1: Soft Reboot'
+author: Christopher Nam
+date: '2025-09-18'
+slug: series-20-episode-1-genesis
+categories: [Series 20, Betting]
+tags: [Series 20, Betting]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+#  Your Task
+
+> Using task data up to and including Episode 1 of Series 20 of Taskmaster UK, generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series. Bonus points for generating a joint ranking distribution for the full cast of Series 20.
+
+```{r}
+s20_data_link <- "https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing"
+
+task_attempt_df <- range_read(s20_data_link, sheet = "Attempts-Tasks")
+
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(s20_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+# Let's Start this Chase: New Cast ... Same Sort of Analysis
+
+```{r, out.width = "40%", fig.cap = "Let's Start this Series 20 Chase!"}
+knitr::include_graphics("https://64.media.tumblr.com/43bd475c418c4c5355a8fa349d4348fd/55a8cb856fb071a3-de/s1280x1920/dcc0cf4abb5d3b5a12fb179ce4fcf588cf691095.gifv")
+```
+
+[N.B. No shade intended.](https://youtu.be/SIxubLzYOl4?si=7lhMRZBxJNnjYbXy)
+
+With Series 20 of UK Taskmaster now in full swing, it's time to perform a new set of analysis and modelling techniques.
+
+The techniques and analysis have previously been covered in the following Series 19 related posts: [Episode Odds](/themedianduck/2025/06/odds-in-your-favour/), [Series Odds](/themedianduck/2025/07/take-a-chance-on-me/), [Retrospective Part 1: Sharing the Same Juice](/themedianduck/2025/07/glass-half-most/).
+
+
+## The Start of The Race
+```{r}
+# Series Tracker data frame. Episode x Contestant granularity
+series_points_df <- task_attempt_df %>% group_by(Series_ID, Contestant, Episode_ID) %>%
+    arrange(Episode_ID) %>%
+    reframe(
+        Num_Tasks = n_distinct(Task_ID),
+        Ep_Points = sum(Points)
+        ) %>% 
+    group_by(Series_ID, Episode_ID) %>%
+    mutate(
+        Ep_Ranking = rank(-Ep_Points, ties.method = "min")
+        ) %>%
+    group_by(Series_ID, Contestant) %>%
+    arrange(Episode_ID) %>%
+    mutate(
+        Series_Points = cumsum(Ep_Points)
+    ) %>%
+    group_by(Series_ID, Episode_ID) %>%
+        mutate(
+        Series_Ranking = rank(-Series_Points, ties.method = "min")
+            ) %>%
+    left_join(contestants_df, by = join_by(Contestant == Contestant_Name))
+```
+
+```{r ep1-series-tracking, fig.cap = "The Series 20 Race has begun!", out.width = "75%"}
+title_label <- "Series 20: Series Score Tracker"
+
+latest_df <- series_points_df %>% filter(Episode_ID == max(series_points_df$Episode_ID))
+    
+    
+ggplot(series_points_df, aes(x= Episode_ID, y= Series_Points)) +
+ geom_point(aes(colour = Initials)) +
+    geom_line(aes(colour = Initials)) +
+    geom_image(data = latest_df, aes(x= 10 + (Series_Ranking-1)*0.5, y = Series_Points, image = Image_URL), size = 0.1, by = "height", inherit.aes = FALSE) + 
+    coord_cartesian(xlim = c(1, 12)) +
+    coord_cartesian(ylim = c(0, 50)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 12)) +
+    labs(title = title_label) +
+    xlab("Episode") +
+    ylab("Series Points (Cumulative)") +
+    quack_theme()
+```
+:::{.insights}
+
+Figure \@ref(fig:ep1-series-tracking) shows the ongoing status of Series 20. In Episode 1 of the series, we saw:
+
+- Maisie Adam take the initial lead, accumulating 19 points.
+- Phil Ellis following closely behind with 16 points.
+- Ania Magliano being hot on the heels of Phil with 15 points.
+- Reece Shearsmith taking 4th position with 13 points.
+- Sanjeev Bhaskar completing the rear of the cast centipede with 12 points.
+
+Based on just this first episode (and assuming that contestants perform in a similar manner), **we would naively predict this exact observed episode 1 ranking configuration for both future episodes and the overall series.**
+
+However, this prediction doesn't capture any notion of the volatility and uncertainty associated with Taskmaster (and life in general).
+:::
+
+
+```{r}
+#Filter task_attempt to episodes  of interest.
+
+# For each contestant, sample the corresponding amount based on the number of required simulations
+# Each sample episode contains: 1 prize task, 3 pre-records, 1 live tasks. 
+# Each sample series contains: Length of series - number of episodes that have been broadcasted already x of episode Samples
+
+
+# For each episode sample, rank contestants within that episode.
+# Within each series sample, calculate series cumulative scores and rank contestants. 
+
+seed_id <- 2025-09-11
+set.seed(seed_id)
+
+series_id <- unique(task_attempt_df$Series_ID)
+sim_max_episode_used <- 1
+num_sims <- 100000 
+
+num_eps_series <- 10
+remain_num_eps <- num_eps_series - sim_max_episode_used
+pr_task_inflate <- 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+
+train_df <- task_attempt_df %>% filter(Episode_ID <= sim_max_episode_used)
+    
+
+group_train_data_df <- train_df %>% group_by(Contestant, Task_Type) 
+
+
+sample_set_1 <- group_train_data_df %>% 
+    filter(Task_Type != "Pre-Record") %>%
+    slice_sample(n = num_sims * remain_num_eps, replace = TRUE) %>%
+    mutate(Episode_ID = rep((sim_max_episode_used+1): num_eps_series, each = num_sims),
+           Universe_ID = rep(1:num_sims, times = remain_num_eps)
+           )
+
+sample_set_2 <- group_train_data_df %>% 
+    filter(Task_Type == "Pre-Record") %>%
+    slice_sample(n = pr_task_inflate * num_sims * remain_num_eps, replace = TRUE)  %>%
+    mutate(Episode_ID = rep((sim_max_episode_used+1): num_eps_series, each = num_sims * pr_task_inflate),
+           Universe_ID = rep(1:num_sims, times = remain_num_eps * pr_task_inflate),
+               Task_ID = rep((1:pr_task_inflate) + 1, times = num_sims * remain_num_eps) 
+           )
+
+full_sample_set_df <- rbind(sample_set_1, sample_set_2) %>%
+    mutate(
+        OG_Points = Points,
+        T1_Points = pmax(pmin(OG_Points, 5), 0)
+    ) %>% 
+    arrange(Series_ID, Universe_ID, Episode_ID, Task_ID, Contestant) %>%
+    group_by(Series_ID, Universe_ID, Episode_ID, Task_ID) %>%
+        mutate(
+            Points = 5 - (rank(-T1_Points, ties.method = "min") - 1)
+        )
+    
+
+
+sanity_check_df <- full_sample_set_df %>% group_by(Contestant, Task_Type) %>%
+    reframe(
+        Num_Sims = n_distinct(Universe_ID),
+        Num_Episodes = n_distinct(Episode_ID),
+        Num_records = n()
+    )
+```
+
+## Within Episode Ranking Distributions
+```{r}
+#  Taking the contest-task samples and aggregate 
+
+#Episode summary for each contestant (summed over tasks), and ranked within that episode. 
+episode_sample_summary_df <- full_sample_set_df %>% group_by(Universe_ID, Series_ID, Episode_ID, Contestant) %>%
+    reframe(Ep_Points = sum(Points)) %>%
+    group_by(Universe_ID, Series_ID, Episode_ID) %>%
+    mutate(Ep_Rank = rank(-Ep_Points, ties.method = "min")) %>%
+    group_by(Universe_ID, Series_ID, Contestant) %>%
+    arrange(Universe_ID, Series_ID, Episode_ID) %>%
+    mutate(
+        Sim_Series_Points =  cumsum(Ep_Points)
+    )
+```
+
+```{r}
+prop_ep_win_df <- episode_sample_summary_df %>% 
+    group_by(Series_ID, Contestant, Ep_Rank) %>%
+    reframe(
+        Num_Count = n()
+        ) %>% 
+    group_by(Series_ID, Contestant) %>%
+        mutate(
+        MAP_Flag = Num_Count == max(Num_Count),
+        Denominator = sum(Num_Count)
+        ) %>% ungroup() %>%
+    mutate(
+        Prop_Count = Num_Count/Denominator
+        
+    ) %>%
+    left_join(contestants_df, by = join_by(`Contestant` == Contestant_Name))
+    
+```
+
+
+```{r ep1-ep-rankings, fig.cap = "How will our contestants fare within an individual episode?", out.width = "75%"}
+graph_title_label <- glue("Probability Distribution For Episode Ranking for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", max_ep = sim_max_episode_used, num_sims = scales::number(num_sims), seed_id = seed_id, remain_eps = remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}", seed_id = seed_id)
+
+ggplot(prop_ep_win_df, 
+       aes(y = Prop_Count, x= Ep_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8), colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+:::{.insights}
+From `r number(num_sims)` simulated series in which there are `r remain_num_eps` remaining episodes (consequently we have simulated `r number(num_sims*remain_num_eps)` episodes), Figure \@ref(fig:ep1-ep-rankings) presents distributions for each contestant's placement within an episode.
+
+Some observations:
+
+- **For all contestants except for Ania, their ranking distributions are peaked around their ranking from Episode 1.** That is:
+    - Maisie's distribution is peaked around 1st place with 81.30%; she placed 1st in episode 1 in reality.
+    - Phil's distribution is peaked around 2nd place with 50.26%; he placed 2nd in the episode.
+    - Reece's most likely episode ranking is 4th with 53.17%; he placed 4th in the episode.
+    - Sanjeev's distribuion is skewed towards 5th place with 50.56%; he placed last (5th) in episode 1.
+- **Ania's distribution (and most likely within episode ranking) is centred around 2nd place with 41.46%. This differs to the outcome of Episode 1 where she placed 3rd. **
+    - Ania's distribution is flatter and less peaked compared to the other contestants; she is expected to come 3rd with 28.46% probability, and even has a chance of placing 1st or 4th with probabilities less than 10%.
+    - **Ania and Phil sharing the same most likely within episode ranking is not surprising given that ties can occur.** In addition, this shared peak highlights the need to go beyond each contestant's marginal distribution, consider the joint distribution featuring the entire cast and their rankings.
+- It is interesting to observe that Sanjeev has a 5.26% chance of placing first, whilst Reece has 0% chance.
+    - This is because under the Multiverse Approach we have used to generate these distribution, sampling is performed separately for each task type. That is prize task samples are only sampled from observed prize tasks, pre-record samples are only from observed pre-records etc. 
+    - Consequently when only Episode 1 has been observed, there is only one prize and live tasks to sample from for all simulations. There is no variation in between these samples.
+    - There is however, variation in the pre-record simulations  and this is where Sanjeev's 1st place instances are occurring. Sanjeev obtained 5 points in one pre-recorded task which could plausibly be sampled consecutively in the same episode and thus be enough for Sanjeev to win an episode.
+    - In comparison, Reece's highest pre-recorded points was 3 which may not be sufficient to win a simulated episode, even if sampled consecutively within the same episode.
+- The same reasoining also applies to why Maisie and Ania have non-zero probabilities of placing 5th (2.14% and 3.69% respectively), compared to 0% probability for Phil.
+    - Both Maisie and Ania had pre-recorded tasks in which they scored 1, whilst Phil was awarded 4 points in all 3 pre-recorded tasks in episode 1.
+:::
+
+
+## End-of-Series Ranking Distributions
+```{r}
+
+# Constructing Series Simulations
+series_sample_summary_df <- series_points_df %>% 
+    filter(Episode_ID == sim_max_episode_used) %>%
+    select(Series_ID, Contestant, Episode_ID, Series_Points) %>%
+    rename(Num_Obs_Eps = Episode_ID, Obs_Series_Points = Series_Points) %>%
+    full_join(episode_sample_summary_df, by = join_by(Series_ID == Series_ID, Contestant == Contestant)) %>%
+    mutate(
+     Full_Sim_Series_Points = Obs_Series_Points + Sim_Series_Points   
+    ) %>% group_by(Series_ID, Universe_ID, Episode_ID) %>%
+    arrange(Universe_ID, Episode_ID) %>%
+    mutate(
+        Sim_Series_Rank = rank(-Full_Sim_Series_Points, ties.method = "min")
+    )
+
+```
+
+```{r}
+# Series End Wins and Proportions
+prop_series_win_df <- series_sample_summary_df %>% 
+    filter(Episode_ID == num_eps_series) %>%
+    group_by(Series_ID, Contestant, Sim_Series_Rank) %>%
+    reframe(
+        Num_Count = n()
+        ) %>% 
+    group_by(Series_ID, Contestant) %>%
+        mutate(
+        MAP_Flag = Num_Count == max(Num_Count),
+        Denominator = sum(Num_Count)
+        ) %>% ungroup() %>%
+    mutate(
+        Prop_Count = Num_Count/Denominator
+        
+    ) %>%
+    left_join(contestants_df, by = join_by(`Contestant` == Contestant_Name))
+    
+```
+
+
+```{r ep1-series-rankings, fig.cap = "Where will our contestants place by the end of the series?", out.width = "75%"}
+graph_title_label <- glue("Probability Distribution For Overall Series Rankings for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", max_ep = sim_max_episode_used, num_sims = scales::number(num_sims), seed_id = seed_id, remain_eps = remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}", seed_id = seed_id)
+
+ggplot(prop_series_win_df, 
+       aes(y = Prop_Count, x= Sim_Series_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8)  , colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("End of Series Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+:::{.insights}
+Figure \@ref(fig:ep1-series-rankings) presents distributions for each contestants placement by the end of the series. This is fFrom `r number(num_sims)` simulated series in which there are `r remain_num_eps` remaining episodes.
+
+- **The end of series rankings for each contestant are in line with the Episode 1 outcome; they are peaked around the rankings observed in this episode.** 
+    - The end of series distributions display less variability and are less flat than the within episode rankings displayed in Figure \@ref(fig:ep1-ep-rankings). 
+- If we are to make a **prediction based on the maximum probabilities for each contestants marginal distribution (Maximum a Posteriori, MAP)**
+    - **Ania will end the series in 3rd place with 82.80% probability.**
+    - **Maisie will place 1st at the end of the series with 99.92% chance.**
+    - **Phil will place 2nd with 89.88% probability by the end of the series.**
+    - **Reece will end up in 4th place by the end of the series with 76.60% chance.**
+    - **Sanjeev will place 5th in the series with 73.65% probability.**
+- From each contestant's marginal distribution:
+    - **Maisie is almost certainly (with probability 99.92%) going to place 1st in the series.** The remaining probabilities are relatively insignificant are assigned to finishing 2nd and 3rd. 
+    - **Ania and Phil's main source of variability is whether they will place 2nd or 3rd.**
+        - Ania could finish the series in 2nd place with 16.49% chance.
+        - Phil could finish in 3rd with 10.03%.
+    - **Reece and Sanjeev's main source of uncertainty is whether they will finish in 4th or 5th place.**
+        - Reece is expected to finish in 5th place with 23.37% probability.
+        - Sanjeev is expected to finish in 4th place with 25.44% probability.
+    - There also small (but relatively insignificant) probabilities associated with contestants finishing in other rankings. For example: 
+        - Sanjeev could finish the series in 2nd place with 0.02%; it occurred in `r number(num_sims * 0.02/100)` times in the `r number(num_sims)` simulated timelines.
+        - Ania could win the series with 0.04% probability; it occurred in `r number(num_sims * 0.04/100)` times in the `r number(num_sims)` simulated timelines.
+    - Under our current methodology, we assign 0% probability to:
+        - Ania finishing 5th in the series.
+        - Maisie finishing 4th or 5th in the series.
+        - Phil finishing 5th in the series.
+        - Reece finishing 1st or 2nd.
+        - Sanjeev finishing 1st.
+:::
+
+## Joint Cast Ranking Distribution
+
+```{r}
+sim_cast_summary_df <- series_sample_summary_df %>% 
+    filter(Episode_ID == num_eps_series) %>%
+    left_join(contestants_df[c("Contestant_Name", "Initials")], by = join_by(Contestant == Contestant_Name)) %>%
+    mutate(Init_Rank = paste0(Initials, ": ", Sim_Series_Rank)) %>%
+    group_by(Series_ID, Universe_ID) %>%
+    reframe(
+         Num_Records = n(),
+         Full_Cast_Rank = paste(Init_Rank, collapse = ", ")
+    )
+```
+
+```{r}
+# Calculating the probability associated with the full cast series ranking event
+counts_sim_cast_df  <- sim_cast_summary_df %>% group_by(Series_ID, Full_Cast_Rank) %>%
+    reframe(
+        Num_Count = n_distinct(Universe_ID)
+     )%>%
+    group_by(Series_ID) %>%
+    mutate(Num_Sims = sum(Num_Count),
+           Prop_Count = Num_Count/Num_Sims
+           ) %>%
+    ungroup() %>%
+    mutate(
+        Prob_Rank = rank(-Prop_Count),
+        MAP_Flag = (Prop_Count == max(Prop_Count)),
+           text = ifelse(MAP_Flag, paste0("Prediction (", scales::percent(Prop_Count, accuracy = 0.01), ")"),"")
+                         ) %>%
+    arrange(-Prop_Count)
+```
+
+```{r s20-cast-joint-dist, out.width = "75%", cache = FALSE, fig.cap = "How will the Series 20 cast fare as a complete unit? Joint Distribution of Series Rankings for the Entire Cast of Series 20"}
+top_casts <- 20 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Series Rankings for Series {series_id}", series_id = series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", max_ep = sim_max_episode_used, num_sims = scales::number(num_sims), seed_id = seed_id, remain_eps = remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}", n_cast = top_casts, seed_id = seed_id)
+
+counts_sim_cast_df %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag) %>%
+ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0), family = "elite", colour = "darkgreen", nudge_y = 0.001) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+```
+:::{.insights}
+Figure \@ref(fig:s20-cast-joint-dist) shows the joint distribution for the casts end of series ranking. The joint distribution can provide greater insight to interactions between contestants (for examples ties) 
+
+- **Using the MAP as our prediction method, the most likely end of series contestant placement (occurring with 62.01%) is:**
+    - *1st: Maisie Adams*
+    - **2nd: Phil Ellis**
+    - *3rd: Ania Magliano*
+    - **4th: Reece Shearsmith**
+    - *5th: Sanjeev Bhaskar*
+- The second most likely end of series of placement occurs with probability less than 25%. The configuration has Sanjeev and Reece switching their predicted placements between 4th and 5th place.
+- The Top 7 most probable joint cast rankings are all different combinations of Ania and Phil placing 2nd or 3rd, and Reece and Sanjeev placing 4th or 5th. Maisie will always place 1st. 
+- These joint cast ranking are in line with the marginal contestant distributions displayed in Figure \@ref(fig:ep1-series-rankings). 
+:::
+
+# What Have We Learnt Today?
+
+::: {.infobox .today data-latex="{today}"}
+We've learnt that:
+
+- It is incredibly early days, but based on just Episode 1 outcomes, the most likely end of series ranking (MAP) for the full cast is:
+    - **Maisie: 1st, Phil: 2nd, Ania: 3rd, Reece: 4th, Sanjeev: 5th.**
+    - We estimate this particular joint cast series ranking **occurring with 62.01% probability.**
+    - This series prediction is in line with the observed Episode 1 rankings. 
+- By generating a full join distribution, we can also see outcomes from alternative realities and universes, and the likelihood of these outcomes occurring. This includes where ties occur.
+    - Alternative timelines highlight that **main areas of variability are Phil and Ania switching between 2nd and 3rd, and Reece and Sanjeev switching between 4th and 5th.**
+- We have also generated marginal distributions for each contestant's within episode ranking, and end of series ranking.
+    - The generated distributions are in line with what we have observed so far from Episode 1.
+        - Maisie is estimated to win an episode with approximately 81.30%, and win the series the 99.92%.
+
+:::{.awards}
+__It is very important to note that all these insights and predictions are based only on Episode 1 data and also assumes that contestants behave and perform similarly as to what occurred in Episode 1. I'm sure the cast of Series 20 have lots of surprises planned for us!__
+:::        
+        
+```{r,  out.width="40%", fig.cap = "Farewell, until the next post!" }
+knitr::include_graphics("https://64.media.tumblr.com/e3b1f2d08f2062c52460d38dec762cb5/36e19df5b7c011c2-74/s1280x1920/efccc578538d6861834a2df276603245c2248d56.gifv")
+```
+        
+:::

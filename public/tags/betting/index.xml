@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Betting on The Median Duck</title>
+    <link>http://localhost:4321/themedianduck/tags/betting/</link>
+    <description>Recent content in Betting on The Median Duck</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Christopher Nam</copyright>
+    <lastBuildDate>Thu, 18 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:4321/themedianduck/tags/betting/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Series 20, Episode 1: Soft Reboot</title>
+      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</link>
+      <pubDate>Thu, 18 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</guid>
+      <description>Your Task&#xD;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using task data up to and including Episode 1 of Series 20 of Taskmaster UK, generate episode and series odds for each contestant.&#xA;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;Figure 1: Let’s Start this Series 20 Chase!&#xD;N.B. No shade intended.&#xA;With Series 20 of UK Taskmaster now in full swing, it’s time to perform a new set of analysis and modelling techniques.</description>
+    </item>
+  </channel>
+</rss>

@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Tue, 16 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 18 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Series 20, Episode 1: Soft Reboot</title>
+      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</link>
+      <pubDate>Thu, 18 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</guid>
+      <description>Your Task&#xD;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using task data up to and including Episode 1 of Series 20 of Taskmaster UK, generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series. Bonus points for generating a joint ranking distribution for the full cast of Series 20.&#xA;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;Figure 1: Let’s Start this Series 20 Chase!</description>
+    </item>
     <item>
       <title>Series 19 Retrospecive Part 2: The Qrstuv-ies</title>
       <link>http://localhost:4321/themedianduck/2025/09/awards-season/</link>
