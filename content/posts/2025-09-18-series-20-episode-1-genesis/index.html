@@ -1,0 +1,212 @@
+---
+title: 'Series 20, Episode 1: Soft Reboot'
+author: Christopher Nam
+date: '2025-09-18'
+slug: series-20-episode-1-genesis
+categories: [Series 20, Betting]
+tags: [Series 20, Betting]
+draft: yes
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#your-task" id="toc-your-task">Your Task</a></li>
+<li><a href="#lets-start-this-chase-new-cast-same-sort-of-analysis" id="toc-lets-start-this-chase-new-cast-same-sort-of-analysis">Let’s Start this Chase: New Cast … Same Sort of Analysis</a></li>
+<li><a href="#what-have-we-learnt-today" id="toc-what-have-we-learnt-today">What Have We Learnt Today?</a></li>
+</ul>
+</div>
+
+<div id="your-task" class="section level1">
+<h1>Your Task</h1>
+<blockquote>
+<p>Using task data up to and including Episode 1 of Series 20 of Taskmaster UK, generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series. Bonus points for generating a joint ranking distribution for the full cast of Series 20.</p>
+</blockquote>
+</div>
+<div id="lets-start-this-chase-new-cast-same-sort-of-analysis" class="section level1">
+<h1>Let’s Start this Chase: New Cast … Same Sort of Analysis</h1>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<p class="caption">
+Figure 1: Let’s Start this Series 20 Chase!
+</p>
+<img src="https://64.media.tumblr.com/43bd475c418c4c5355a8fa349d4348fd/55a8cb856fb071a3-de/s1280x1920/dcc0cf4abb5d3b5a12fb179ce4fcf588cf691095.gifv" alt="Let's Start this Series 20 Chase!" width="40%" />
+</div>
+<p><a href="https://youtu.be/SIxubLzYOl4?si=7lhMRZBxJNnjYbXy">N.B. No shade intended.</a></p>
+<p>With Series 20 of UK Taskmaster now in full swing, it’s time to perform a new set of analysis and modelling techniques.</p>
+<p>The techniques and analysis have previously been covered in the following Series 19 related posts: <a href="/themedianduck/2025/06/odds-in-your-favour/">Episode Odds</a>, <a href="/themedianduck/2025/07/take-a-chance-on-me/">Series Odds</a>, <a href="/themedianduck/2025/07/glass-half-most/">Retrospective Part 1: Sharing the Same Juice</a>.</p>
+<div id="the-start-of-the-race" class="section level2">
+<h2>The Start of The Race</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep1-series-tracking"></span>
+<p class="caption">
+Figure 2: The Series 20 Race has begun!
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/ep1-series-tracking-1.png" alt="The Series 20 Race has begun!" width="75%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:ep1-series-tracking">2</a> shows the ongoing status of Series 20. In Episode 1 of the series, we saw:</p>
+<ul>
+<li>Maisie Adam take the initial lead, accumulating 19 points.</li>
+<li>Phil Ellis following closely behind with 16 points.</li>
+<li>Ania Magliano being hot on the heels of Phil with 15 points.</li>
+<li>Reece Shearsmith taking 4th position with 13 points.</li>
+<li>Sanjeev Bhaskar completing the rear of the cast centipede with 12 points.</li>
+</ul>
+<p>Based on just this first episode (and assuming that contestants perform in a similar manner), <strong>we would naively predict this exact observed episode 1 ranking configuration for both future episodes and the overall series.</strong></p>
+<p>However, this prediction doesn’t capture any notion of the volatility and uncertainty associated with Taskmaster (and life in general).</p>
+</div>
+</div>
+<div id="within-episode-ranking-distributions" class="section level2">
+<h2>Within Episode Ranking Distributions</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep1-ep-rankings"></span>
+<p class="caption">
+Figure 3: How will our contestants fare within an individual episode?
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/ep1-ep-rankings-1.png" alt="How will our contestants fare within an individual episode?" width="75%" />
+</div>
+<div class="insights">
+<p>From 100 000 simulated series in which there are 9 remaining episodes (consequently we have simulated 900 000 episodes), Figure <a href="#fig:ep1-ep-rankings">3</a> presents distributions for each contestant’s placement within an episode.</p>
+<p>Some observations:</p>
+<ul>
+<li><strong>For all contestants except for Ania, their ranking distributions are peaked around their ranking from Episode 1.</strong> That is:
+<ul>
+<li>Maisie’s distribution is peaked around 1st place with 81.30%; she placed 1st in episode 1 in reality.</li>
+<li>Phil’s distribution is peaked around 2nd place with 50.26%; he placed 2nd in the episode.</li>
+<li>Reece’s most likely episode ranking is 4th with 53.17%; he placed 4th in the episode.</li>
+<li>Sanjeev’s distribuion is skewed towards 5th place with 50.56%; he placed last (5th) in episode 1.</li>
+</ul></li>
+<li><strong>Ania’s distribution (and most likely within episode ranking) is centred around 2nd place with 41.46%. This differs to the outcome of Episode 1 where she placed 3rd. </strong>
+<ul>
+<li>Ania’s distribution is flatter and less peaked compared to the other contestants; she is expected to come 3rd with 28.46% probability, and even has a chance of placing 1st or 4th with probabilities less than 10%.</li>
+<li><strong>Ania and Phil sharing the same most likely within episode ranking is not surprising given that ties can occur.</strong> In addition, this shared peak highlights the need to go beyond each contestant’s marginal distribution, consider the joint distribution featuring the entire cast and their rankings.</li>
+</ul></li>
+<li>It is interesting to observe that Sanjeev has a 5.26% chance of placing first, whilst Reece has 0% chance.
+<ul>
+<li>This is because under the Multiverse Approach we have used to generate these distribution, sampling is performed separately for each task type. That is prize task samples are only sampled from observed prize tasks, pre-record samples are only from observed pre-records etc.</li>
+<li>Consequently when only Episode 1 has been observed, there is only one prize and live tasks to sample from for all simulations. There is no variation in between these samples.</li>
+<li>There is however, variation in the pre-record simulations and this is where Sanjeev’s 1st place instances are occurring. Sanjeev obtained 5 points in one pre-recorded task which could plausibly be sampled consecutively in the same episode and thus be enough for Sanjeev to win an episode.</li>
+<li>In comparison, Reece’s highest pre-recorded points was 3 which may not be sufficient to win a simulated episode, even if sampled consecutively within the same episode.</li>
+</ul></li>
+<li>The same reasoining also applies to why Maisie and Ania have non-zero probabilities of placing 5th (2.14% and 3.69% respectively), compared to 0% probability for Phil.
+<ul>
+<li>Both Maisie and Ania had pre-recorded tasks in which they scored 1, whilst Phil was awarded 4 points in all 3 pre-recorded tasks in episode 1.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="end-of-series-ranking-distributions" class="section level2">
+<h2>End-of-Series Ranking Distributions</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep1-series-rankings"></span>
+<p class="caption">
+Figure 4: Where will our contestants place by the end of the series?
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/ep1-series-rankings-1.png" alt="Where will our contestants place by the end of the series?" width="75%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:ep1-series-rankings">4</a> presents distributions for each contestants placement by the end of the series. This is fFrom 100 000 simulated series in which there are 9 remaining episodes.</p>
+<ul>
+<li><strong>The end of series rankings for each contestant are in line with the Episode 1 outcome; they are peaked around the rankings observed in this episode.</strong>
+<ul>
+<li>The end of series distributions display less variability and are less flat than the within episode rankings displayed in Figure <a href="#fig:ep1-ep-rankings">3</a>.</li>
+</ul></li>
+<li>If we are to make a <strong>prediction based on the maximum probabilities for each contestants marginal distribution (Maximum a Posteriori, MAP)</strong>
+<ul>
+<li><strong>Ania will end the series in 3rd place with 82.80% probability.</strong></li>
+<li><strong>Maisie will place 1st at the end of the series with 99.92% chance.</strong></li>
+<li><strong>Phil will place 2nd with 89.88% probability by the end of the series.</strong></li>
+<li><strong>Reece will end up in 4th place by the end of the series with 76.60% chance.</strong></li>
+<li><strong>Sanjeev will place 5th in the series with 73.65% probability.</strong></li>
+</ul></li>
+<li>From each contestant’s marginal distribution:
+<ul>
+<li><strong>Maisie is almost certainly (with probability 99.92%) going to place 1st in the series.</strong> The remaining probabilities are relatively insignificant are assigned to finishing 2nd and 3rd.</li>
+<li><strong>Ania and Phil’s main source of variability is whether they will place 2nd or 3rd.</strong>
+<ul>
+<li>Ania could finish the series in 2nd place with 16.49% chance.</li>
+<li>Phil could finish in 3rd with 10.03%.</li>
+</ul></li>
+<li><strong>Reece and Sanjeev’s main source of uncertainty is whether they will finish in 4th or 5th place.</strong>
+<ul>
+<li>Reece is expected to finish in 5th place with 23.37% probability.</li>
+<li>Sanjeev is expected to finish in 4th place with 25.44% probability.</li>
+</ul></li>
+<li>There also small (but relatively insignificant) probabilities associated with contestants finishing in other rankings. For example:
+<ul>
+<li>Sanjeev could finish the series in 2nd place with 0.02%; it occurred in 20 times in the 100 000 simulated timelines.</li>
+<li>Ania could win the series with 0.04% probability; it occurred in 40 times in the 100 000 simulated timelines.</li>
+</ul></li>
+<li>Under our current methodology, we assign 0% probability to:
+<ul>
+<li>Ania finishing 5th in the series.</li>
+<li>Maisie finishing 4th or 5th in the series.</li>
+<li>Phil finishing 5th in the series.</li>
+<li>Reece finishing 1st or 2nd.</li>
+<li>Sanjeev finishing 1st.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="joint-cast-ranking-distribution" class="section level2">
+<h2>Joint Cast Ranking Distribution</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:s20-cast-joint-dist"></span>
+<p class="caption">
+Figure 5: How will the Series 20 cast fare as a complete unit? Joint Distribution of Series Rankings for the Entire Cast of Series 20
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/s20-cast-joint-dist-1.png" alt="How will the Series 20 cast fare as a complete unit? Joint Distribution of Series Rankings for the Entire Cast of Series 20" width="75%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:s20-cast-joint-dist">5</a> shows the joint distribution for the casts end of series ranking. The joint distribution can provide greater insight to interactions between contestants (for examples ties)</p>
+<ul>
+<li><strong>Using the MAP as our prediction method, the most likely end of series contestant placement (occurring with 62.01%) is:</strong>
+<ul>
+<li><em>1st: Maisie Adams</em></li>
+<li><strong>2nd: Phil Ellis</strong></li>
+<li><em>3rd: Ania Magliano</em></li>
+<li><strong>4th: Reece Shearsmith</strong></li>
+<li><em>5th: Sanjeev Bhaskar</em></li>
+</ul></li>
+<li>The second most likely end of series of placement occurs with probability less than 25%. The configuration has Sanjeev and Reece switching their predicted placements between 4th and 5th place.</li>
+<li>The Top 7 most probable joint cast rankings are all different combinations of Ania and Phil placing 2nd or 3rd, and Reece and Sanjeev placing 4th or 5th. Maisie will always place 1st.</li>
+<li>These joint cast ranking are in line with the marginal contestant distributions displayed in Figure <a href="#fig:ep1-series-rankings">4</a>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="what-have-we-learnt-today" class="section level1">
+<h1>What Have We Learnt Today?</h1>
+<div class="infobox today">
+<p>We’ve learnt that:</p>
+<ul>
+<li>It is incredibly early days, but based on just Episode 1 outcomes, the most likely end of series ranking (MAP) for the full cast is:
+<ul>
+<li><strong>Maisie: 1st, Phil: 2nd, Ania: 3rd, Reece: 4th, Sanjeev: 5th.</strong></li>
+<li>We estimate this particular joint cast series ranking <strong>occurring with 62.01% probability.</strong></li>
+<li>This series prediction is in line with the observed Episode 1 rankings.</li>
+</ul></li>
+<li>By generating a full join distribution, we can also see outcomes from alternative realities and universes, and the likelihood of these outcomes occurring. This includes where ties occur.
+<ul>
+<li>Alternative timelines highlight that <strong>main areas of variability are Phil and Ania switching between 2nd and 3rd, and Reece and Sanjeev switching between 4th and 5th.</strong></li>
+</ul></li>
+<li>We have also generated marginal distributions for each contestant’s within episode ranking, and end of series ranking.
+<ul>
+<li>The generated distributions are in line with what we have observed so far from Episode 1.
+<ul>
+<li>Maisie is estimated to win an episode with approximately 81.30%, and win the series the 99.92%.</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="awards">
+<p><strong>It is very important to note that all these insights and predictions are based only on Episode 1 data and also assumes that contestants behave and perform similarly as to what occurred in Episode 1. I’m sure the cast of Series 20 have lots of surprises planned for us!</strong></p>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<p class="caption">
+Figure 6: Farewell, until the next post!
+</p>
+<img src="https://64.media.tumblr.com/e3b1f2d08f2062c52460d38dec762cb5/36e19df5b7c011c2-74/s1280x1920/efccc578538d6861834a2df276603245c2248d56.gifv" alt="Farewell, until the next post!" width="40%" />
+</div>
+</div>
+</div>

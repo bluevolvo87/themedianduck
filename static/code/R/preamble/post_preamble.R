@@ -9,7 +9,10 @@ knitr::opts_chunk$set(echo = FALSE,
                       class.source = "watch-out",
                       class.output = "watch-out",
                       fig.align = "center",
-                      fig.topcaption=TRUE
+                      fig.topcaption=TRUE,
+                      out.width = "75%",
+                      cache = TRUE,
+                      cache.lazy = FALSE
                       
 )
 
@@ -20,3 +23,5 @@ suppressPackageStartupMessages(library(kableExtra))
 
 # Variable substituion in strings
 suppressPackageStartupMessages(library(glue))
+
+library(scales)
