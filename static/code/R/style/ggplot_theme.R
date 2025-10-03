@@ -8,4 +8,6 @@ quack_theme <- function(){
         plot.subtitle = element_text(hjust = 0, size = 14),
         legend.position = 'bottom' #Legend displayed at the bottom
         ) 
-    }
+}
+
+library(RColorBrewer)

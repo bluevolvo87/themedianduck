@@ -1,0 +1,431 @@
+---
+title: 'Series 20, Episode 3: The Unnecessary Trilogy'
+author: Christopher Nam
+date: '2025-09-30'
+slug: series-20-episode-3-the-unnecessary-trilogy
+categories: [Series 20, Betting]
+tags: [Series 20, Betting]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+<script src="{{< blogdown/postref >}}index_files/kePrint/kePrint.js"></script>
+<link href="{{< blogdown/postref >}}index_files/lightable/lightable.css" rel="stylesheet" />
+
+<div id="TOC">
+<ul>
+<li><a href="#your-task" id="toc-your-task">Your Task</a></li>
+<li><a href="#series-scores-on-the-doors" id="toc-series-scores-on-the-doors">Series Scores on the Doors</a></li>
+<li><a href="#within-episode-ranking-distributions" id="toc-within-episode-ranking-distributions">Within-Episode Ranking Distributions</a></li>
+<li><a href="#end-of-series-ranking-distributions" id="toc-end-of-series-ranking-distributions">End-of-Series Ranking Distributions</a></li>
+<li><a href="#joint-cast-ranking-distributions" id="toc-joint-cast-ranking-distributions">Joint Cast Ranking Distributions</a></li>
+<li><a href="#what-have-we-learnt-today" id="toc-what-have-we-learnt-today">What Have We Learnt Today?</a></li>
+</ul>
+</div>
+
+<div id="your-task" class="section level1">
+<h1>Your Task</h1>
+<blockquote>
+<p>Using the latest data of Series 20 UK Taskmaster (up to Episode 3), generate ranking distributions for the cast of this series. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.</p>
+<p>Bonus points for commenting on how how these distributions have changed since the last episode (Episode 2).</p>
+</blockquote>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<p class="caption">
+Figure 1: I’m here….and falling into this episode’s post!
+</p>
+<img src="https://64.media.tumblr.com/a6db71c2facc3d400eaadcac29688ab8/6da94649ca1682a1-94/s1280x1920/929f611882694161f4dad2dfff5e5a6fff86a223.gifv" alt="I'm here....and falling into this episode's post!" width="50%" />
+</div>
+</div>
+<div id="series-scores-on-the-doors" class="section level1">
+<h1>Series Scores on the Doors</h1>
+<div id="episode-3-recap" class="section level2">
+<h2>Episode 3 Recap</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep3-score-board"></span>
+<p class="caption">
+Figure 2: Series 20 Episode 3 Score Board
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/ep3-score-board-1.png" alt="Series 20 Episode 3 Score Board" width="50%" />
+</div>
+<table class=" lightable-minimal table table-striped table-hover table-condensed table-responsive" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto; font-size: 20px; width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<caption style="font-size: initial !important;">
+<span id="tab:ep3-performance-grade">Table 1: </span>Episode Performance Report Cards
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;text-decoration: underline;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;">
+Contestant
+</th>
+<th style="text-align:center;text-decoration: underline;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;">
+Episode 3 Points
+</th>
+<th style="text-align:center;text-decoration: underline;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;">
+Episode 3 Ranking
+</th>
+<th style="text-align:center;text-decoration: underline;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;">
+Episode 3 Performance Grade
+</th>
+<th style="text-align:center;text-decoration: underline;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;">
+Summary Performance from Previous 2 Episodes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 10em; font-weight: bold;">
+Maisie Adam <img src="https://taskmaster.info/images/people/0693_maisie_adam.png" width="72" height="72">
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+19
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+1
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;color: black !important;background-color: rgba(145, 207, 96, 255) !important;">
+B+ (Very Good)
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 35em; font-style: italic;">
+[Min: 14, P25: 15.25, Median: 16.5, P75: 17.75, Max: 19, Mean: 16.5:, StdDev: 3.5]
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 10em; font-weight: bold;">
+Ania Magliano <img src="https://taskmaster.info/images/people/0692_ania_magliano.png" width="72" height="72">
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+18
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+2
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;color: black !important;background-color: rgba(26, 152, 80, 255) !important;">
+A (Best Ever)
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 35em; font-style: italic;">
+[Min: 15, P25: 15, Median: 15, P75: 15, Max: 15, Mean: 15.0:, StdDev: 0.0]
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 10em; font-weight: bold;">
+Sanjeev Bhaskar <img src="https://taskmaster.info/images/people/0696_sanjeev_bhaskar.png" width="72" height="72">
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+15
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+3
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;color: black !important;background-color: rgba(26, 152, 80, 255) !important;">
+A (Best Ever)
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 35em; font-style: italic;">
+[Min: 9, P25: 9.75, Median: 10.5, P75: 11.25, Max: 12, Mean: 10.5:, StdDev: 2.1]
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 10em; font-weight: bold;">
+Phil Ellis <img src="https://taskmaster.info/images/people/0694_phil_ellis.png" width="72" height="72">
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+14
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+4
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;color: black !important;background-color: rgba(217, 239, 139, 255) !important;">
+B (Good)
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 35em; font-style: italic;">
+[Min: 9, P25: 10.75, Median: 12.5, P75: 14.25, Max: 16, Mean: 12.5:, StdDev: 4.9]
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 10em; font-weight: bold;">
+Reece Shearsmith <img src="https://taskmaster.info/images/people/0695_reece_shearsmith.png" width="72" height="72">
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+11
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;font-style: italic;">
+5
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 15em; font-weight: bold;color: black !important;background-color: rgba(215, 48, 39, 255) !important;">
+D (Worst Ever)
+</td>
+<td style="text-align:center;font-family: monospace;color: black !important;background-color: rgba(255, 255, 194, 255) !important;font-size: 20px;vertical-align: middle !important;border-left:2px solid gray;border-right:2px solid gray;width: 35em; font-style: italic;">
+[Min: 13, P25: 15.25, Median: 17.5, P75: 19.75, Max: 22, Mean: 17.5:, StdDev: 6.4]
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<span style="font-style: italic;">Note: </span>
+</td>
+</tr>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup></sup> Episode Performance Grade is based on comparing to current episode performance, to prior episode performance and where it lies in the distribution.
+</td>
+</tr>
+</tfoot>
+</table>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/ep3-performance-grade-1.png" width="0.01%" style="display: block; margin: auto;" /></p>
+<div class="insights">
+<p>As highlighted in Figure <a href="#fig:ep3-score-board">2</a> and Table <a href="#tab:ep3-performance-grade">1</a>, in Episode 3 we saw:</p>
+<ul>
+<li><strong>Maisie accumulated 19 points and finished 1st in the episode.</strong>
+<ul>
+<li>Maisie achieved a <strong>very good episode</strong> performance grade; her points are in the upper quartile of past episode point performances (between P75 and Maximum).</li>
+</ul></li>
+<li><strong>Ania continues her trend of placing 2nd in episodes, and was awarded 18 points.</strong>
+<ul>
+<li><em>This was Ania’s best ever episode</em>; she beat her personal best and accumulated the most episode points to date for herself.</li>
+<li>I actually thought that this was Ania’s episode to win; she was awarded 5 points for 3 out of the 5 tasks. She was only awarded 1 point from the team task; if only Phil had kept his mouth shut, or Greg wasn’t being humorously vindictive…
+= Up to episode 2, Ania is the most most predictable contestants with no variation in her episode performance.</li>
+</ul></li>
+<li><strong>Sanjeev reached new heights, coming in 3rd in this episode with 15 points.</strong>
+<ul>
+<li><em>This was Sanjeev’s best episode to date;</em> well done Sanjeev, I’m so proud of you!</li>
+</ul></li>
+<li><strong>Phil accumulated 14 points during this episode and came in 4th.</strong>
+<ul>
+<li>This was a good, above average episode for Phil.</li>
+</ul></li>
+<li><strong>Reece completes the leaderboard by finishing 5th with 11 points.</strong>
+<ul>
+<li>This was <em>Reece’s worst episode to date.</em></li>
+<li>Up to episode 2, Reece is currently the most volatilte and unpredictable contestant in terms of episode performance.</li>
+</ul></li>
+<li>We also saw that <strong>Maisie doesn’t have the greatest memory</strong>; she could not identify the Chesham Football Club mascot despite being the only contestant to have actually encountered it in person, and could not remembering her own decisions from a two-part <em>“Snakes and Steps”</em> task.
+<ul>
+<li>Maisie also couldn’t remember the list of women named in Lou Bega’s <a href="https://youtu.be/EK_LN3XEcnw?si=V6rKgXEX88jQjkmA"><em>“Mambo No.5”</em></a>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+</ul></li>
+<li>For some bizarre reason (to me), we observed that the UK Taskmaster production team had to use <em>“Snakes and Steps”</em> rather than the more commonly known <em>“Snakes and Ladders”</em> (at least in the UK).
+<ul>
+<li>I am fully aware that this game is known as <em>“Chutes and Ladders”</em>, perhaps after receiving backlash from the vocal snake community and/or chutes being closer in proximity to ladders than snakes on a daily basis (construction sites rarely have snakes…)</li>
+<li>It’s unclear why the production team chose to rename it, but the usual reason is due to copyright. A quick Google search doesn’t highlight that <em>“Snakes and Ladders”</em> is copyrighted or a brand, but who knows!</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="updated-series-scores" class="section level2">
+<h2>Updated Series Scores</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep3-series-tracking"></span>
+<p class="caption">
+Figure 3: The Series 20 race in action!
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/ep3-series-tracking-1.png" alt="The Series 20 race in action!" width="65%" />
+</div>
+<div class="insights">
+<p>And after episode 3, we see yet another changes in the series leaderboard from Figure <a href="#fig:ep3-series-tracking">3</a>:</p>
+<ul>
+<li><strong>Maisie has regained her 1st position with 52 series points.</strong></li>
+<li><em>Ania has climbed up to 2nd position and is hot on the heels of Maisie with 48 points.</em></li>
+<li><strong>Reece has dropped down to 3rd place with 46 points.</strong>
+<ul>
+<li>In addition to Reece having a very bad Episode 3, I also think that he had a too good of a performance in Episode 2. Those 5 additional bonus points from the live task no doubt inflated his performance and what we can expect from him.</li>
+</ul></li>
+<li><em>Phil maintains his 4th place position in the series with 39 points.</em>
+<ul>
+<li>It would seem that Phil’s performance in Episode 1 (placing 2nd with 16 points), may have been a blip.</li>
+</ul></li>
+<li><strong>Sanjeev maintains his 5th position with 36 points.</strong></li>
+<li>We <strong>do not have a single clear leader of the pack</strong>, but the cast appears to be <strong>separating into two subgroups</strong>.
+<ul>
+<li><strong>Higher ranks: Maisie, Ania and Reece</strong></li>
+<li><em>Lower ranks: Phil and Sanjeev.</em></li>
+</ul></li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<p class="caption">
+Figure 4: Huh….I could actually win this?
+</p>
+<img src="https://64.media.tumblr.com/70d8284b5cc29208e5e45ea8ce1757f9/cf635a2b51213839-47/s1280x1920/0b1006061b6404082da7f19b7a6ec9984ac4a683.gifv" alt="Huh....I could actually win this?" width="50%" />
+</div>
+</div>
+</div>
+<div id="within-episode-ranking-distributions" class="section level1">
+<h1>Within-Episode Ranking Distributions</h1>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep3-ep-rankings"></span>
+<p class="caption">
+Figure 5: How will our contestants fare within an individual episode? Using up to Episode 2 (left), using up to Episode 3 (right).
+</p>
+<img src="https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/index_files/figure-html/ep2-ep-rankings-2.png" alt="How will our contestants fare within an individual episode? Using up to Episode 2 (left), using up to Episode 3 (right)." width="49%" /><img src="{{< blogdown/postref >}}index_files/figure-html/ep3-ep-rankings-2.png" alt="How will our contestants fare within an individual episode? Using up to Episode 2 (left), using up to Episode 3 (right)." width="49%" />
+</div>
+<div class="insights">
+<p>Our within-episode ranking distribution have changed yet again, as seen in Figure <a href="#fig:ep3-ep-rankings">5</a>, although to lesser extent than before:</p>
+<ul>
+<li>The most probable contestant rankings have updated to:
+<ul>
+<li><strong>Ania: 1st (with 32.06%) </strong>, previously 2nd (with 30.23%)</li>
+<li><em>Maisie: 1st (with 48.33%)</em>, previously 1st (with 40.97%)</li>
+<li><strong>Phil: 5th (with 30.34%)</strong>, previously 5th (with 29.17%)</li>
+<li><em>Reece: 2nd (with 21.79%)</em>, previously 1st (with 41.70%)</li>
+<li><strong>Sanjeev: 5th (with 27.83%)</strong>, previously 5th (with 35.88%)</li>
+</ul></li>
+<li><strong>All distributions retain the same shape, with no major changes in location of the peaks.</strong> The two contestants who distributions have changed the most are:
+<ul>
+<li><em>Ania: More probability is now assigned to placing 1st in an episode</em>, and less on the lower ranks (3rd to 5th). The probability of coming 2nd has remained unchanged.
+<ul>
+<li>Ania nearly winning episode 3, and her consistent high rank within episodes no doubt helped with this.</li>
+</ul></li>
+<li><strong>Reece: His distribution can be considered flat and uniform with nearly 20% probability on placing on each rank.</strong>
+<ul>
+<li>The probability of Reece coming 1st in an episode has halved based on the new episode. Such is the consequence of placing last in episode 3.</li>
+<li>This flat distribution property also concurs with Reece being the most volatile contestant.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<p class="caption">
+Figure 6: Chess Ham performing water torture after being a Pawn in this Game…
+</p>
+<img src="https://pbs.twimg.com/media/GqfuWqUWAAEfb4d?format=jpg&name=small" alt="Chess Ham performing water torture after being a Pawn in this Game..." width="40%" />
+</div>
+</div>
+<div id="end-of-series-ranking-distributions" class="section level1">
+<h1>End-of-Series Ranking Distributions</h1>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep3-series-rankings"></span>
+<p class="caption">
+Figure 7: Where will our contestants place by the end of the series? Using up to Episode 2 (left), using up to Episode 3 (right).
+</p>
+<img src="https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/index_files/figure-html/ep2-series-rankings-2.png" alt="Where will our contestants place by the end of the series? Using up to Episode 2 (left), using up to Episode 3 (right)." width="49%" /><img src="{{< blogdown/postref >}}index_files/figure-html/ep3-series-rankings-2.png" alt="Where will our contestants place by the end of the series? Using up to Episode 2 (left), using up to Episode 3 (right)." width="49%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:ep3-series-rankings">7</a> also shows that the series ranking distributions have changed considerably more than the within-episode ranking distributions as seen in Figure <a href="#fig:ep3-ep-rankings">5</a>.</p>
+<ul>
+<li>Based on each contestants marginal distribution of their series ranking, the <strong>maximum a posterior series ranking (that is the most likely) predictions</strong> are:
+<ul>
+<li><strong>Ania: 2nd with 65.36%;</strong> previously 3rd place with 69.28%.</li>
+<li><em>Maisie: 1st with 79.65%;</em> previously 1st place with 43.51%.</li>
+<li><strong>Phil: 5th with 48.45%;</strong> previously 4th place with 73.78%.</li>
+<li><em>Reece: 3rd with 70.08%;</em> previously 1st place with 53.60%.</li>
+<li><strong>Sanjeev: 4th with 47.57%;</strong> previously 5th place with 72.40%.</li>
+</ul></li>
+<li>For each contestant:
+<ul>
+<li><em>Ania’s probability mass has shifted from placing 3rd to 2nd in the series.</em>
+<ul>
+<li>Her strong and consistent performance in the series so far is no doubt responsible for this shift.</li>
+</ul></li>
+<li>We are anticipating with <strong>near certainty of 97.31%, that Maisie will place either 1st (with 79.65% chance) or 2nd (with 17.66%) in the series.</strong> We previously had 15% certainty that Maisie would place 3rd.
+<ul>
+<li><em>Even after 3 episodes, I am still apprehensive of whether Maisie will place 1st or 2nd in the series in reality.</em><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> She’s a strong contestant for sure (her episode scores are 14 and above), but she gives the air of an unpredictable and chaotic individual. Maybe she is just chaotically competent contestant.</li>
+<li>Maisie is currently leading the series, but 2nd and 3rd position are closely behind her (within 6 points). Insignificant probability being assigned to placing 3rd is somewhat surprising, although this could also be due to Reece being too volatile in his performance to place 2nd at the moment, with Maisie coming in 3rd (she would also have to have a streak of bad tasks).</li>
+</ul></li>
+<li><strong>Phil’s probability is now split between placing 4th or 5th, and is very much a flip of a coin.</strong>
+<ul>
+<li>The days of when Phil had 90% of placing 2nd in the series (after episode 1, probably ab bit too premature to be taken seriously), are slowly fading away it seems.</li>
+</ul></li>
+<li><em>Reece’s distribution has shifted considerably from peaking around 1st place (with 53.60%), to now 3rd place (70.08%).</em>
+<ul>
+<li>This shift is distribution is no doubt due his Episode 3 performance being his worse to date, and stellar Episode 2 performance being a potential blip.</li>
+</ul></li>
+<li><strong>Sanjeev’s distribution mimics Phil’s distribution in that he is expected to place 4th or 5th.</strong>
+<ul>
+<li>The probability of placing 4th an 5th are very similar (another a flip of a coin).</li>
+<li>The shift of probability mass from 5th to 4th is somewhat surprising and could be due to Sanjeev’s best performance to date in episode 3 and a few other moments of brilliance in select tasks from other episodes.</li>
+<li>In comparison, Phil has not performed spectacularly in any tasks so far; Phil has not been scored anything above 4 in all tasks so far.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
+<p class="caption">
+Figure 8: Reece’s slight tumble in the leaderboard.
+</p>
+<img src="https://64.media.tumblr.com/7858918407e931fde3f85dbd7e184144/6da94649ca1682a1-3e/s1280x1920/71970df66faf41210c440081c8c5a7a5793871fd.gifv" alt="Reece's slight tumble in the leaderboard." width="40%" />
+</div>
+</div>
+<div id="joint-cast-ranking-distributions" class="section level1">
+<h1>Joint Cast Ranking Distributions</h1>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:s20-cast-joint-dist"></span>
+<p class="caption">
+Figure 9: How will the Series 20 cast fare as a complete unit? Using up to Episode 2 (left), using up to Episode 3 (right). Joint Distribution of Series Rankings for the Entire Cast of Series 20
+</p>
+<img src="https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/index_files/figure-html/s20-cast-joint-dist-2.png" alt="How will the Series 20 cast fare as a complete unit? Using up to Episode 2 (left), using up to Episode 3 (right). Joint Distribution of Series Rankings for the Entire Cast of Series 20" width="49%" /><img src="{{< blogdown/postref >}}index_files/figure-html/s20-cast-joint-dist-2.png" alt="How will the Series 20 cast fare as a complete unit? Using up to Episode 2 (left), using up to Episode 3 (right). Joint Distribution of Series Rankings for the Entire Cast of Series 20" width="49%" />
+</div>
+<div class="insights">
+<p>And yet again, the joint ranking distribution for the cast has changed as demonstrated in Figure <a href="#fig:s20-cast-joint-dist">9</a>:</p>
+<ul>
+<li>The <strong>most probable cast ranking, occurring with 25.94% probability</strong>, is now:
+<ul>
+<li><strong>Ania: 2nd,</strong></li>
+<li><em>Maisie: 1st,</em></li>
+<li><strong>Phil: 5th,</strong></li>
+<li><em>Reece: 3rd,</em></li>
+<li><strong>Sanjeev: 4th</strong>
+<ul>
+<li>A big celebration for Sanjeev potentially not finishing last in the series after all.</li>
+</ul></li>
+</ul></li>
+<li>However, <em>with almost equal probability (approximately 25.00%) is the same ranking combination, but with Phil placing 4th and Sanjeev placing 5th.</em>
+- That former Sanjeev celebration was perhaps a bit too premature…</li>
+<li>After these two ranking configurations, <strong>there are 4 ranking combinations which have 5-7% chance of occurring.</strong> These combinations vary in two main dimensions:
+<ul>
+<li><em>How Ania, Maisie and Reece will place amongst the top 3.</em></li>
+<li><strong>Whether Phil or Sanjeev will place 4th or 5th respectively.</strong></li>
+</ul></li>
+<li>Our prior prediction from the last episode <strong>[Ania: 3rd, Maisie: 2nd, Phil: 4th, Reece: 1st, Sanjeev: 5th]</strong> now has an estimated 0.73% probability of occurring.</li>
+<li>It is worth noting that whilst some may perceive 25% probability of occurring to be low; this is an improvement over a naive benchmark probability.
+<ul>
+<li>These benchmark probabilities would assume uniformity across all possible cast rankings, such that they all have the same probability of occurring (a flat distribution); these benchmark probabilities would lie between 0.03% to 0.83%, based on whether ties are or are not accounted for.</li>
+</ul></li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-10"></span>
+<p class="caption">
+Figure 10: Ania scheming to overtake Maisie…
+</p>
+<img src="https://64.media.tumblr.com/2e7d8b09069c6ebf5d6e8a4f970984f1/d13b2b908995f7f2-dc/s1280x1920/0ed397a7936e7301f77801040d71f42b01041b1f.gifv" alt="Ania scheming to overtake Maisie..." width="50%" />
+</div>
+</div>
+<div id="what-have-we-learnt-today" class="section level1">
+<h1>What Have We Learnt Today?</h1>
+<div class="infobox today">
+<p>We’ve learnt that:</p>
+<ul>
+<li><strong>Our distributions have changed yet again, based on Episode 3 performance!</strong>
+<ul>
+<li>Our current end of series ranking prediction is <strong>[Maisie: 1st, Ania: 2nd, Reece: 3rd, Sanjeev: 4th, Phil: 5th]</strong>, occurring with 25.94% probability. This is based on the most probable cast ranking.</li>
+<li>However, there is a similarly probable cast ranking. This prediction would have the is the same combination for 1st, 2nd and 3rd, but Phil placing 4th and Sanjeev finishing 5th.</li>
+</ul></li>
+<li>We have now started <strong>grading each contestant’s episode performance</strong>, by comparing it to prior episode performances.
+<ul>
+<li>We consider where the current episode’s point performance lies in the distribution of historic point performance.</li>
+<li>Based on this method:
+<ul>
+<li><strong>Ania and Sanjeev both had their best episode to date.</strong></li>
+<li><em>Reece had his worst episode to date.</em></li>
+<li><strong>Maisie had a very good episode.</strong></li>
+<li><em>Phil had a good, above average episode.</em></li>
+</ul></li>
+</ul></li>
+<li><em>Ania is currently the most predictable, least volatile contestant.</em></li>
+<li><strong>Reece is currently the least predictable, most volatile contestant.</strong></li>
+</ul>
+<div class="awards">
+<p><strong>Insights and analysis are generated for my own enjoyment and curiosity, and not necessarily representative of what will happen in reality!</strong></p>
+<p><strong>All insights and predictions are based on series data up to episode 3 and also assumes that contestants behave and perform similarly as to what has occurred up to Episode 3.</strong></p>
+<p><strong>This is a strong assumption to make and based on past Taskmaster series, surprises are always in store!</strong></p>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<p class="caption">
+Figure 11: The current series leader has spoken!
+</p>
+<img src="https://64.media.tumblr.com/9c3fd562cb66356f291ff98a568e1bde/c5eb349c6bec2449-87/s1280x1920/1dd875f6278f7a2c7acf9625c2d98fb945f450d4.gifv" alt="The current series leader has spoken!" width="40%" />
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Perhaps she is recalling the lyrics to <em>“Nambo No.5”</em>, an <strong>imaginary</strong> self indulgent song penned by the the author of this blog names all the woman who has rejected him.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>This is a coded message to say that I wouldn’t want to place bets on Maisie definitely finishing 1st or 2nd in the series. I am a risk averse person though!<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
