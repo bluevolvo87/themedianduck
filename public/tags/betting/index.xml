@@ -7,14 +7,21 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Thu, 25 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 30 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:4321/themedianduck/tags/betting/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Series 20, Episode 3: The Unnecessary Trilogy</title>
+      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</link>
+      <pubDate>Tue, 30 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</guid>
+      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 3), generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 2).</description>
+    </item>
     <item>
       <title>Series 20, Episode 2: The Disappointing Sequel</title>
       <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</link>
       <pubDate>Thu, 25 Sep 2025 00:00:00 +0000</pubDate>
       <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</guid>
-      <description>Your Task&#xD;Series scores on the doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using task data up to and including Episode 2 of Series 20 of Taskmaster UK, generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series. Bonus points for generating a joint ranking distribution for the full cast of Series 20.&#xA;Observe how these distributions have changed since the last episode.</description>
+      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 2), generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 1).</description>
     </item>
     <item>
       <title>Series 20, Episode 1: Soft Reboot</title>

@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 
 options(width = 1000)
+options(knitr.table.format = "html")
 
 suppressPackageStartupMessages(library(kableExtra))
 

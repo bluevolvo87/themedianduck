@@ -81,13 +81,13 @@ series_points_df <- task_attempt_df %>% group_by(Series_ID, Contestant, Episode_
     left_join(contestants_df, by = join_by(Contestant == Contestant_Name))
 ```
 
-```{r ep1-series-tracking, fig.cap = "The Series 20 Race has begun!", out.width = "75%"}
+```{r ep1-series-tracking, fig.cap = "The Series 20 Race has begun!", out.width = "75%", cache = FALSE}
 title_label <- "Series 20: Series Score Tracker"
 
-latest_df <- series_points_df %>% filter(Episode_ID == max(series_points_df$Episode_ID))
+latest_df <- series_points_df %>% filter(Episode_ID == 1)
     
-    
-ggplot(series_points_df, aes(x= Episode_ID, y= Series_Points)) +
+series_points_df %>% filter(Episode_ID <= 1) %>%    
+ggplot(aes(x= Episode_ID, y= Series_Points)) +
  geom_point(aes(colour = Initials)) +
     geom_line(aes(colour = Initials)) +
     geom_image(data = latest_df, aes(x= 10 + (Series_Ranking-1)*0.5, y = Series_Points, image = Image_URL), size = 0.1, by = "height", inherit.aes = FALSE) + 
