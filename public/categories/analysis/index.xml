@@ -2,39 +2,32 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Analysis on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/categories/analysis/</link>
+    <link>https://bluevolvo87.github.io/themedianduck/categories/analysis/</link>
     <description>Recent content in Analysis on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Mon, 09 Dec 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/categories/analysis/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Contestant Consistency</title>
-      <link>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</link>
-      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</guid>
-      <description>Your Task&#xD;The Data&#xD;No Sh*t Sherlock&#xD;Volatility Volcano&#xD;A Different perspective&#xD;Your Task&#xD;Validate (or invalidate) the hypothesis that a Taskmaster champion, is one that is a consistent Taskmaster contestant.&#xA;Some Background&#xD;In many episodes of the Taskmaster Podcast (example episodes and timestamps) , it is hypothesised that a key to becoming a Taskmaster Champion is that the contestants are consistent in the task points that they receive, compared to those who are more inconsistent and volatile in their points.</description>
-    </item>
+    <lastBuildDate>Sun, 24 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/analysis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>The Taskmaster Swear Cloud Appreciation Society</title>
-      <link>http://localhost:4321/themedianduck/2024/11/taskmaster-swear-cloud/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/11/taskmaster-swear-cloud/</link>
       <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/11/taskmaster-swear-cloud/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/11/taskmaster-swear-cloud/</guid>
       <description>Your Task&#xD;Making it Rain… with Data&#xD;The Overall Swear Forecast&#xD;The Series Swear Forecast&#xD;Getting My Head out of the Clouds, and Going to the Bar.&#xD;What Have we Learnt Today?&#xD;This post contains strong lanuage…reader discretion advised! And this time, I really mean it…&#xA;Your Task&#xD;Create a swear word cloud which is fit for the Cloud Appreciation Society.&#xA;Making it Rain… with Data&#xD;We continue to use the profanity based queries we have developed in the following posts (Foulest Mouth of Them All, The Taskmaster’s Potty Mouth).</description>
     </item>
     <item>
       <title>The Taskmaster&#39;s Potty Mouth</title>
-      <link>http://localhost:4321/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</link>
       <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</guid>
       <description>Your Task&#xD;The Profanity Rate Approach&#xD;Case of the Missing Profanities&#xD;Putting on a Spread&#xD;To Mean or Median…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find out whether the Taskmaster (Greg Davies) has become more or less foul mouth over time.&#xD;This post is an extension of this profanity based post.&#xA;The Profanity Rate Approach&#xD;One way to answer our question is to use Profanity Rate that we previously defined in the aforementioned post.</description>
     </item>
     <item>
       <title>The Foulest Mouth of Them All</title>
-      <link>http://localhost:4321/themedianduck/2024/10/profanity-insanity/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</link>
       <pubDate>Mon, 21 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/10/profanity-insanity/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</guid>
       <description>Your Task&#xD;Profanity Insanity&#xD;The Foulest Mouth of Them All…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find the foulest mouthed contestant in UK Taskmaster to date.&#xD;Bonus points for finding the foulest mouth in each series.&#xA;A Side Amble in the Preamble&#xD;In the spirit of good code practices, namely avoiding duplicating code and centralising common code into a single location were possible, here is a set of preamble scripts that I will be sourcing at the beginning of each post.</description>
     </item>
   </channel>

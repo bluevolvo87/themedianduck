@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simulation on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/categories/simulation/</link>
+    <link>https://bluevolvo87.github.io/themedianduck/categories/simulation/</link>
     <description>Recent content in Simulation on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
     <lastBuildDate>Sun, 06 Jul 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/categories/simulation/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/simulation/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Series-ly, Take a Chance on Me</title>
-      <link>http://localhost:4321/themedianduck/2025/07/take-a-chance-on-me/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/07/take-a-chance-on-me/</link>
       <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/07/take-a-chance-on-me/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/07/take-a-chance-on-me/</guid>
       <description>Your Task&#xD;Previously on The Median Duck…&#xD;The Ultimate Pen … is the Penultimate&#xD;Series-ly, What’s the Situation?&#xD;What Have We Learnt Today?&#xD;💡 The majority of this post was written before I had watched the Series 19 finale. My results and insights are driven purely from data up to Episode 9, I have not cheated in any way! Your Task&#xD;For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their series rank.</description>
     </item>
     <item>
       <title>May the Odds Be In Your Favour</title>
-      <link>http://localhost:4321/themedianduck/2025/06/odds-in-your-favour/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</link>
       <pubDate>Sat, 28 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/06/odds-in-your-favour/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</guid>
       <description>Your Task&#xD;A New Dawn, A New Dataset&#xD;The Observed Reality Timeline Approach (ORT)&#xD;The Multiverse Approach (MV)&#xD;What Have We Learnt Today&#xD;Your Task&#xD;For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their ranking in an episode.&#xA;For example, estimate the probability of Fatiha-El Ghorri placing 1st, 2nd, 3rd, 4th and 5th in an episode of Series 19.&#xA;A New Dawn, A New Dataset&#xD;With Series 19 well underway (at time of writing, Episode 8 “Science all your life” has just broadcasted), and a potential lag in the data being supplied to TdlM database1, it is time to take data matters into our own piano capable hands.</description>
     </item>
   </channel>
