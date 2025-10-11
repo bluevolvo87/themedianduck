@@ -14,28 +14,6 @@ remain_num_eps <- num_eps_series - sim_max_episode_used
 
 
 ########
-# Series Tracker data frame. Episode x Contestant granularity
-series_points_df <- task_attempt_df %>% group_by(Series_ID, Contestant, Episode_ID) %>%
-    arrange(Episode_ID) %>%
-    reframe(
-        Num_Tasks = n_distinct(Task_ID),
-        Ep_Points = sum(Points)
-    ) %>% 
-    group_by(Series_ID, Episode_ID) %>%
-    mutate(
-        Ep_Ranking = rank(-Ep_Points, ties.method = "min")
-    ) %>%
-    group_by(Series_ID, Contestant) %>%
-    arrange(Episode_ID) %>%
-    mutate(
-        Series_Points = cumsum(Ep_Points)
-    ) %>%
-    group_by(Series_ID, Episode_ID) %>%
-    mutate(
-        Series_Ranking = rank(-Series_Points, ties.method = "min")
-    ) %>%
-    left_join(contestants_df, by = join_by(Contestant == Contestant_Name))
-
 
 #Filter task_attempt to episodes  of interest.
 

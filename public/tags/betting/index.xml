@@ -2,32 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Betting on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/tags/betting/</link>
+    <link>https://bluevolvo87.github.io/themedianduck/tags/betting/</link>
     <description>Recent content in Betting on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Tue, 30 Sep 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/tags/betting/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 07 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/tags/betting/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Series 20, Episode 4: Let&#39;s Franchise This Baby</title>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/</link>
+      <pubDate>Tue, 07 Oct 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/</guid>
+      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 4), generate ranking distributions for the cast of this series. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 3).</description>
+    </item>
     <item>
       <title>Series 20, Episode 3: The Unnecessary Trilogy</title>
-      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</link>
       <pubDate>Tue, 30 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</guid>
-      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 3), generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 2).</description>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</guid>
+      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 3), generate ranking distributions for the cast of this series. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 2).</description>
     </item>
     <item>
       <title>Series 20, Episode 2: The Disappointing Sequel</title>
-      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</link>
       <pubDate>Thu, 25 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</guid>
       <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 2), generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 1).</description>
     </item>
     <item>
       <title>Series 20, Episode 1: Soft Reboot</title>
-      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-1-genesis/</link>
       <pubDate>Thu, 18 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-1-genesis/</guid>
       <description>Your Task&#xD;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using task data up to and including Episode 1 of Series 20 of Taskmaster UK, generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series. Bonus points for generating a joint ranking distribution for the full cast of Series 20.&#xA;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;Figure 1: Let’s Start this Series 20 Chase!</description>
     </item>
   </channel>
