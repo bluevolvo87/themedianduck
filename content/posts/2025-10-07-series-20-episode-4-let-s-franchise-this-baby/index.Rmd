@@ -82,7 +82,7 @@ sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
 ```
 # Series Scores on the Doors
 
-## Episode 3 Recap and Insights
+## Episode 4 Recap and Insights
 
 ```{r ep4-score-board, fig.cap = "Series 20 Episode 4 Score Board", out.width = "50%"}
 latest_df <- multiverse_env$series_points_df %>% filter(Episode_ID == multiverse_env$sim_max_episode_used)
@@ -142,7 +142,6 @@ column_spec(4, background = compare_df$Current_Ep_Grade_Colour, bold = TRUE, col
 column_spec(5, italic = TRUE, width = "35em") %>%
 footnote(general = "Episode Performance Grade is based on comparing to current episode performance, to prior episode performance and where it lies in the distribution.") %>%
     scroll_box(height = '500px', width = "100%")
-
 ```
 
 :::{.insights}
