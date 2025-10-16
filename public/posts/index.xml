@@ -2,187 +2,117 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on The Median Duck</title>
-    <link>http://localhost:4321/themedianduck/posts/</link>
+    <link>https://bluevolvo87.github.io/themedianduck/posts/</link>
     <description>Recent content in Posts on The Median Duck</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Tue, 30 Sep 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/themedianduck/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 07 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://bluevolvo87.github.io/themedianduck/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Series 20, Episode 4: Let&#39;s Franchise This Baby</title>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/</link>
+      <pubDate>Tue, 07 Oct 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/</guid>
+      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 4), generate ranking distributions for the cast of this series. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 3).</description>
+    </item>
     <item>
       <title>Series 20, Episode 3: The Unnecessary Trilogy</title>
-      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</link>
       <pubDate>Tue, 30 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</guid>
-      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 3), generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 2).</description>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-3-the-unnecessary-trilogy/</guid>
+      <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 3), generate ranking distributions for the cast of this series. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 2).</description>
     </item>
     <item>
       <title>Series 20, Episode 2: The Disappointing Sequel</title>
-      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</link>
       <pubDate>Thu, 25 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-2-the-disappointing-sequel/</guid>
       <description>Your Task&#xD;Series Scores on the Doors&#xD;Within-Episode Ranking Distributions&#xD;End-of-Series Ranking Distributions&#xD;Joint Cast Ranking Distributions&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using the latest data of Series 20 UK Taskmaster (up to Episode 2), generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series placement, and the joint distribution for the full cast.&#xA;Bonus points for commenting on how how these distributions have changed since the last episode (Episode 1).</description>
     </item>
     <item>
       <title>Series 20, Episode 1: Soft Reboot</title>
-      <link>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-1-genesis/</link>
       <pubDate>Thu, 18 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/series-20-episode-1-genesis/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/series-20-episode-1-genesis/</guid>
       <description>Your Task&#xD;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Using task data up to and including Episode 1 of Series 20 of Taskmaster UK, generate ranking distributions for each contestant. Ranking distributions should be for within-episode and end-of-series. Bonus points for generating a joint ranking distribution for the full cast of Series 20.&#xA;Let’s Start this Chase: New Cast … Same Sort of Analysis&#xD;Figure 1: Let’s Start this Series 20 Chase!</description>
     </item>
     <item>
       <title>Series 19 Retrospecive Part 2: The Qrstuv-ies</title>
-      <link>http://localhost:4321/themedianduck/2025/09/awards-season/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/09/awards-season/</link>
       <pubDate>Tue, 16 Sep 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/09/awards-season/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/09/awards-season/</guid>
       <description>Your Task&#xD;For the tl;dr generation….and the Winners are&#xD;And Here Are My Workings…&#xD;What Have we Learnt Today?&#xD;Your Task&#xD;Host the inaugral Qrstuv-ies, an unofficial data-driven Taskmaster Awards ceremony which celebrates the latest series of UK Taskmaster.&#xA;What’s your Favourite Season? … Mine is the Awards Season&#xD;For the tl;dr generation….and the Winners are&#xD;Figure 1: Series 19 Qrstuv-ies Winners&#xD;And Here Are My Workings…&#xD;Your Average and Standard (Deviation) Statistical Analysis&#xD;Table 2 shows overall summary statistics for the points awarded for each contestants task attempt across the series.</description>
     </item>
     <item>
       <title>Series 19 Retrospective Part 1: Sharing the Same Juice</title>
-      <link>http://localhost:4321/themedianduck/2025/07/glass-half-most/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/07/glass-half-most/</link>
       <pubDate>Fri, 25 Jul 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/07/glass-half-most/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/07/glass-half-most/</guid>
       <description>Your Task&#xD;The Current Timeline&#xD;The Prophet Nick Mohammed&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;With Series 19 having concluded, compare the predictions that were made on Series 19 outcomes (final series contestant rankings, series points accrued by each contestant) with the actual outcomes (those at the end of episode 10 and the end of the series).&#xA;The aforementioned Series 19 predictions were discussed in a prior post. These predictions were made using data up to and including Episode 9 of Series 19, on for standings at the end of the series (after Episode 10).</description>
     </item>
     <item>
       <title>Series-ly, Take a Chance on Me</title>
-      <link>http://localhost:4321/themedianduck/2025/07/take-a-chance-on-me/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/07/take-a-chance-on-me/</link>
       <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/07/take-a-chance-on-me/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/07/take-a-chance-on-me/</guid>
       <description>Your Task&#xD;Previously on The Median Duck…&#xD;The Ultimate Pen … is the Penultimate&#xD;Series-ly, What’s the Situation?&#xD;What Have We Learnt Today?&#xD;💡 The majority of this post was written before I had watched the Series 19 finale. My results and insights are driven purely from data up to Episode 9, I have not cheated in any way! Your Task&#xD;For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their series rank.</description>
     </item>
     <item>
       <title>May the Odds Be In Your Favour</title>
-      <link>http://localhost:4321/themedianduck/2025/06/odds-in-your-favour/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</link>
       <pubDate>Sat, 28 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/06/odds-in-your-favour/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/06/odds-in-your-favour/</guid>
       <description>Your Task&#xD;A New Dawn, A New Dataset&#xD;The Observed Reality Timeline Approach (ORT)&#xD;The Multiverse Approach (MV)&#xD;What Have We Learnt Today&#xD;Your Task&#xD;For each contestant of the Series 19 of UK Taskmater, generate probability distributions on their ranking in an episode.&#xA;For example, estimate the probability of Fatiha-El Ghorri placing 1st, 2nd, 3rd, 4th and 5th in an episode of Series 19.&#xA;A New Dawn, A New Dataset&#xD;With Series 19 well underway (at time of writing, Episode 8 “Science all your life” has just broadcasted), and a potential lag in the data being supplied to TdlM database1, it is time to take data matters into our own piano capable hands.</description>
     </item>
     <item>
       <title>The Elephant in the Room</title>
-      <link>http://localhost:4321/themedianduck/2025/06/the-elephant-in-the-room/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/06/the-elephant-in-the-room/</link>
       <pubDate>Fri, 20 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2025/06/the-elephant-in-the-room/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/06/the-elephant-in-the-room/</guid>
       <description>The Elephant&#xD;The Room: Series 19 Opinion (so far)&#xD;The Elephant&#xD;Hello. It’s been a while and I apologise to my single digit audience for my absence.&#xD;I would love to say that I had a good excuse for my absence, but the truth is rather more boring than that.&#xA;However, it’s time embrace the free time the I have regained and reignite this (passion) project.&#xA;The simple truth is that the Board volunteer position I held for the Housing Association associated with my condominium (a flat for UK readers) took over a significant proportion of my time and energy.</description>
     </item>
     <item>
-      <title>Contestant Consistency</title>
-      <link>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</link>
-      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/12/contestant-consistency/</guid>
-      <description>Your Task&#xD;The Data&#xD;No Sh*t Sherlock&#xD;Volatility Volcano&#xD;A Different perspective&#xD;Your Task&#xD;Validate (or invalidate) the hypothesis that a Taskmaster champion, is one that is a consistent Taskmaster contestant.&#xA;Some Background&#xD;In many episodes of the Taskmaster Podcast (example episodes and timestamps) , it is hypothesised that a key to becoming a Taskmaster Champion is that the contestants are consistent in the task points that they receive, compared to those who are more inconsistent and volatile in their points.</description>
-    </item>
-    <item>
       <title>The Taskmaster Swear Cloud Appreciation Society</title>
-      <link>http://localhost:4321/themedianduck/2024/11/taskmaster-swear-cloud/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/11/taskmaster-swear-cloud/</link>
       <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/11/taskmaster-swear-cloud/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/11/taskmaster-swear-cloud/</guid>
       <description>Your Task&#xD;Making it Rain… with Data&#xD;The Overall Swear Forecast&#xD;The Series Swear Forecast&#xD;Getting My Head out of the Clouds, and Going to the Bar.&#xD;What Have we Learnt Today?&#xD;This post contains strong lanuage…reader discretion advised! And this time, I really mean it…&#xA;Your Task&#xD;Create a swear word cloud which is fit for the Cloud Appreciation Society.&#xA;Making it Rain… with Data&#xD;We continue to use the profanity based queries we have developed in the following posts (Foulest Mouth of Them All, The Taskmaster’s Potty Mouth).</description>
     </item>
     <item>
       <title>The Taskmaster&#39;s Potty Mouth</title>
-      <link>http://localhost:4321/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</link>
       <pubDate>Sat, 09 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/11/the-taskmaster-s-potty-mouth/</guid>
       <description>Your Task&#xD;The Profanity Rate Approach&#xD;Case of the Missing Profanities&#xD;Putting on a Spread&#xD;To Mean or Median…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find out whether the Taskmaster (Greg Davies) has become more or less foul mouth over time.&#xD;This post is an extension of this profanity based post.&#xA;The Profanity Rate Approach&#xD;One way to answer our question is to use Profanity Rate that we previously defined in the aforementioned post.</description>
     </item>
     <item>
       <title>The Foulest Mouth of Them All</title>
-      <link>http://localhost:4321/themedianduck/2024/10/profanity-insanity/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</link>
       <pubDate>Mon, 21 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/10/profanity-insanity/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</guid>
       <description>Your Task&#xD;Profanity Insanity&#xD;The Foulest Mouth of Them All…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find the foulest mouthed contestant in UK Taskmaster to date.&#xD;Bonus points for finding the foulest mouth in each series.&#xA;A Side Amble in the Preamble&#xD;In the spirit of good code practices, namely avoiding duplicating code and centralising common code into a single location were possible, here is a set of preamble scripts that I will be sourcing at the beginning of each post.</description>
     </item>
     <item>
       <title>A Data Dic(tionary) pic of TdlM</title>
-      <link>http://localhost:4321/themedianduck/2024/08/tdlm-data-dictionary/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</link>
       <pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/08/tdlm-data-dictionary/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</guid>
       <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Summary of Findings&#xD;Final Thoughts&#xD;Appendix Details&#xD;Your Task&#xD;Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (database connection post).</description>
     </item>
     <item>
       <title>Sidenote: Musings on TdlM</title>
-      <link>http://localhost:4321/themedianduck/2024/07/data-quality-musings/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</link>
       <pubDate>Wed, 17 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/07/data-quality-musings/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</guid>
       <description>Sidenote Introduction&#xD;Data Quality&#xD;Why This Datasource?&#xD;Potential Articles to Explore in the Future&#xD;Sidenote Introduction&#xD;A few remarks and musings on the Trabajo de las Mesas database (TdlM).&#xA;Data Quality&#xD;As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.&#xA;I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from taskmaster.</description>
     </item>
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>
-      <link>http://localhost:4321/themedianduck/2024/07/database-connection/</link>
+      <link>https://bluevolvo87.github.io/themedianduck/2024/07/database-connection/</link>
       <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/07/database-connection/</guid>
+      <guid>https://bluevolvo87.github.io/themedianduck/2024/07/database-connection/</guid>
       <description>Your Task Successfully connect to the Taskmaster database from within R. Fastest wins; your time starts now!&#xA;This article provides an overview of Trabajo de las Mesas, a pivotal database that will be central to this project.&#xA;The article will also provide guidance on how to connect to the database from within R.&#xA;Trabajo de las Mesas Database Trabajo de las Mesas (TdlM 1) provides a plethora of data associated with Taskmaster in a database format.</description>
-    </item>
-    <item>
-      <title>New Post on Archie</title>
-      <link>http://localhost:4321/themedianduck/2024/07/new-post-on-archie/</link>
-      <pubDate>Sat, 06 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2024/07/new-post-on-archie/</guid>
-      <description>Intro This is my first post in the Archie template in hugo.&#xA;Here&amp;rsquo;s a random sample from the standard Normal distribution.&#xA;rnorm(5) ## [1] -1.6798449 -1.1733463 0.7588441 0.4321513 0.4408915 Here&amp;rsquo;s an image of a duck.&#xA;Did I create a html from this?</description>
-    </item>
-    <item>
-      <title>Hello R Markdown</title>
-      <link>http://localhost:4321/themedianduck/2020/12/hello-r-markdown/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      <guid>http://localhost:4321/themedianduck/2020/12/hello-r-markdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.&#xA;You can embed an R code chunk like this:&#xA;summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
-    </item>
-    <item>
-      <title>Telegram Bot for  GitHub Actions</title>
-      <link>http://localhost:4321/themedianduck/2020/04/telegram-bot-for-github-actions/</link>
-      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/themedianduck/2020/04/telegram-bot-for-github-actions/</guid>
-      <description>Telegram Telegram is a cloud-based mobile and desktop messaging app with a focus on security and speed. It is free to use and extensively hackable. It also has a good bot support system. The API is also easy to implement and has many wrappers for building bots with the API.&#xA;GitHub Actions GitHub Actions is a CI/CD runtime for your GitHub repository. You can run almost anything from scripts to docker containers.</description>
-    </item>
-    <item>
-      <title>Primer: When You Have Too Much to Do</title>
-      <link>http://localhost:4321/themedianduck/2020/04/primer-when-you-have-too-much-to-do/</link>
-      <pubDate>Wed, 01 Apr 2020 02:01:58 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2020/04/primer-when-you-have-too-much-to-do/</guid>
-      <description>You have a to-do list that scrolls on for days. You are managing multiple projects, getting lots of email and messages on different messaging systems, managing finances and personal health habits and so much more.&#xA;It all keeps piling up, and it can feel overwhelming.&#xA;How do you keep up with it all? How do you find focus and peace and get stuff accomplished when you have too much on your plate?</description>
-    </item>
-    <item>
-      <title>Getting Started with Traveling Ultralight</title>
-      <link>http://localhost:4321/themedianduck/2020/03/getting-started-with-traveling-ultralight/</link>
-      <pubDate>Wed, 18 Mar 2020 12:13:35 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2020/03/getting-started-with-traveling-ultralight/</guid>
-      <description>I’m on a trip at the moment, and a friend who generously let me sleep on his couch looked at my small travel backpack and commented on how little I travel with: “That’s impressive,” he said.&#xA;I was a little surprised, because though I’ve gotten that comment before, it’s become normal for me to travel with just a small bag (10 lbs. or less, usually), and I have friends who travel with even less.</description>
-    </item>
-    <item>
-      <title>How to test dark mode?</title>
-      <link>http://localhost:4321/themedianduck/2018/03/how-to-test-dark-mode/</link>
-      <pubDate>Sun, 18 Mar 2018 12:13:38 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2018/03/how-to-test-dark-mode/</guid>
-      <description>Here is how you can setup dark mode for Ink and test on various OS like iOS, Android, macOS and Windows 10.</description>
-    </item>
-    <item>
-      <title>Typography</title>
-      <link>http://localhost:4321/themedianduck/2018/03/typography/</link>
-      <pubDate>Sun, 18 Mar 2018 12:13:38 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2018/03/typography/</guid>
-      <description>Lid est laborum et dolorum fuga. Et harum quidem rerum facilis est et expeditasi distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihilse impedit quo minus id quod amets untra dolor amet sad. Sed ut perspser iciatis unde omnis iste natus error sit voluptatem accusantium doloremque laste. Dolores sadips ipsums sits.&#xA;Heading 1 Lid est laborum et dolorum fuga. Et harum quidem rerum facilis est et expeditasi distinctio.</description>
-    </item>
-    <item>
-      <title>Hugo shortcodes</title>
-      <link>http://localhost:4321/themedianduck/2018/03/hugo-shortcodes/</link>
-      <pubDate>Sun, 18 Mar 2018 12:13:36 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2018/03/hugo-shortcodes/</guid>
-      <description>Images Github Gist Youtube video Vimeo Instagram View this post on Instagram Callouts 💡 I guess this works </description>
-    </item>
-    <item>
-      <title>How I Learned to Stop Procrastinating, &amp; Love Letting Go</title>
-      <link>http://localhost:4321/themedianduck/2018/03/how-i-learned-to-stop-procrastinating-love-letting-go/</link>
-      <pubDate>Sun, 18 Mar 2018 12:13:32 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2018/03/how-i-learned-to-stop-procrastinating-love-letting-go/</guid>
-      <description>The end of procrastination is the art of letting go.&#xA;I’ve been a lifelong procrastinator, at least until recent years. I would put things off until deadline, because I knew I could come through. I came through on tests after cramming last minute, I turned articles in at the deadline after waiting until the last hour, I got things done.&#xA;Until I didn’t. It turns out procrastinating caused me to miss deadlines, over and over.</description>
-    </item>
-    <item>
-      <title>Fearlessness: How to Stop Running from Space</title>
-      <link>http://localhost:4321/themedianduck/2018/03/fearlessness-how-to-stop-running-from-space/</link>
-      <pubDate>Sun, 18 Mar 2018 12:13:30 +0530</pubDate>
-      <guid>http://localhost:4321/themedianduck/2018/03/fearlessness-how-to-stop-running-from-space/</guid>
-      <description>We spend our days filling in every available space, cramming in more tasks, responding to messages, checking social media and online sites, watching videos.&#xA;We are afraid of empty space in our lives.&#xA;The result is often a continual busyness, constant distraction and avoidance, lack of focus, lack of satisfaction with our lives.&#xA;We run from silence. We run from the spaces between tasks and appointments. We run from solitude and stillness.</description>
     </item>
   </channel>
 </rss>
