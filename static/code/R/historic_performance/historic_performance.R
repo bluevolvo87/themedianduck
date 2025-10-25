@@ -63,12 +63,13 @@ compare_curr_ep_df <- past_summary_df[c("Series_ID", "Contestant", "Initials", "
            Current_Ep_Ranking = Ep_Ranking 
     ) %>% mutate(
         Current_Ep_Grade = case_when(
-            (Current_Ep_Points > Max_Ep_Points) ~ grade_lookup_df[1,"Grade"],
-            ((Max_Ep_Points >= Current_Ep_Points) & (Current_Ep_Points > P75_Ep_Points)) ~ grade_lookup_df[2,"Grade"],
-            ((P75_Ep_Points >= Current_Ep_Points) & (Current_Ep_Points > Median_Ep_Points)) ~ grade_lookup_df[3,"Grade"],
-            ((Median_Ep_Points >= Current_Ep_Points) & (Current_Ep_Points > P25_Ep_Points)) ~ grade_lookup_df[4,"Grade"],
-            ((P25_Ep_Points >= Current_Ep_Points) & (Current_Ep_Points >= Min_Ep_Points)) ~ grade_lookup_df[5,"Grade"],
-            (Min_Ep_Points > Current_Ep_Points) ~ grade_lookup_df[6,"Grade"]
+            (Max_Ep_Points < Current_Ep_Points ) ~ grade_lookup_df[1,"Grade"],
+            ((P75_Ep_Points <= Current_Ep_Points)) ~ grade_lookup_df[2,"Grade"],
+            ((Median_Ep_Points <= Current_Ep_Points) ) ~ grade_lookup_df[3,"Grade"],
+            ((P25_Ep_Points <= Current_Ep_Points) ) ~ grade_lookup_df[4,"Grade"],
+            ((Min_Ep_Points <= Current_Ep_Points)) ~ grade_lookup_df[5,"Grade"],
+            (Current_Ep_Points < Min_Ep_Points) ~ grade_lookup_df[6,"Grade"]
+          
         ),
         Current_Ep_Grade_Colour = case_when(
             Current_Ep_Grade == "A (Best Ever)" ~ grade_lookup_df[1,"Colour"],
