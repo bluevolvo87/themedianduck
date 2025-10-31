@@ -1,0 +1,558 @@
+---
+title: 'Series 20, Episode 7: Heist, Heist Baby'
+author: Christopher Nam
+date: '2025-10-28'
+slug: series-20-episode-7-heist-heist-baby
+categories: [Series 20, Betting]
+tags: [Series 20, Betting]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+#  Your Task
+
+> You know the drill by now; generate the usual ranking distributions (marginal, joint, within-episode, end of series), and comparisons to prior week's distributions and predictions.
+>
+> Bonus points for actually publishing this commentary ahead of the broadcast of Episode 8.
+
+```{r,  out.width="40%", fig.cap = "Making a mouth watering entrance in the flesh."}
+knitr::include_graphics("https://64.media.tumblr.com/58a5f04f5c689d00071704bebed1dc95/7bbe509ef20d10c4-f4/s1280x1920/70ba4f19afa89c725ee87147b99ac70a3320877d.png")
+```
+
+```{r, cache = FALSE}
+s20_data_link <- "https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing"
+
+task_attempt_df <- range_read(s20_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(s20_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2025-09-11, 
+                 sim_max_episode_used = 7,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+
+```
+# Series Scores on the Doors
+## Episode 7 Recap and Insights
+
+```{r ep7-score-board, fig.cap = "Series 20 Episode 6 Score Board", out.width = "50%", include = FALSE}
+latest_df <- multiverse_env$series_points_df %>% filter(Episode_ID == multiverse_env$sim_max_episode_used)
+
+title_label <- glue("Series {series_id}, Episode {ep_id} Scores and Rankings", series_id = multiverse_env$series_id, ep_id = multiverse_env$sim_max_episode_used)
+
+
+ep_plot <- 
+    latest_df %>% mutate(
+        Alt_Ep_Ranking = rank(-Ep_Points, ties.method = "first")
+    ) %>%
+    ggplot(aes(x = Alt_Ep_Ranking, y = Ep_Points, image = Image_URL)) +
+    geom_bar(stat = "identity", aes(fill = as.factor(Alt_Ep_Ranking)), colour = "darkred", linewidth = 2, show.legend = FALSE) +
+    geom_image(aes(y = Ep_Points, x= Alt_Ep_Ranking), size = 0.2, by = "height", nudge_y = 2.5) +
+    geom_text(aes(label = Ep_Points), y = 1, nudge_y = 0, size = 20, vjust = 0, hjust = 0.5, family = "elite") +
+    scale_fill_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e5", "5" = "#737473")) + # Official colours
+    quack_theme() +
+    ggtitle(label = title_label) +
+    xlab("Episode Ranking") + ylab("Episode Points") +
+    scale_x_discrete(limits = latest_df$Ep_Ranking) +
+    ylim(c(0, 25))
+
+ep_plot
+```
+
+```{r ep7-performance-grade, fig.cap = "Episode 7 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+
+compare_df <- multiverse_env$compare_curr_ep_df
+
+kbl_col_names <- c("Contestant",
+                   glue("Episode {ep} Points", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Ranking", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Performance Grade", ep = multiverse_env$sim_max_episode_used),
+                    glue("Summary Performance from Previous {hist_ep} Episodes", hist_ep = multiverse_env$sim_max_episode_used-1)
+                   )
+
+tbl_title <- glue("Episode {ep_id} Performance Report Cards", ep_id = multiverse_env$sim_max_episode_used)
+tbl_foot <- glue("Episode {curr_ep_id} Performance Grade is based on comparing the current episode performance, to the prior {prev_ep_id} episode(s) performance and where it lies in the distribution.", curr_ep_id =  multiverse_env$sim_max_episode_used, prev_ep_id = multiverse_env$sim_max_episode_used-1)
+
+df_compared_df <- as.data.frame(compare_df)
+
+react_compare_df <- compare_df %>% 
+    select(Contestant, Current_Ep_Points, Current_Ep_Ranking, Current_Ep_Grade,  Ep_Performance_Summary)
+
+react_compare_df <-as.data.frame(react_compare_df)
+
+reactable(
+    data = react_compare_df,
+    columns = list(
+        `Contestant` = reactable::colDef(
+            name = kbl_col_names[1],
+            cell = function(value, index) {
+                img_url <- df_compared_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 150
+        ),
+        `Current_Ep_Points` = colDef(name = kbl_col_names[2], width = 150,
+                                     cell = 
+                                             reactablefmtr::data_bars(
+                                         react_compare_df["Current_Ep_Points"],
+                                         bar_height = 50,
+                                         text_size = 18,
+                                         fill_color = "#FFFFC2" ,
+                                         border_color = "darkred",
+                                         bold_text = TRUE,
+                                         border_style = "solid",
+                                         border_width ="thin"
+                                             )
+        ),
+        `Current_Ep_Ranking` = colDef(name = kbl_col_names[3], width = 150,
+                                      style = function(value, index){
+                                          fill_colour <- case_when(value == 1 ~  "#D6AF36",
+                                                    value == 2 ~  "#A7A7AD",
+                                                    value == 3 ~ "#A77044",
+                                                    value == 4 ~ "#e0e5e5",
+                                                    value == 5 ~ "#737473")
+                                          list(background = fill_colour)
+                                          }),
+        `Current_Ep_Grade` = colDef(name = kbl_col_names[4], width = 150, 
+                                    style = function(value, index){
+                                        list(background = df_compared_df[index, "Current_Ep_Grade_Colour"])
+                                    }
+                                        ),
+        `Ep_Performance_Summary` = colDef(name = kbl_col_names[5], minWidth = 350)
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = TRUE,
+    width = "100%"
+) %>%
+    reactablefmtr::add_title(
+        title = tbl_title,
+        text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+    ) %>%
+    reactablefmtr::add_subtitle(
+        subtitle = tbl_foot,
+            font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+    )
+```
+
+```{r ep7-task-performance, cache = FALSE, out.width="0.01%", fig.show="hold", fig.width = 1, fig.height = 1, fig.cap = "Contestant Task Performance"}
+kable_text_df <- multiverse_env$kable_text_df %>%
+    left_join(contestants_df[c("Contestant_Name", "Initials", "Image_URL")], by = join_by(Contestant == Contestant_Name))
+
+react_full_text_df <- as.data.frame(kable_text_df)
+
+react_sub_text_df <- kable_text_df %>% ungroup() %>%
+    select(Contestant, Image_URL, Period, all_of(multiverse_env$heat_cols))
+react_sub_text_df <- as.data.frame(react_sub_text_df)
+
+caption_label <- glue("Series {series_id} Task Points Distributions for each Contestant", series_id = multiverse_env$series_id)
+footnote_label <- glue("Past covers tasks up to Episode {past_ep}, Current Ep covers tasks in Episode  {current_ep}.", past_ep = multiverse_env$sim_max_episode_used - 1, current_ep = multiverse_env$sim_max_episode_used)
+
+kbl_col_names <- c("Contestant",
+                   glue("Episode {ep} Points", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Ranking", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Performance Grade", ep = multiverse_env$sim_max_episode_used),
+                    glue("Summary Performance from Previous {hist_ep} Episodes", hist_ep = multiverse_env$sim_max_episode_used-1)
+                   )
+
+reactable(multiverse_env$prop_count_pivot_df, 
+          height = 0.1, 
+          width = 0.1,
+          fullWidth = TRUE,
+          theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "1px",
+        color = "black"
+    ))
+
+
+reactable(
+    data = react_sub_text_df,
+    columns = list(
+        `Contestant` = colDef(
+            cell = function(value, index) {
+                img_url <- react_full_text_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 175, html = TRUE, filterable = TRUE
+        ),
+        `Image_URL` = colDef(html = TRUE, show = FALSE, resizable = TRUE),
+        `Period` = colDef(width = 150, html = FALSE, filterable = TRUE)
+    ),
+    defaultSortOrder = "asc",
+    groupBy = "Contestant",
+    defaultExpanded = TRUE,
+    defaultColDef = colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        html = TRUE,
+        minWidth = 100
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    height = 500,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    style = list(maxWidth = 2000),
+    width = "100%",
+    fullWidth = TRUE
+) %>%
+    reactablefmtr::add_title(
+    title = caption_label,
+    text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+  ) %>%
+    reactablefmtr::add_subtitle(
+    subtitle = footnote_label,
+    font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+    )
+
+```
+
+:::{.insights}
+And following Episode 7, Table \@ref(fig:ep7-performance-grade) and \@ref(fig:ep7-task-performance):
+
+- **Ania won the episode with 20 points.**
+    - This was Ania's second episode win of the series, and also her best episode to date.
+- **In 2nd place was Sanjeev who accumulated 18 points.**
+    - This was a very good, above average episode for Sanjeev.
+    - This could have been Sanjeev's first episode win but the live studio task favoured contestants of the more youthful and mobile nature.
+- **Maisie and Phil finished in tied 3rd place with 17 points.**
+    - This was good, average episode for Maisie. She may have escaped her performance dip, but time will tell if this is a one off anomaly, or a full escape from the Dip. Plus I'm not quite willing to give up on my Dip jokes and references.
+    - For Phil, this was a very good, above average episode.
+- **Reece completed the Episode 7 scoreboard, finishing in 5th place with 13 points.**
+    - This wasn't a great episode for Reece; he finished below average.
+- I'm not the biggest fan of the Taskmaster role playing tasks (see Taskmaster Hotel, Taskmaster Fast Food), but I was a big fan of the **Taskmaster Museum Heist** task. 
+    - It was the perfect blend of being detective skills, and creative puzzle solving.
+    - In an amazing case of serendipity and life imitating art, Episode 7 was also broadcasted in the same week that the [Louvre Robbery occurred](https://en.wikipedia.org/wiki/2025_Louvre_robbery) occurred. This has not gone unnoticed by the Taskmaster community, with the inevitable humorous responses from the community and even the Taskmaster crew.
+    
+```{=html}
+<div align="center">
+<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DQMxhq1DfWv/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;text-align: center;"> <a href="https://www.instagram.com/p/DQMxhq1DfWv/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%; text-align: center;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;text-align: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DQMxhq1DfWv/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Channel 4 Entertainment (@channel4entertainment)</a></p></div></blockquote>
+<script async src="//www.instagram.com/embed.js"></script>
+</div>
+
+```
+:::
+
+```{r,  out.width="40%", fig.cap = "How do you trap a wild Little Alex Horne?"}
+knitr::include_graphics("https://64.media.tumblr.com/601f27cd31268ed131c61c07a26f7ee4/2e267c5fbee39b5d-b7/s1280x1920/1855a59396e5b667e35a447dfec5a5f7d33ef428.gifv")
+```
+
+
+## Updated Series Scores
+
+```{r ep7-series-tracking, fig.cap = "The Series 20 race in action!", out.width = "65%", cache = FALSE}
+title_label <- glue("Series {series_id}: Series Score Tracker", series_id = multiverse_env$series_id)
+
+ggplot(multiverse_env$series_points_df, aes(x= Episode_ID, y= Series_Points)) +
+ geom_point(aes(colour = Initials), size = 1.55) +
+    geom_line(aes(colour = Initials), alpha = 0.6, linewidth = 1.5) +
+    #scale_color_manual(values = c("AM" = "darkred", "MA" = "darkblue", "PE" = "darkorange", "RS" = "darkgreen", "SB" = "purple")) +
+    geom_image(data = multiverse_env$latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5, y = Series_Points, image = Image_URL), size = 0.1, by = "height", inherit.aes = FALSE) + 
+    new_scale_color() +
+    geom_label(data = multiverse_env$latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5, y = Series_Points + 15, label = Series_Ranking, colour = as.factor(Series_Ranking)), parse= TRUE, family = "elite", size = 14, show.legend = FALSE, inherit.aes = FALSE, label.padding = unit(0.05, "lines"), fill = "#FFFFC2") + 
+    scale_color_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e0", "5" = "#737473")) + 
+    #coord_cartesian(xlim = c(1, 12)) +
+    coord_cartesian(ylim = c(0, 150)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 12)) +
+    labs(title = title_label) +
+    xlab("Episode") +
+    ylab("Series Points (Cumulative)") +
+    quack_theme()
+```
+
+:::{.insights}
+And the following Episode 7, Figure \@ref(fig:ep7-series-tracking) shows that there is another series ranking change, albeit a smaller one!
+
+- **Ania continues to be the forerunner of the series; she is currently 1st with 111 points.**
+- _Phil is on track to win silver for the series; he is in 2nd place with 106 points._
+- **Maisie follows closely behind in 3rd with 102 points.**
+- _Sanjeev has now crept into 4th place with 99 points but..._
+- **Reece is immediately behind Sanjeev with 98 points and is currently in 5th place.**
+- The Glass Ceiling has finally been broken! 3 out of the 5 cast members have broken through the 3 digit barrier (100), and Reece and Sanjeev will break it by the next episode.
+:::
+
+```{r, out.width = "40%", fig.cap = "Maisie not quite believing how she has fallen from her initial series high, and how Phil has managed to pull ahead to 2nd plcae."}
+knitr::include_graphics("https://64.media.tumblr.com/798be03c0dc717a8e701f4bb43ee768a/c6bfd8abbc9b69b2-58/s1280x1920/8b477e60f8bc03377c7c056be699ec5b95ef4ec8.gifv")
+```
+
+
+# Within-Episode Ranking Distributions
+```{r ep7-ep-rankings, fig.cap = "How will our contestants fare within an individual episode? Using up to Episode 6 (left), using up to Episode 7 (right).", out.width = "49%", fig.show="hold", cache = FALSE}
+graph_title_label <- glue("Probability Distribution For Episode Ranking for Series {series_id}", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaining episodes.", max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}", seed_id = multiverse_env$seed_id)
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-6-the-egg-istential-crisis/index_files/figure-html/ep6-ep-rankings-2.png")
+
+ggplot(multiverse_env$prop_ep_win_df, 
+       aes(y = Prop_Count, x= Ep_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8), colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+:::{.insights}
+From Figure \@ref(fig:ep7-ep-rankings):
+
+- **Uniform distributions continue to be en vogue for most of the cast of Series 20.** Maisie, Phil and Sanjeev have distributions which are the most like a uniform distribution (an equal 20% probability for each ranking). The small deviations are as follows.
+    - Maisie's distribution is slightly skewed towards the higher ranks.
+    - Phil's within episode ranking distribution is peaked and centred around 2nd and 3rd place.
+    - Sanjeev's distribution is peaked and centred on 2nd place.
+- However there are some more obvious detractors from the this uniformity:
+    - **Reece's distribution shows a skewness to the lower end of ranks within an episode.** 
+    - _Ania's distribution clearly deviates from a uniform distribution. Her distribution is skewed towards the top ranks for an episode._
+- The most probable within episode rankings have updated to:
+    - **Ania: 1st with 38.59% probability**, previously 1st with 34.99%.
+    - *Maisie: 1st with 23.28% chance*, previously 1st with 24.40%.
+    - **Phil: 2nd with 23.06% probability**, previously 2nd with 22.84%.
+    - *Reece: 5th with 28.54% chance*, previously 5th with 25.48%.
+    - **Sanjeev: 2nd with 21.48% chance**, previously 2nd with 20.77%.
+:::
+
+```{r,  out.width="40%", fig.cap = "I'm sure Mummy Horne appreciates this feature!"}
+knitr::include_graphics("https://64.media.tumblr.com/84c7ae783054e3d46ffada58e8d5e76a/71ea389fdab472f7-75/s1280x1920/8f3a8280b761adf332d33e9c8064c0d601d2e6d0.gifv")
+```
+
+
+# End-of-Series Ranking Distributions
+```{r ep7-series-rankings, fig.cap = "Where will our contestants place by the end of the series? Using up to Episode 6 (left), using up to Episode 7 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+graph_title_label <- glue("Probability Distribution For Overall Series Rankings for Series {series_id}", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaining episodes.", max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}", seed_id = multiverse_env$seed_id)
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-6-the-egg-istential-crisis/index_files/figure-html/ep6-series-rankings-2.png")
+
+ggplot(multiverse_env$prop_series_win_df, 
+       aes(y = Prop_Count, x= Sim_Series_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8)  , colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("End of Series Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+:::{.insights}
+From Figure \@ref(fig:ep7-series-rankings):
+
+- Whilst there is uniformity in the within-series ranking distributions, the **series ranking distributions show clear deviations from a uniform distribution.**
+    - Ania's distribution is highly skewed towards the left (the higher ranks); she is estimated to be crowned champion of the series with approximately 81%.
+        - Given that Ania is currently the forerunner of the series, and that she has been a consistent high performer, this makes intuitive sense.
+    - Maisie's distribution is flatter than Ania's; it is peaked and centred around placing 3rd in the series with approximately 33%. She could place 2nd and 4th with comparable probability of 25% or so.
+    - Phil's distribution is peaked on placing 2nd with 45%, with 26% chance of also placing 3rd in the series.
+    - Reece's distribution is highly skewed to the right (lower ranks); he is estimated to place 5th in the series with approximately 56%.
+        - As Reece is currently in last place for the series, and he is the most volatile, unpredictable contestant who has had a streak of recent bad episodes, this distribution does make sense. 
+    - Sanjeev has a relatively flat, wide distribution akin to Maisie's. His distribution is however, peaked and centred on placing 4th with about 37%, and just under 25% chance of placing 3rd or 5th.
+- The peak locations and the relative flatness for Maisie, Phil and Sanjeev distributions, do seem logical based on their current series ranking (hence the peak locations), and their fluctuating performance in the last few episode (the flatness and the uncertainty). 
+- The **maximum a posterior series ranking (that is the most likely) predictions** are:
+    - **Ania: 1st with 80.61%;** previously 1st with 62.92%.
+    - *Maisie: 3rd with 33.44%;* previously 3rd with 27.27%.
+    - **Phil: 2nd with 45.40%;** previously 2nd with 35.22%.
+    - *Reece: 5th with 56.37%;* previously 5th with 32.96%.
+    - **Sanjeev: 4th with 36.66%;** previously 5th with 40.04%.
+:::
+
+
+```{r,  out.width="40%", fig.cap = "Maisie does not like the results and odds that I am presenting..."}
+knitr::include_graphics("https://64.media.tumblr.com/197767d31c966b93dfc6f584872c0bfc/d2d8cf9c1e583460-78/s1280x1920/03aff0761c95c664e55a46b30ee841da61a47696.png")
+```
+
+# Joint Cast Ranking Distributions
+
+```{r, cache = FALSE}
+initials_vec <- c("AM", "MA", "PE", "RS", "SB")
+prev_ep_joint_pred <- c(1,3,2,4,5)
+
+full_prev_ep_pred <- paste(paste(initials_vec, prev_ep_joint_pred, sep = ": "), collapse= ", ")
+```
+
+```{r s20-cast-joint-dist, out.width = "49%", fig.cap = "How will the Series 20 cast fare as a complete unit? Using up to Episode 6 (left), using up to Episode 7 (right). Joint Distribution of Series Rankings for the Entire Cast of Series 20", fig.show = "hold", cache = FALSE}
+top_casts <- 20 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Series Rankings for Series {series_id}", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaining episodes.", max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}", n_cast = top_casts, seed_id = multiverse_env$seed_id)
+
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-6-the-egg-istential-crisis/index_files/figure-html/s20-cast-joint-dist-2.png")
+
+multiverse_env$counts_sim_cast_df %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag | (Full_Cast_Rank %in% full_prev_ep_pred)) %>%
+    mutate(text = ifelse(Full_Cast_Rank %in% full_prev_ep_pred, paste("Previous Prediction ", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
+ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0, colour = MAP_Flag), family = "elite", nudge_y = 0.001, show.legend = FALSE) +
+        scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1), n.breaks = 10) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+```
+
+:::{.insights}
+And from Figure \@ref(fig:s20-cast-joint-dist), the full cast series ranking distribution has regained some of its peakiness.
+
+- The **most probable cast series ranking occurring with 12.35% probability** is:
+    - **1st: Ania**
+    - _2nd: Phil_
+    - **3rd: Maisie**
+    - _4th: Sanjeev_
+    - **5th: Reece**
+- The prior prediction we made (in which Reece was 4th and Sanjeev was 5th), has an estimated probability of 6.44% occurring. 
+    - This prior prediction is the 4th most likely ranking outcome.
+- Inspecting the top 5 most likely cast rankings they predominantly vary according to who places 2nd to 5th.
+    - Phil's ranking varies between placing 2nd and 3rd.
+    - Maisie's ranking varies between placing 2nd and 3rd, with one instance on placing 4th.
+    - Whether Reece will place 4th or 5th.
+    - Sanjeev will place 4th or 5th, with one instance of placing 3rd. 
+    - In all the configurations, Ania comes 1st.
+:::
+
+```{r, out.width = "40%", fig.cap = "Ania getting ready to retain her favourable championship odds; she means serious business."}
+knitr::include_graphics("https://64.media.tumblr.com/fbe1b06201bdb045e8e340aa469df151/52d119a03f3a6282-75/s540x810/fe2f974667e15e9af683ff634d4d6e3a3ad2710d.gifv")
+```
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- The most probable series ranking is `[Ania: 1st, Maisie: 3rd, Phil: 2nd, Reece: 5th, Sanjeev: 4th]`, with 12.35% chance.
+    - Other likely series rankings feature variants of the order of who will place in 2nd to 5th. Ania is expected to come 1st in all these combinations.
+- The universe works in mysterious ways! Who would have planned the Taskmaster Museum Heist task being broadcasted in the same week of the Louvre Robbery occurring.
+- Despite my best intentions to publish this post (about Episode 7) before the broadcast of Episode 8, it didn't quite happen.
+    - Here's to hoping that the Episode 8 post comes out before the Episode 9 broadcast. 
+:::
+
+```{r, out.width = "40%", fig.cap = "Locking me up until the next post..."}
+knitr::include_graphics("https://64.media.tumblr.com/d1bf51e7d81ebcda3d78236a1db8facd/2e267c5fbee39b5d-e0/s540x810/07c4f3f77c8bb83ab360cd68150d3af0cec2151a.gifv")
+```
