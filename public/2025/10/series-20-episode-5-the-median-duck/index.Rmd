@@ -1,0 +1,676 @@
+---
+title: 'Series 20, Episode 5: The Not Quite Median (Duck)'
+author: Christopher Nam
+date: '2025-10-14'
+slug: series-20-episode-5-the-median-duck
+categories: [Series 20, Betting]
+tags: [Series 20, Betting]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+#  Your Task
+
+> We're at the midway point of the series! Generate the usual ranking distributions (marginal, joint, within-episode, end of series), and comparisons to prior week's distributions and predictions.
+>
+> Bonus points for comparing the estimated within episode ranking distributions to their empirical counterparts based on observed episode rankings to date.
+
+
+```{r,  out.width="40%", fig.cap = "Getting into position for this week's post."}
+knitr::include_graphics("https://64.media.tumblr.com/882aa19f541a3825addf9bf3e35f1a34/03e232aee56f728e-d5/s1280x1920/d44195ccb36cc6f268b5eb4d924f7725e544aa42.gifv")
+```
+
+
+```{r, cache = FALSE}
+s20_data_link <- "https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing"
+
+task_attempt_df <- range_read(s20_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(s20_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2025-09-11, 
+                 sim_max_episode_used = 5,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+
+```
+# Series Scores on the Doors
+## Episode 5 Recap and Insights
+```{r ep5-score-board, fig.cap = "Series 20 Episode 5 Score Board", out.width = "50%"}
+latest_df <- multiverse_env$series_points_df %>% filter(Episode_ID == multiverse_env$sim_max_episode_used)
+
+title_label <- glue("Series {series_id}, Episode {ep_id} Scores and Rankings", series_id = multiverse_env$series_id, ep_id = multiverse_env$sim_max_episode_used)
+
+
+ep_plot <- 
+    latest_df %>% mutate(
+        Alt_Ep_Ranking = rank(-Ep_Points, ties.method = "first")
+    ) %>%
+    ggplot(aes(x = Alt_Ep_Ranking, y = Ep_Points, image = Image_URL)) +
+    geom_bar(stat = "identity", aes(fill = as.factor(Alt_Ep_Ranking)), colour = "darkred", linewidth = 2, show.legend = FALSE) +
+    geom_image(aes(y = Ep_Points, x= Alt_Ep_Ranking), size = 0.2, by = "height", nudge_y = 2.5) +
+    geom_text(aes(label = Ep_Points), y = 1, nudge_y = 0, size = 20, vjust = 0, hjust = 0.5, family = "elite") +
+    scale_fill_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e5", "5" = "#737473")) + # Official colours
+    quack_theme() +
+    ggtitle(label = title_label) +
+    xlab("Episode Ranking") + ylab("Episode Points") +
+    scale_x_discrete(limits = latest_df$Ep_Ranking) +
+    ylim(c(0, 25))
+
+ep_plot
+```
+
+```{r ep5-performance-grade, fig.cap = "Episode Performance Report Cards", fig.topcap = FALSE}
+
+compare_df <- multiverse_env$compare_curr_ep_df
+
+kbl_col_names <- c("Contestant",
+                   glue("Episode {ep} Points", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Ranking", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Performance Grade", ep = multiverse_env$sim_max_episode_used),
+                    glue("Summary Performance from Previous {hist_ep} Episodes", hist_ep = multiverse_env$sim_max_episode_used-1)
+                   )
+
+tbl_title <- glue("Episode {ep_id} Performance Report Cards", ep_id = multiverse_env$sim_max_episode_used)
+tbl_foot <- glue("Episode {curr_ep_id} Performance Grade is based on comparing the current episode performance, to the prior {prev_ep_id} episode(s) performance and where it lies in the distribution.", curr_ep_id =  multiverse_env$sim_max_episode_used, prev_ep_id = multiverse_env$sim_max_episode_used-1)
+
+df_compared_df <- as.data.frame(compare_df)
+
+react_compare_df <- compare_df %>% 
+    select(Contestant, Current_Ep_Points, Current_Ep_Ranking, Current_Ep_Grade,  Ep_Performance_Summary)
+
+react_compare_df <-as.data.frame(react_compare_df)
+
+reactable(
+    data = react_compare_df,
+    columns = list(
+        `Contestant` = reactable::colDef(
+            name = kbl_col_names[1],
+            cell = function(value, index) {
+                img_url <- df_compared_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 150
+        ),
+        `Current_Ep_Points` = colDef(name = kbl_col_names[2], width = 150),
+        `Current_Ep_Ranking` = colDef(name = kbl_col_names[3], width = 150),
+        `Current_Ep_Grade` = colDef(name = kbl_col_names[4], width = 150, 
+                                    style = function(value, index){
+                                        list(background = df_compared_df[index, "Current_Ep_Grade_Colour"])
+                                    }
+                                        ),
+        `Ep_Performance_Summary` = colDef(name = kbl_col_names[5], minWidth = 350)
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = TRUE,
+    width = "100%"
+) %>%
+    reactablefmtr::add_title(
+        title = tbl_title,
+        text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+    ) %>%
+    reactablefmtr::add_subtitle(
+        subtitle = tbl_foot,
+            font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+    )
+```
+
+
+:::{.insights}
+Well that was quite the episode! From Episode 5, Figure \@ref(fig:ep5-score-board) and Table \@ref(fig:ep5-performance-grade):
+
+- **Phil won his first episode in the series! He finished in 1st place with 18 points.**
+    - Unsurprisingly, this was Phil's best episode to date and after highlighting this observation in last weeks post, Phil finally displayed moments of brilliance which contributed to this win.
+    
+- *Reece finished in 2nd place with 14 points.*
+    - This was considered a bad (below average) performance by Reece as it in the lower half of episode performances to date. 
+- **Sanjeev accumulated 12 points and finished in 3rd place.**
+    - Like Reece, this was a bad, below average performance by Sanjeev.
+- **Ania placed 4th with 11 points in total.**
+    - Unsurprisingly, this was Ania's worst episode performance date. To date, she has never scored episode points as low as this, or placed as low as this in an episode.
+- **Maisie rounded out the leaderboard, accumulating 7 points and finishing in 5th place.**
+    - This is Maisie's worst episode to date, and is also the lowest scoring episode so far in the series.
+    - Her anger is no doubt justified, but also very entertaining.
+- The outcome of the live studio task proved to be extremely influential in the episode and current series standings. 
+    - Phil and Reece being awarded for their deceitful behaviours, and negative penalty points for Ania, Maisie and Sanjeev ultimately influenced the outcome of this episode.
+:::
+
+```{r,  out.width="40%", fig.cap = "One of Phil's Moments of Brilliance in This Episode", fig.show="hold"}
+phil_vec <- c("https://64.media.tumblr.com/44b7725f0ee05a279f6651d0d4bad546/50c7e03a74f52a63-f2/s1280x1920/0ce966104fce5316e0486255c9346173b599f71e.png",
+              "https://64.media.tumblr.com/352f608fe9af765957371f055af73f2c/50c7e03a74f52a63-0b/s1280x1920/81057f8fc018fae9c52380e51ad704420c69f724.png"
+)
+              
+knitr::include_graphics(phil_vec)
+```
+## Task Performance
+
+```{r ep5-task-performance, cache = FALSE, out.width="0.01%", fig.show="hold", fig.width = 1, fig.height = 1, fig.cap = "Contestant Task Performance"}
+kable_text_df <- multiverse_env$kable_text_df %>%
+    left_join(contestants_df[c("Contestant_Name", "Initials", "Image_URL")], by = join_by(Contestant == Contestant_Name))
+
+react_full_text_df <- as.data.frame(kable_text_df)
+
+react_sub_text_df <- kable_text_df %>% ungroup() %>%
+    select(Contestant, Image_URL, Period, all_of(multiverse_env$heat_cols))
+react_sub_text_df <- as.data.frame(react_sub_text_df)
+
+caption_label <- glue("Series {series_id} Task Points Distributions for each Contestant", series_id = multiverse_env$series_id)
+footnote_label <- glue("Past covers tasks up to Episode {past_ep}, Current Ep covers tasks in Episode  {current_ep}.", past_ep = multiverse_env$sim_max_episode_used - 1, current_ep = multiverse_env$sim_max_episode_used)
+
+kbl_col_names <- c("Contestant",
+                   glue("Episode {ep} Points", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Ranking", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Performance Grade", ep = multiverse_env$sim_max_episode_used),
+                    glue("Summary Performance from Previous {hist_ep} Episodes", hist_ep = multiverse_env$sim_max_episode_used-1)
+                   )
+
+reactable(multiverse_env$prop_count_pivot_df, 
+          height = 0.1, 
+          width = 0.1,
+          fullWidth = TRUE,
+          theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "1px",
+        color = "black"
+    ))
+
+
+reactable(
+    data = react_sub_text_df,
+    columns = list(
+        `Contestant` = colDef(
+            cell = function(value, index) {
+                img_url <- react_full_text_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 175, html = TRUE
+        ),
+        `Image_URL` = colDef(html = TRUE, show = FALSE, resizable = TRUE),
+        `Period` = colDef(width = 150, html = FALSE)
+    ),
+    defaultSortOrder = "asc",
+    groupBy = "Contestant",
+    defaultExpanded = TRUE,
+    defaultColDef = colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        html = TRUE,
+        minWidth = 100
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    height = 500,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    style = list(maxWidth = 2000),
+    width = "100%",
+    fullWidth = TRUE
+) %>%
+    reactablefmtr::add_title(
+    title = caption_label,
+    text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+  ) %>%
+    reactablefmtr::add_subtitle(
+    subtitle = footnote_label,
+    font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+  )
+
+```
+
+:::{.insights}
+From the Task Perfromance Table \@ref(fig:ep5-task-performance):
+
+- We see our **first instance in the series of negative points being awarded.**
+    - `[Ania, Maisie, Sanjeev]` were penalised -3 points from the live lamé studio task.
+- *Phil finally broke his rut of not performing spectacularly in prior tasks; he was awarded the full 5 points in 2 tasks.*
+    - Phil's win in this episode can be attributed to being awarded no less than 2 points.
+    - Phil's overall task performance will continue to be centered around the low to mid points range, but he now has likelihood of a stellar performance and being awarded 5 points..
+- **Apart from the live studio task, Ania had a average episode, with points being awarded from either end (1 to 5).**
+    - Ania has still yet to be awarded 4 points for a task.
+    - Ania's task performance distribution is unlikely to change substantially.
+- *Maisie's poor performance in this episode is due to 3 of her tasks scoring 1 point and below.* 
+    - Maisie only had two tasks in which she performed well and was awarded 4 and 5 points,
+    - Maisie has previously been disqualified (awarded 0 points), but this disqualification was more targeted (Maisie and Reece suffered), whereas the prior disqualification affected the entire cast.
+    - Maisie's -3 penalty also no doubt added to this terrible episode performance. 
+    - Maisie's task performance distribution will become flatter and will be less pronounced
+- **Ignoring Reece's task in which he was penalised and awarded 0 points, Reece had a pretty good episode; he was awarded no less than 3 points and ranked 3rd and above for these tasks.**
+    - The bimodal, extreme nature of Reece's task performance distribution will less evident following the tasks from this episode.
+- **Whilst Sanjeev was graded as having a "bad" episode, this can be mainly attributed to the effect of the -3 points awarded from the live task.**
+    - If we omit this task, Sanjeev didn't perform as badly, scoring between 2 and 5 points.
+    - Sanjeev's task performance distribution is not anticipated to change greatly; it will retain the same basic shape (skewed to the low to mid tanks) but will be flatter. 
+:::
+
+## Updated Series Scores
+
+```{r ep4-series-tracking, fig.cap = "The Series 20 race in action!", out.width = "65%", cache = FALSE}
+title_label <- glue("Series {series_id}: Series Score Tracker", series_id = multiverse_env$series_id)
+
+ggplot(multiverse_env$series_points_df, aes(x= Episode_ID, y= Series_Points)) +
+ geom_point(aes(colour = Initials), size = 1.55) +
+    geom_line(aes(colour = Initials), alpha = 0.6, linewidth = 1.5) +
+    #scale_color_manual(values = c("AM" = "darkred", "MA" = "darkblue", "PE" = "darkorange", "RS" = "darkgreen", "SB" = "purple")) +
+    geom_image(data = multiverse_env$latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5, y = Series_Points, image = Image_URL), size = 0.1, by = "height", inherit.aes = FALSE) + 
+    new_scale_color() +
+    geom_text(data = multiverse_env$latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5, y = Series_Points + 10, label = Series_Ranking, colour = as.factor(Series_Ranking)), parse= TRUE, family = "elite", size = 14, show.legend = FALSE, inherit.aes = FALSE) + 
+    scale_color_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e5", "5" = "#737473")) + 
+    #coord_cartesian(xlim = c(1, 12)) +
+    coord_cartesian(ylim = c(0, 100)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 12)) +
+    labs(title = title_label) +
+    xlab("Episode") +
+    ylab("Series Points (Cumulative)") +
+    quack_theme()
+```
+
+:::{ .insights}
+And following the surprise outcome of Episode 5, we also see a shake up in the series leaderboard (Figure \@ref(fig:ep4-series-tracking)):
+
+- The updated series rankings following Episode 5 are:
+    - **Ania maintains her 1st place position with 78 points.**
+    - ot on the heels on Ania is *Reece; he places 2nd with 77 points.*
+    - Also closely behind Reece, are *both Maisie and Phil in joint 3rd place with 73 points*.
+    - **Sanjeev rounds out the pack ending with 67 points in 5th place.**
+- As is evident, the Lamé Live Task has had a substantial impact.
+    - *Phil has now transitioned from the lower ranks (the 4th and 5th placements shared with Sanjeev) and joined the higher ranks (1st, 2nd and 3rd positions shared amongst Ania, Maisie and Reece).*
+        - Overall, the **two sub-groups we have seen from Episode 3 and 4, is less evident following Episode 5.**
+    - The -3 points awarded by the Lamé Live task had a detrimental impact on Ania and Maisie.
+        - **Ania lost her strong lead over Reece**, such that it is now a close race between them.
+        - *Maisie lost her position as a likely, comfortable forerunner of the series.* She could regain her position, but she will require lots of good performances going forward.
+:::
+
+```{r,  out.width="40%", fig.cap = "Is this really happening?"}
+knitr::include_graphics("https://64.media.tumblr.com/22f2cd2aa34bf2e1de941a067a7ac479/c950ae72a1e7b301-af/s1280x1920/c4b97933950b28355b5c178f05a78416fb1d2f11.gifv")
+```
+
+# Within-Episode Ranking Distributions
+```{r ep5-ep-rankings, fig.cap = "How will our contestants fare within an individual episode? Using up to Episode 4 (left), using up to Episode 5 (right).", out.width = "49%", fig.show="hold", cache = FALSE}
+graph_title_label <- glue("Probability Distribution For Episode Ranking for Series {series_id}", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}", seed_id = multiverse_env$seed_id)
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/index_files/figure-html/ep4-ep-rankings-2.png")
+
+ggplot(multiverse_env$prop_ep_win_df, 
+       aes(y = Prop_Count, x= Ep_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8), colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+```{r}
+
+all_ranks <- c(1:5)
+
+obs_ep_placement <- 
+    multiverse_env$series_points_df %>%
+    group_by(Series_ID, Contestant, Initials, Image_URL, Ep_Ranking) %>%
+    count(name = "Num_Count", Series_ID, Contestant, Initials, Image_URL, Ep_Ranking) %>%
+    group_by(Series_ID, Contestant, Initials, Image_URL) %>%
+    mutate(
+        Denominator = sum(Num_Count),
+        Prop_Count = Num_Count/Denominator,
+        Method = "Observed",
+        
+    ) %>% ungroup() %>%
+    rename(Ep_Rank = Ep_Ranking)
+
+
+est_ep_placement <- multiverse_env$prop_ep_win_df %>%
+    add_column(Method = "Estimated")
+
+ep_placement_df <- obs_ep_placement %>% bind_rows(est_ep_placement)
+
+ep_placement_df$Method <- factor(ep_placement_df$Method, levels = c("Observed", "Estimated"))
+        
+```
+
+
+:::{.insights}
+As seen in Figure \@ref(fig:ep5-ep-rankings), our within-episode ranking distributions have changed, but to a lesser than one might expect given the events of Episode 5.
+
+- **Each contestant's within episode ranking distribution appears to be flatter, almost passing plausibly as a uniform distribution **(that is a 1 in 5 chance of placing in each position, which translates to 20% probability) for some contestants.
+    - This is **most true for Reece's distribution**, showing the least deviation from the 20% probability benchmark if we were to assume a uniform distribution.
+    - *Maisie deviates slightly from the uniform distribution by being slightly more skewed towards the higher ranks.*
+    - **Sanjeev also deviates slightly from this uniform distribution, this time skewing to the lower ranks.**
+    - *Phil's distribution has changed the most amongst the contestants. His distribution is peaked towards placing 3rd in an episode, rather than being peaked and skewed towards placing 5th.*
+    - **Ania's distribution has changed the least and is still peaked and skewed towards placing 1st. She exhibits the most deviation from a uniform distribution.**
+- So far, **all contestants have placed at least once in 1st place**. This includes ties and ignores outcome of tie breaker tasks. 
+- The most probable contestant rankings have updated to:
+    - **Ania:  1st with 37.51%**, previously 1st with 38.80%
+    - *Maisie: 1st with 26.22%*, previously 1st with 34.64%
+    - **Phil: 3rd with 23.55%**, previously 5th with 28.67%
+    - *Reece: 1st with 23.07%*, previously 1st with 24.19%
+    - **Sanjeev: 4th with 21.76%**, previously 4th with 24.78%
+:::
+
+```{r,  out.width="40%", fig.cap = "Maisie questioning the data and my insights."}
+knitr::include_graphics("https://64.media.tumblr.com/5b80d49b24870c732cc4b5dc6c67bbe7/4c588f9be08159a7-80/s1280x1920/873d50e8bd0d67bcef82ad0fdb72077c32406ff1.gifv   ")
+```
+
+
+## Does My Distribution Look Fat in This?
+```{r ep5-ep-compare, fig.cap = "Does my distribution look good? Comparing the estimated and observed distribution for within-episode ranking", out.width = "70%", fig.show="hold", cache = FALSE}
+graph_title_label <- glue("Empirical and Estimated Within Episode Ranking Distributions", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Series: {series_id}", series_id = multiverse_env$series_id)
+
+caption_label <- glue("Simulation Seed: {seed_id}, estimation used data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", seed_id = multiverse_env$seed_id, max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+
+ggplot(ep_placement_df, 
+       aes(y = Prop_Count, x= Ep_Rank, image = Image_URL, fill = Method, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", position = position_dodge2(width =0.9, preserve = "single", padding = 0.05)) + 
+    scale_fill_manual(values = c("Observed" = "#c4c089", "Estimated" = "#cf7474")) +
+    facet_grid(Initials~., switch = "both") +
+    geom_image(data = multiverse_env$latest_df, aes(image = Image_URL), size=1, x= 0.25, y = 0.75/2, by = "height", inherit.aes = FALSE) +
+    geom_label(aes(y = Prop_Count + 0.0), position = position_dodge2(width =0.9, preserve = "single", padding = 0.05), text.colour = "black", border.colour = "black", family = "elite", size = 4, legend.show = FALSE) +
+    #scale_color_manual(values = c("Observed" = tm_colour_vec[1], "Estimated" = tm_colour_vec[2])) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.75)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th", "")) +
+    coord_cartesian(xlim = c(0.25, 5.5))
+```
+
+:::{.insights}
+Figure \@ref(fig:ep5-ep-compare) compares the latest estimated ranking distribution to the empirical distribution based on observed episode rankings to date. **If our estimation method is reasonable, the estimated distribution should not be to dissimilar to the empirical distribution.**
+
+We observe:
+
+- **Reece's flat, uniform estimated distribution mimics the observed empirical distribution; Reece has finished in all positions to date.**
+- For the remaining contestants, the **most likely outcome under the estimated and observed distribution don't quite line up**, and we **don't see the same level of flatness in the estimated distributions.**
+    - *For Phil for example, he has placed 4th for 60% of episodes so far; however, our estimated distributed shows that Phil's most likely episode ranking is 3rd place with 23.55%.*
+    - Whilst this is unfortunate, we **stress that empirical distribution is based on 5 episodes and observations only.** This **may not be a sufficient sample size to form an accurate distribution we can make inferences from.**
+- We see **many instances of contestants not placing in particular positions, but we still have estimated probabilities.**
+    - For example, *Ania has not placed 5th in an episode to date, but we estimate that she will place in this position with 11.02%.*
+    - Whilst this may seem odd (having a probability estimate for an event which has yet to occur), it is a **benefit of our simulation based estimation method and sampling a such granular level (at a contestant-task level).**
+- Our method also provides a **smoother probability distribution that are less disjointed compared to an empirical distribution.**
+    - *Maisie for example, is a woman of extremes in reality with regards to episode ranking; she has placed 1st and 5th each with 40% occurrence to date. The remaining 20% is for placing 3rd and Maisie has never placed 2nd or 4th.*
+    - **Maisie's estimated distribution has a smoother trajectory, placing the most probability on placing 1st and decaying steadily from there.**
+
+:::
+
+# End-of-Series Ranking Distributions
+```{r ep5-series-rankings, fig.cap = "Where will our contestants place by the end of the series? Using up to Episode 4 (left), using up to Episode 5 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+graph_title_label <- glue("Probability Distribution For Overall Series Rankings for Series {series_id}", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}", seed_id = multiverse_env$seed_id)
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/index_files/figure-html/ep4-series-rankings-2.png")
+
+ggplot(multiverse_env$prop_series_win_df, 
+       aes(y = Prop_Count, x= Sim_Series_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8)  , colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("End of Series Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+:::{.insights}
+After watching Episode 5, I was very intrigued to see how it would affect the end of series ranking distributions. The updated distributions are displayed in Figure \@ref(fig:ep5-series-rankings). We see that:
+
+- **For Maisie, Phil and Reece, their distributions are flatter than the previous weeks.** As these are the **three most volatile and unpredictable contestants (they have changed positions the most thus far), their flatter distributions are to be expected. **
+    - For Maisie, her distribution has flattened the most and whilst her most likely placement is still 2nd place, this is **less pronounced and peaked than before**. She also has **approximately 30% chance of placing 4th or 5th in the series, whereas she  previously less than 2%.**
+    - **Phil's distribution has been flattened and the peak has shifted towards placing 4th in the series,** rather than 5th. **Phil is expected to rank in the lower half of the score board** (approximately 80% for placing 3rd and below), he does have a **more significant chance placing 1st than before** (3.32% versus 0.01% probability).
+        - This increase in probability towards the top end of the score board is no doubt due to Phil's stellar episode performance and finally showing moments of brilliance (and consequently being award 5 points) which can now propagate through our simulated series.
+    - **Reece's distribution has also flattened and the most likely outcome is for him to now place 2nd with 33.08%.** The distribution is now peaked and centred around this placement. 
+- **Sanjeev's distribution has returned to its old ways and is now peaked on placing 5th in the series.** It is still skewed towards the lower ranks. 
+    - Sanjeev does have 6% of placing either 1st or 2nd in the series now. Whilst this may be surprising, Sanjeev has had a few moments of brilliance thus far which is likely contributing to this estimation. 
+- **Ania's distribution has retained the same shape; it is still skewed and peaked on placing first with 64.68%.**
+    - **I am very surprised that this peak is more pronounced**, despite the events of Episode 5. Her previous probability of ranking 1st was 58.83%. After some deep diving and reflection, this **surprising outcome can be justified**:
+        -  Whilst Ania had her worst episode to date, this is mainly attributed to the penalisation of the live task. If we exclude this task (or pretend that the penalisation was less severe with 0 points being awarded), Ania's episode performance wouldn't be quite as severe (it would be considered good or average for some other contestants). 
+        - It is also important to reiterate that **under the simulation logic employed, sampling is performed within task type and that any sampled tasks with penalty points are capped to 0.** Ultimately, this means the effect of this task and its severe penalty is curbed, and enough for Ania to still perform well enough to win the series.
+        - In addition, **Ania still had 2 moments of brilliance in this episode, and in general has been awarded 5 points 45% of the time; this is the highest amongst all contestants this series.** Such a high percentage means that it is more likely to more sampled in our simulations, and thus gives Ania a better chance of continuing to perform well in our simulation. 
+- Based on each contestants marginal distribution of their series ranking, the **maximum a posterior series ranking (that is the most likely) predictions** are:
+    - **Ania: 1st with 64.68%;** previously 1st with 58.83%.
+    - *Maisie: 2nd with 28.89%;* previously 2nd with 44.78%.
+    - **Phil: 4th with 35.36%;** previously 5th with 59.28%.
+    - *Reece: 2nd with 33.06%;* previously 3rd with 57.19%.
+    - **Sanjeev: 5th with 53.32%;** previously 4th with 54.03%.
+:::
+
+```{r,  out.width="40%", fig.cap = "Sanjeev justifying my input and insights."}
+knitr::include_graphics("https://64.media.tumblr.com/9bddd116eb0b004f315723743ff625dd/dee650a312c6437f-73/s1280x1920/a5e43da5f2a79265ad4f9dda216c397d335430c9.gifv")
+```
+
+
+# Joint Cast Ranking Distributions
+
+```{r, cache = FALSE}
+initials_vec <- c("AM", "MA", "PE", "RS", "SB")
+prev_ep_joint_pred <- c(1,2,5,3,4)
+
+full_prev_ep_pred <- paste(paste(initials_vec, prev_ep_joint_pred, sep = ": "), collapse= ", ")
+```
+
+```{r s20-cast-joint-dist, out.width = "49%", fig.cap = "How will the Series 20 cast fare as a complete unit? Using up to Episode 4 (left), using up to Episode 5 (right). Joint Distribution of Series Rankings for the Entire Cast of Series 20", fig.show = "hold", cache = FALSE}
+top_casts <- 20 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Series Rankings for Series {series_id}", series_id = multiverse_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaing episodes.", max_ep = multiverse_env$sim_max_episode_used, num_sims = scales::number(multiverse_env$num_sims), seed_id = multiverse_env$seed_id, remain_eps = multiverse_env$remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}", n_cast = top_casts, seed_id = multiverse_env$seed_id)
+
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2025/10/series-20-episode-4-let-s-franchise-this-baby/index_files/figure-html/s20-cast-joint-dist-2.png")
+
+multiverse_env$counts_sim_cast_df %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag | (Full_Cast_Rank %in% full_prev_ep_pred)) %>%
+    mutate(text = ifelse(Full_Cast_Rank %in% full_prev_ep_pred, paste("Previous Prediction ", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
+ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0, colour = MAP_Flag), family = "elite", nudge_y = 0.001, show.legend = FALSE) +
+        scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1), n.breaks = 10) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+```
+
+:::{.insights}
+The joint cast ranking distribution (as displayed in Figure \@ref(fig:s20-cast-joint-dist)) shows:
+
+- The **distribution has flattened yet again and with no standout peak.** This is a **reflection of the great uncertainty of how this series will pan out eventually**, with no single cast ranking leading the race.
+- The **most probable cast ranking, occurring with 8.05% probability**, is now:
+    - **Ania: 1st,**
+    - *Maisie: 3rd,*
+    - **Phil: 4th,**
+    - *Reece: 2nd,*
+    - **Sanjeev: 5th**
+- Our **previous prediction**, `[Ania: 1st, Maisie: 2nd, Phil: 5th, Reece: 3rd, Sanjeev: 4th]`, now has a **estimated probability of 3.30% occurring**. Comparing these two prediction, only one person has retained the same predicted placement. 
+    - **This prior prediction is estimated to be 7th most likely outcome.**
+- Analysing the **Top 7 most likely cast rankings**, we note:
+    - **Ania is placed 1st in all but one of the ranking combinations.**
+    - *Sanjeev is expected to place 4th or 5th. *
+    - **Maisie places 2nd or 3rd predominantly, with one occurrence of placing 4th.**
+    - *Phil has a range of placing between 3rd to 5th place with placing 4th being the  most common outcome.*
+    - **Reece also has a wide range of placements, ranging from 1st to 4th. Placing 2nd or 3rd is the most common occurrence amongst the top 7.**
+:::
+
+# Sidebar: An Honest Conversation at the Table
+
+> This is mainly for the data science, `R` readers out there.
+
+Eager eyed readers may have noticed a change in the presentation of the tables compared to last week's post (see Tables \@ref(fig:ep5-performance-grade) and \@ref(fig:ep5-task-performance). This is due to switching from using the `R` packages `kable` and `kableExtra` in the previous post, to `reactable` and `reactablefmtr` in this post. 
+
+I'm relatively new at trying to incorporate tables into my posts, and also equally ambitious with what I wanted to do with them to tell my Median Duck story (for example including conditional formatting, featuring collapsible/grouped rows, including the contestant image along with their name). 
+
+With this in mind, the main reason for my switch to `reactable` in this post (and likely going forward) is that I kept encountering crashing and timeout issues when using `kable`. One of the reasons why my posts are *"late"* is because I spend too much time trying to figure out these issues, eventually with no avail. The timeout issues themselves definitely added unnecessary friction to my workflow (previewing and rendering the post), and the effort trying to deep dive into it also took time away from the (interesting) statistical and commentary work. 
+
+**So any readers wanting to use tables in their `R` markdown documents, I personally would encourage using `reactable` over `kable`, particular if `html` documents are the main output format.** This is not to say that `reactable` is perfect, but I have thus far encountered less friction with them.[^hacks]
+
+[^hacks]: There are many hacks employed with `reactable` to get certain features working; bonus points if you can find them!
+
+<details>
+<summary>For the curious folk, example of `kable` timeout error</summary>
+
+The timeout error was akin to:
+```{bash, echo = TRUE, eval = FALSE}
+Error: No such process, pid 25964, ??? later: exception occurred while executing callback: invoke_wrapped: throwing std::runtime_error
+```
+
+My deep dive led me to [this issue within Shiny applications](https://github.com/rstudio/rstudio/issues/13394).
+
+
+Another error I encountered was akin to:
+
+```{bash, echo = TRUE, eval = FALSE}
+Error in UseMethod("nodeset_apply") : no applicable method for 'nodeset_apply' applied to an object of class "NULL"
+```
+which seems to be a [known issue for `kableExtra`](https://github.com/haozhu233/kableExtra/issues/534).
+</details>
+
+
+# What Have We Learnt Today?
+::: {.infobox .today data-latex="{today}"}
+We've learnt that:
+
+- **Phil finally won an episode and his moments of brilliance; he was finally awarded 5 points for two tasks.**
+    - The events of this episode have also assisted him in his estimated distributions: his within-episode ranking distribution less skewed towards placing 5th) and his series ranking distribution is peaked and skewed on placing 4th.
+- We saw our **first task of the series which featured penalty points (negative points being awarded); these were awarded to Ania, Maisie and Sanjeev.**
+    - As a result of these penalty points, **Maisie had her worst episode so far, and also the lowest scoring episode of the series.**
+    - **Despite these penalty points, Ania still has 64.68% probability of placing 1st in the series.** This is a **testament to Ania's frequent moments of brilliance** (she has been awarded 5 points 40% of the time and this is the most amongst the cast), and her **top end performance consistency across episodes.**
+- Our **current prediction for the series ranking is `[Ania: 1st, Maisie: 3rd, Phil: 4th, Reece: 2nd, Sanjeev: 5th]` with a 8.05% of occurring.**
+    - Both the **contestant marginals and joint distributions indicate that most of the uncertainty lies in who will the 2nd, 3rd and 4th positions.**
+    
+:::{.awards}
+Maybe one day I'll publish these posts ahead of the next episode, maybe even with several days before hand to allow the readers to digest it!
+:::     
+
+```{r,  out.width="40%", fig.cap = "The usual charming sign off gif..."}
+knitr::include_graphics("https://64.media.tumblr.com/ed6d50cb191154188541818bd8b83aeb/c950ae72a1e7b301-13/s1280x1920/348ab0caee41fc37a36a5f7c993ac511e7908cb2.gifv")
+```
+
+:::
+
