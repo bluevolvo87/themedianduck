@@ -4,5 +4,5 @@
 .Ruserdata
 .DS_Store
 Thumbs.db
-content/posts/*/index_cache/
-public/*/*/*/index_cache
+**/index_cache/
+**/*.RData
