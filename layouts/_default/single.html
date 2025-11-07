@@ -22,16 +22,18 @@
 			{{ .Content }}
 		</section>
 		
-  
 
+  
 		<div class="post-tags">
 			{{ if ne .Type "page" }}
 			{{ if gt .Params.tags 0 }}
+			
 			<nav class="nav tags">
 				<ul class="tags">
-				    Tags: 
+				    {{- $BaseURL := ( .Site.BaseURL ) -}}
+				    Tags:  
 					{{ range .Params.tags }}
-					<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a> 
+					<a href="{{ $BaseURL}}{{ "/tags/" |relLangURL}}{{ . | urlize}}">{{ . }}</a>
 					{{ end }}
 				</ul>
 			</nav>
