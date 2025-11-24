@@ -1,0 +1,1036 @@
+---
+title: 'Series 20, Episode 10: A Swashbuckling Series Finale'
+author: Christopher Nam
+date: '2025-11-17'
+slug: series-20-episode-10-a-swashbuckling-series-finale
+categories: [Series 20, Betting]
+tags: [Series 20, Betting]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+#  Your Task
+> We're at the end of series; the blog post tasks have changed!
+> 
+> Review your one episode ahead prediction for Series 20 of Taskmaster; that is the prediction for episode 10 and the final Series 20 outcome, based on observations up to and include Episode 9. Quantify the probability for the variety of  extraordinary events we witnessed.
+
+```{r,  out.width="50%", fig.cap = "At last! Correspondence on the last episode of Series 20. Sorry for the delay!"}
+knitr::include_graphics("https://64.media.tumblr.com/3fdad7963a2d44e50bdcf76c0e61cf63/b72f6082a5d4a1f8-b0/s1280x1920/7d7e2a3909135dc3376ce7103bf1fc86d74a9827.gifv")
+```
+
+```{r, cache = FALSE}
+s20_data_link <- "https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing"
+
+task_attempt_df <- range_read(s20_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(s20_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2025-09-11, 
+                 sim_max_episode_used = 10,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# multi_dir <- here("static", "code", "R", "multiverse")
+# multi_file  <- "multiverse.R"
+# 
+# sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+
+```
+
+# Series Scores on the Doors
+## Episode 10 Recap and Insights
+```{r ep10-performance-grade, fig.cap = "Episode 10 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+
+compare_df <- multiverse_env$compare_curr_ep_df
+
+kbl_col_names <- c("Contestant",
+                   glue("Episode {ep} Points", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Ranking", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Performance Grade", ep = multiverse_env$sim_max_episode_used),
+                    glue("Summary Performance from Previous {hist_ep} Episodes", hist_ep = multiverse_env$sim_max_episode_used-1)
+                   )
+
+tbl_title <- glue("Episode {ep_id} Performance Report Cards", ep_id = multiverse_env$sim_max_episode_used)
+tbl_foot <- glue("Episode {curr_ep_id} Performance Grade is based on comparing the current episode performance, to the prior {prev_ep_id} episode(s) performance and where it lies in the distribution.", curr_ep_id =  multiverse_env$sim_max_episode_used, prev_ep_id = multiverse_env$sim_max_episode_used-1)
+
+df_compared_df <- as.data.frame(compare_df)
+
+react_compare_df <- compare_df %>% 
+    select(Contestant, Current_Ep_Points, Current_Ep_Ranking, Current_Ep_Grade,  Ep_Performance_Summary)
+
+react_compare_df <-as.data.frame(react_compare_df)
+
+reactable(
+    data = react_compare_df,
+    columns = list(
+        `Contestant` = reactable::colDef(
+            name = kbl_col_names[1],
+            cell = function(value, index) {
+                img_url <- df_compared_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 150
+        ),
+        `Current_Ep_Points` = colDef(name = kbl_col_names[2], width = 150,
+                                     cell = 
+                                             reactablefmtr::data_bars(
+                                         react_compare_df["Current_Ep_Points"],
+                                         bar_height = 50,
+                                         text_size = 18,
+                                         fill_color = "#FFFFC2" ,
+                                         border_color = "darkred",
+                                         bold_text = TRUE,
+                                         border_style = "solid",
+                                         border_width ="thin"
+                                             )
+        ),
+        `Current_Ep_Ranking` = colDef(name = kbl_col_names[3], width = 150,
+                                      style = function(value, index){
+                                          fill_colour <- case_when(value == 1 ~  "#D6AF36",
+                                                    value == 2 ~  "#A7A7AD",
+                                                    value == 3 ~ "#A77044",
+                                                    value == 4 ~ "#e0e5e5",
+                                                    value == 5 ~ "#737473")
+                                          list(background = fill_colour)
+                                          }),
+        `Current_Ep_Grade` = colDef(name = kbl_col_names[4], width = 150, 
+                                    style = function(value, index){
+                                        list(background = df_compared_df[index, "Current_Ep_Grade_Colour"])
+                                    }
+                                        ),
+        `Ep_Performance_Summary` = colDef(name = kbl_col_names[5], minWidth = 350)
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = TRUE,
+    width = "100%"
+) %>%
+    reactablefmtr::add_title(
+        title = tbl_title,
+        text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+    ) %>%
+    reactablefmtr::add_subtitle(
+        subtitle = tbl_foot,
+            font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+    )
+```
+
+```{r ep10-task-performance, cache = FALSE, out.width="0.01%", fig.show="hold", fig.width = 1, fig.height = 1, fig.cap = "Contestant Task Performance"}
+
+series_id <- 20
+kable_text_df <- multiverse_env$kable_text_df %>%
+    left_join(contestants_df[c("Contestant_Name", "Initials", "Image_URL")], by = join_by(Contestant == Contestant_Name))
+
+react_full_text_df <- as.data.frame(kable_text_df)
+
+react_sub_text_df <- kable_text_df %>% ungroup() %>%
+    select(Contestant, Image_URL, Period, all_of(multiverse_env$heat_cols))
+react_sub_text_df <- as.data.frame(react_sub_text_df)
+
+caption_label <- glue("Series {series_id} Task Points Distributions for each Contestant", series_id = series_id)
+footnote_label <- glue("Past covers tasks up to Episode {past_ep}, Current Ep covers tasks in Episode  {current_ep}.", past_ep = multiverse_env$sim_max_episode_used - 1, current_ep = multiverse_env$sim_max_episode_used)
+
+kbl_col_names <- c("Contestant",
+                   glue("Episode {ep} Points", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Ranking", ep = multiverse_env$sim_max_episode_used),
+                   glue("Episode {ep} Performance Grade", ep = multiverse_env$sim_max_episode_used),
+                    glue("Summary Performance from Previous {hist_ep} Episodes", hist_ep = multiverse_env$sim_max_episode_used-1)
+                   )
+
+reactable(multiverse_env$prop_count_pivot_df, 
+          height = 0.1, 
+          width = 0.1,
+          fullWidth = TRUE,
+          theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "1px",
+        color = "black"
+    ))
+
+
+reactable(
+    data = react_sub_text_df,
+    columns = list(
+        `Contestant` = colDef(
+            cell = function(value, index) {
+                img_url <- react_full_text_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 175, html = TRUE, filterable = TRUE
+        ),
+        `Image_URL` = colDef(html = TRUE, show = FALSE, resizable = TRUE),
+        `Period` = colDef(width = 150, html = FALSE, filterable = TRUE)
+    ),
+    defaultSortOrder = "asc",
+    groupBy = "Contestant",
+    defaultExpanded = TRUE,
+    defaultColDef = colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        html = TRUE,
+        minWidth = 100
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    height = 500,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    style = list(maxWidth = 2000),
+    width = "100%",
+    fullWidth = TRUE
+) %>%
+    reactablefmtr::add_title(
+    title = caption_label,
+    text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+  ) %>%
+    reactablefmtr::add_subtitle(
+    subtitle = footnote_label,
+    font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+    )
+
+```
+
+:::{.insights}
+And from that swashbuckling finale episode, and as exhibited in Table \@ref(fig:ep10-performance-grade) and \@ref(fig:ep10-task-performance):
+
+- **Maisie won the series finale with 17 points.**
+    - This was a very good, above average episode for Maisie, and her 3rd episode win.
+- **Reece and Sanjeev both earned 16 points and were joint 2nd.**
+    - For Reece, this was a good, slightly above average episode for him.
+    - For Sanjeev, this was a very good episode and appears in this top quartile of episode performance.
+- **Phil had a very bad, below average episode. He accumulated 12 points and finished in 4th place.**
+- **Ania rounded out the final episode rankings; she was awarded 10 points in total, and ended up in 5th place for episode.**
+    - This was Ania's worst episode to date as her prior lowest episode score was 11 in episode 5. 
+    - This is also the first time in the series in which Ania placed 5th in an episode. 
+- Deep diving into Ania's task performance in this episode, the highest number of task points awarded in this episode was 4.
+    - Prior to this episode, Ania has the largest number of tasks in which she was awarded 5 points amongst the cast. This title will likely also still hold when considering in all episodes in the series.
+    - Ania's poor episode performance can also attributed to her team being disqualified from the team task; they were award 0 points which didn't help any of that team in their episode score.
+    
+- This episode featured a task involving a **[Pythagoras Cup](https://en.wikipedia.org/wiki/Pythagorean_cup), an ancient (and potentially one of the earliest) practical joke devices from the Roman empire**. 
+    - Bernoulli was also mentioned in the same task by Sanjeev, a bit surprising for the statistician inside me as he has his own distribution named after him. 
+
+```{r,  out.width="30%", fig.cap = "You greedy, greedy man, Mr Shearsmith!"}
+knitr::include_graphics("https://64.media.tumblr.com/1bd39a4a5cb0bc798e2e1e5a07bcb7ee/78daebc9cb53a8b9-cc/s1280x1920/07ba998de2e01846be201973f5a5c02ad9f0af55.gifv")
+```
+:::
+
+
+
+## Tangent Time: Science Today, and Science All Your Life
+
+```{r,  out.width="45%", fig.cap = "Behold! The Pythagorean Cup!", fig.show = "hold"}
+pythag_cup <- c("https://mymodernmet.com/wp/wp-content/uploads/2019/10/what-is-a-pythagoras-cup.jpg",
+                "https://miro.medium.com/v2/resize:fit:4800/format:webp/1*3i4l_XqTd8vVKSXpfXutTQ.jpeg")
+
+knitr::include_graphics(pythag_cup)
+```
+
+### The Pythagoras Cup
+A [Pythagoras Cup](https://en.wikipedia.org/wiki/Pythagorean_cup) is a special type of drinking cup that can be used for practical joke purposes, and for teaching unsuspecting victims about the dangers of being greedy. It is also known as a Pythagorean Cup, Greed Cup, Cup of Justice, Anti Greed Goblet, or Tantalus cup, and the cup dates back to the Roman empire.
+
+An original cup has central pillar which deceivingly contains a channel which leads to an opening at the bottom of the cup. When the cup is filled with liquid up to certain point (the height of the central pillar), **all liquid** (not just the surplus liquid added) will be emptied from the base of the cup through a [siphoning](https://en.wikipedia.org/wiki/Siphon) effect.[^siphon] The cup holder (and intended victim) will have quite the mess to clear up and explain. 
+
+If the liquid does not exceed this limit, the cup functions as normal, and the cup bearer is not penalised for being greedy and their dignity remains in tact. Moderation is rewarded by the lack of humiliation.  
+
+Modern day applications of the Pythagoras Cup include toilets[^toilet] and washing machines (how the fabric softener drawer works).
+
+
+[^siphon]: Taskmaster certainly likes to rely on the concept of siphoning quite a bit... 
+[^toilet]: Does this make it toilet humour then?
+
+```{r, out.width="35%", fig.cap = "What kind of witchcraft is this? You've ruined my brand new toga! ([image 1](https://i.imgur.com/cjI0qjJ.gif), [image 2](https://upload.wikimedia.org/wikipedia/commons/0/04/Instructions_for_Pythagoras%27_cup_from_Kotsanas_Museum_of_Ancient_Greek_Technology.jpg))", fig.show = "hold", dpi = 50}
+pythag_cup <- c ("https://i.imgur.com/cjI0qjJ.gif", "https://upload.wikimedia.org/wikipedia/commons/0/04/Instructions_for_Pythagoras%27_cup_from_Kotsanas_Museum_of_Ancient_Greek_Technology.jpg"
+)
+knitr::include_graphics(pythag_cup, dpi = 500)
+```
+
+### Bernoulli Principle
+
+But what about this Bernoulli Principle (or Theorem), as alluded to by Sanjeev? 
+
+>> **Bernoulli Principle:**
+>>
+>> A key concept in fluid dynamics that relates speed, presure and height, and the combination of the three maintaining equilibrium. 
+>> 
+>> In particular, assuming constant height, if a fluid's speed increases, its pressure decreases. And conversely, if the fluid's speed decreases, its pressure increase. 
+>>
+>> It's all about maintaining equilibrium and the conservation of energy. It also has ties to Newton's 3rd law of motion (every action has equal and opposite reaction). 
+
+So in the context of the Pythagoras cup (thanks to the help of [this source](https://incoherency.co.uk/blog/stories/pythagorean-cup.html#:~:text=The%20pressure%20at%20the%20bottom%20(i.e.%20at%20the%20pickup%20of%20the%20siphon)%20decreases%20as%20the%20depth%20of%20the%20water%20in%20the%20container%20decreases.)):
+
+- As liquid is poured into the cup (height increases), pressure at the bottom of the cup (the siphoning source) increases. 
+- Once the liquid exceeds the greed limit and the siphoning effect is activated, liquid starts dripping out of the bottom (height decreases) and pressure starts to decrease. The flow rate of the liquid (the speed ) is linear to the pressure (inversely linear for that matter).
+ 
+
+It is my belief is that Bernoulli's principle describes the relationship between rate of flow and pressure in the Pythagoras cup, and **not** the actual mechanics (as in the siphoning effect), that occurs to make the practical joke work. In fact, [Pascal's Principle of Communicating Vessels](https://medium.com/@Merrysci/the-pythagoras-cup-0a065621bb29) is what initiates the siphoning effect.
+
+
+```{r, out.width="45%", fig.cap = "All is fair and balanced when vessels communicate [(figure source)](https://en.ppt-online.org/235114)", fig.show = "hold", dpi = 50}
+pythag_cup <- c ("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*cZrDFNIaoCnKVFvJADjUag.jpeg")
+knitr::include_graphics(pythag_cup, dpi = 500)
+```
+
+
+### Catfished by Bernoulli
+The _inner "statistician"_[^imposter] in me was pleasantly surprised to hear the name Bernoulli mentioned in an episode of Taskmaster. A **Bernoulli Distribution (and Random Variable) is used to model phenomena in which there are only two outcomes, with the probability of one outcome only needing to be specified.**
+
+The most common example of a Bernoulli Random Variable and Distribution in action is **a coin toss (the two outcomes are heads or tails)**. Other applications include **success or failure tests** (for example, will Ania be series champion or not), and **"on" or "off" events** (for example, will Sanjeev be switched "on" and score more than 10 points, or "off" scoring 10 points or less). Note that the probability of the two outcomes occurring do **not** need to be equal.
+
+Mathematically, we would write this as:
+
+[^imposter]: Did I tell you I suffer from imposter syndrome?
+
+$$
+\text{Outcome} = \begin{cases}
+\text{1: Ania is series champion} & \qquad & \text{with probability } p \\
+\text{0: Ania is not series champion} & \qquad & \text{with probability } (1-p)
+\end{cases}
+$$
+
+The Bernoulli distribution is one of the key statistical distribution which later forms the basis of the Binomial Distribution (multiple Bernoulli outcomes), which in turn forms the basis of binary classification models (for example logistic regression). 
+
+Imagine my surprise however when I learnt that the Bernoulli of this distribution, is not the same Bernoulli of the aforementioned Principle! The Bernoulli Distribution is named after Jacob Bernoulli, whilst the Bernoulli Principle is named after Daniel Bernoulli. I feel catfished!
+
+_Are the two Bernoulli's related at all?_ Well the Bernoulli family is a renowned Swiss family containing eight academics who collectively made significant impact and contributions in the fields of Mathematics and Physics. Think of the Bernoulli family as the the Mathematical equivalent to the Bach family. 
+
+As to _how the two Bernoulli are related_, the two have an _uncle-nephew relationship_; Jacob (of Distribution fame) is the elder of the two and heralds from the first generation of Bernoulli academics, whilst Daniel (of Principle fame) is the younger and is from the second generation of academics.
+
+```{r,  out.width="20%", fig.cap = "Which Bernoulli we will get, is very much a Bernoulli Random Variable. [Jacob Bernoulli (left, senior)](https://upload.wikimedia.org/wikipedia/commons/1/19/Jakob_Bernoulli.jpg), [Daniel Bernoulli (right, junior)](https://upload.wikimedia.org/wikipedia/commons/c/cd/Portr%C3%A4t_des_Daniel_Bernoulli_-_edit1.jpg)", fig.show = "hold"}
+pythag_cup <- c("https://upload.wikimedia.org/wikipedia/commons/1/19/Jakob_Bernoulli.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/c/cd/Portr%C3%A4t_des_Daniel_Bernoulli_-_edit1.jpg")
+
+knitr::include_graphics(pythag_cup)
+```
+
+## The Final Series Scores
+
+```{r ep10-series-tracking, fig.cap = "The Series 20 race in action!", out.width = "49%", cache = FALSE, fig.show = "hold"}
+multiverse_env$series_id <- unique(multiverse_env$series_points_df$Series_ID)
+
+base_x <- 11
+shift_x <- 0.75
+
+title_label <- glue("Series {series_id}: Series Score Tracker", series_id = multiverse_env$series_id)
+
+series_points_plt <- ggplot(multiverse_env$series_points_df, aes(x= Episode_ID, y= Series_Points)) +
+ geom_point(aes(colour = Initials), size = 1.55, alpha = 0.6) +
+    geom_line(aes(colour = Initials), alpha = 0.6, linewidth = 1.5) +
+    #scale_color_manual(values = c("AM" = "darkred", "MA" = "darkblue", "PE" = "darkorange", "RS" = "darkgreen", "SB" = "purple")) +
+    geom_image(data = multiverse_env$latest_df, aes(x= base_x + (rank(-Series_Points, ties.method = "first")-1)*shift_x, y = Series_Points, image = Image_URL), size = 0.1, by = "height", inherit.aes = FALSE) + 
+    new_scale_color() +
+    geom_label(data = multiverse_env$latest_df, aes(x= base_x + (rank(-Series_Points, ties.method = "first")-1)*shift_x, y = Series_Points + 25, label = Series_Ranking, colour = as.factor(Series_Ranking)), parse= TRUE, family = "elite", size = 14, show.legend = FALSE, inherit.aes = FALSE, label.padding = unit(0.05, "lines"), fill = "#FFFFC2") + 
+    scale_color_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e0", "5" = "#737473")) + 
+    
+    geom_label(data = multiverse_env$latest_df, aes(x= base_x + (rank(-Series_Points, ties.method = "first")-1)*shift_x, y = Series_Points - 25, label = Series_Points, colour = as.factor(Series_Ranking)), parse= TRUE, family = "elite", size = 7, show.legend = FALSE, inherit.aes = FALSE, label.padding = unit(0.05, "lines"), fill = "#FFFFC2") + 
+    #coord_cartesian(xlim = c(1, 12)) +
+    coord_cartesian(ylim = c(0, 200)) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 14)) +
+    labs(title = title_label) +
+    xlab("Episode") +
+    ylab("Series Points (Cumulative)") +
+    quack_theme()
+
+title_label <- glue("Series {series_id}: Series Ranking Tracker", series_id = multiverse_env$series_id)
+series_ranking_plt <- ggplot(multiverse_env$series_points_df, aes(x = Episode_ID, y= Series_Ranking)) +
+    geom_point(aes(colour = Initials), size = 1.75, alpha = 0.6) +
+    geom_line(aes(colour = Initials), alpha = 0.6, linewidth = 1.5) +
+    scale_x_continuous(breaks = c(1: 10), limits = c(1, 10)) +
+    scale_y_reverse() +
+    xlab("Episode") +
+    ylab("Series Ranking") +
+    labs(title = title_label) +
+    quack_theme()
+
+series_points_plt
+series_ranking_plt
+```
+
+:::{.insights}
+Well that was a turn out for the books. From Episode 10 and Figure \@ref(fig:ep10-series-tracking):
+
+- The **final series standings** were:
+    - **Joint 1st place for Ania, Maisie and Phil with 151 points.**
+    - **Reece placed in 4th place, having accumulated 148 points.**
+    - **Sanjeev "Bottom of the Score Board" Bhaskar lived up to his nickname, ending in 5th place with 143 points.**
+- And with this three way series tie, a rather controversial tie breaker occurred. This tie breaker involved _recalling (estimating) the number of "T"s in portrait hung in the living room of the Taskmaster house_. 
+    - **Maisie eventually won this tie breaker and is crowned the Series 20 champion.** 
+- **A series tie breaker has not happened before in UK Taskmaster history, let alone a series tie breaker between three contestants!**
+    - A series tie breaker has happened in Series 2 of Australian Taskmaster[^australia] between Anne Edmonds and Lloyd Langford (who are also partners in real life). 
+    - This series Australian tie breaker seemed a bit fairer and slightly more skill based; it was a live studio tie breaker in which they were tasked to estimate the weight of the Taskmaster trophy. 
+    - Lloyd won the tie breaker and was crowned the Australian champion. 
+
+```{r,  out.width="50%", fig.cap = "A threesome you say?!"}
+knitr::include_graphics("https://64.media.tumblr.com/4378051ca127bee27c0f5cf096e3042b/9ebd183a7a5c392f-3a/s1280x1920/89d3fb507b13f08d4591c570f073efb3aa87a206.gifv")
+```
+
+
+[^australia]: Avid Taskmaster fans will know that it was broadcasted as Series 2, but filmed as Series 3. Who knows why the Australian people decided to do a switch-eroo. I would recommend both of these Series to any UK Taskmaster fans with Jenny Tian and Aaron Chen being welcome additions to my comedy landscape.
+:::
+
+
+>> **Congratulations Maisie Adams!** You've successfully managed to escape The Dip and have been crowned the Series 20 Champion!
+
+```{r, out.width="35%", fig.cap = "Never has a gif been so appropriate for how Series 20 panned out eventually...", fig.show = "hold"}
+
+knitr::include_graphics("https://64.media.tumblr.com/9fb97de5f42b3a20e91454e5610a116e/c1da232b5980986c-43/s1280x1920/7798ba008786f61bd81794c9729f22684a595f40.gifv", dpi = 500)
+```
+
+# One Episode Ahead Prediction Retrospective
+Recall from [Episode 9's post](/themedianduck/2025/11/series-20-episode-9-the-ultimate-pen) that our prediction for the cast ranking was: `[1st: Ania, 2nd: Phil, 3rd: Maisie, 4th: Reece, 5th: Sanjeev]`. This is the one episode ahead prediction for the series ranking for the cast; using data up to including Episode 9, we made a prediction on the series ranking in which a series has 10 episodes.
+
+Evidently this prediction did not occur in the end (it was not observed), and my reputation as an accurate legitimate forecaster is at stake.
+
+Whilst inaccuracy is not a desirable trait, it is somewhat reassurring that the outcome of the series came as a big surprise to the champion herself and by Ed Gamble on the Official Taskmaster podcast ([podcast episode link](https://open.spotify.com/episode/5wHcAUJqLlbYaceeU6rWfO?si=1f22574ccd03480e)). I think we can appropriately assume that many believed that this outcome had a relatively low chance of occurring. 
+
+Which naturally leads to the question of whether we can quantify these chances. In particular, we may be interested in :
+
+1. Can we quantify the likelihood of the observed series outcome occurring?
+    - That is, what is the probability of the observed series ranking outcome of `[1st: Ania, 1st: Maisie, 1st: Phil, 4th: Reece, 5th: Sanjeev]` occurring?
+2. What was the probability of a tie occurring? 
+    - Tie can occur at any rank, and by any number of contestants.
+3. What were the chances of a tie occurring for the championship? 
+    - Tie is between 2 or more contestants.
+4. What were the chances of a 3-way tie for the championship?
+5. What were the chances of the 3-way championship tie being between (Ania, Maisie and Phil), henceforth known as the _holy trinity_?
+
+This is all based on the known status up to Episode 9.
+
+```{r,  out.width="35%", fig.cap = "The disappointment of being inaccurate with my prediction..."}
+knitr::include_graphics("https://64.media.tumblr.com/7f811a290062bed969c212c1432c444d/471b5597f635ba56-46/s1280x1920/64f157a3fb9705c5d1f204a4b24b25b09654ad4a.gifv")
+```
+
+
+## Yours Conditionally...
+
+For Questions 3 to 5, it will be worth considering both **unconditional and conditional probabilities** of these events occurring.
+
+**Conditional Distributions are distributions which are conditional on knowing that another event has occurred.** This event can include:
+
+- knowing that a tie has occurred some where in the series ranking.
+- knowing that a tie has occurred **and** that the tie is for the championship (rank 1).
+
+These are different to unconditionally distributions in which we do not know if a tie has occurred or not, and encompasses more uncertainty and unknowns.
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
+# Establish the variables and environment for our analysis
+ep9_var_list <- list(seed_id = 2025-09-11, 
+                 sim_max_episode_used = 9,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+ep9_env <- new.env()
+invisible(list2env(x = ep9_var_list, envir = ep9_env))
+
+
+sys.source(file.path(perform_dir, perform_file), envir = ep9_env)
+
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+sys.source(file.path(multi_dir, multi_file), envir = ep9_env)
+
+```
+
+
+```{r, cache = FALSE}
+initials_vec <- c("AM", "MA", "PE", "RS", "SB")
+series_outcome <- c(1,1,1,4,5)
+
+full_series_outcome <- paste(paste(initials_vec, series_outcome, sep = ": "), collapse= ", ")
+```
+
+```{r}
+test_df <- ep9_env$series_sample_summary_df
+ties_df <- test_df %>% group_by(Universe_ID) %>%
+    reframe(Num_Ranks = n_distinct(Sim_Series_Rank),
+            Rank_1_Count = sum(Sim_Series_Rank == 1),
+            Rank_2_Count = sum(Sim_Series_Rank == 2),
+            Rank_3_Count = sum(Sim_Series_Rank == 3),
+            Rank_4_Count = sum(Sim_Series_Rank == 4),
+            Rank_5_Count = sum(Sim_Series_Rank == 5),
+            AM_1_Flag = max(Contestant == "Ania Magliano" & Sim_Series_Rank == 1),
+            MA_1_Flag  = max(Contestant == "Maisie Adam" & Sim_Series_Rank == 1),
+            PE_1_Flag = max(Contestant == "Phil Ellis" & Sim_Series_Rank == 1)
+            ) %>%
+    mutate(AM_MA_PE_1_Flag = (AM_1_Flag ==1) & (MA_1_Flag ==1) & (PE_1_Flag == 1),
+           Ties_Flag = !(5 == Num_Ranks)
+           )
+
+rank_vec <- 1:5
+rank_col_label <- glue("Rank_{rank_iter}_Count", rank_iter = rank_vec) 
+
+ties_df$Num_Ties <- rowSums(ties_df[rank_col_label] > 1)
+ties_df$Max_Tie_Size <- apply(ties_df[rank_col_label],  MARGIN = 1, FUN = max)                                    
+```
+
+```{r,  out.width="35%", fig.cap = "Wenches on the Benches Time!"}
+knitr::include_graphics("https://64.media.tumblr.com/33419a73edfa88a4fdb4d631cda2ade7/ab35f7c877af38b4-00/s1280x1920/bb6a68b582249aaf5fd551056dd97e722741c4da.gifv")
+```
+
+
+
+## To Tie or Not To Tie (The Knot)? Unconditionally or conditionally...
+
+```{r s20-cast-joint-dist, out.width = "50%", fig.cap = "One Episode Prediction for the Series 20 Outcome", fig.show = "hold", cache = FALSE}
+top_casts <- 20 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Series Rankings for Series {series_id}", series_id = ep9_env$series_id)
+
+subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated Series, with {remain_eps} remaining episodes.", max_ep = ep9_env$sim_max_episode_used, num_sims = scales::number(ep9_env$num_sims), seed_id = ep9_env$seed_id, remain_eps = ep9_env$remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}", n_cast = top_casts, seed_id = ep9_env$seed_id)
+
+
+plot_cast_pred <- ep9_env$counts_sim_cast_df %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag | (Full_Cast_Rank %in% full_series_outcome)) %>%
+    mutate(text = ifelse(Full_Cast_Rank %in% full_series_outcome, paste("Observed Series Outcome ", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
+ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0, colour = MAP_Flag), family = "elite", nudge_y = 0.001, show.legend = FALSE) +
+        scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1), n.breaks = 10) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+
+observed_outcome_df <- ep9_env$counts_sim_cast_df %>% filter(Full_Cast_Rank %in% full_series_outcome)
+
+plot_cast_pred
+```
+
+:::{.insights}
+**1. Can we quantify the likelihood of the observed series outcome occurring?**
+    
+**That is, what is the probability of the observed series ranking outcome of `[1st: Ania, 1st: Maisie, 1st: Phil, 4th: Reece, 5th: Sanjeev]` occurring?**
+
+From Figure \@ref(fig:s20-cast-joint-dist), the joint distribution for the series 20 cast rankings based on information up to Episode 9, the **observed series outcome of `[`r full_series_outcome`]`had a `r percent(observed_outcome_df$Prop_Count, accuracy = 0.01)` chance of occurring**. It is ranked as the **`r observed_outcome_df$Prob_Rank`nd most likely series outcome**.
+
+To put this into more context, out of the `r number(observed_outcome_df$Num_Sims, big.mark = ",")` timelines we simulated, this observed series outcome occurred in `r observed_outcome_df$Num_Count`.
+
+```{r,  out.width="50%", fig.cap = "The cast laughing at how unlikely the observed series outcome was....but it still happened!"}
+knitr::include_graphics("https://64.media.tumblr.com/d963f3e596e96f2117921ec4e5d5cd27/ee6ac40d6b83886a-a9/s1280x1920/3ef456b016d444986915b2ec1345ffecbbcc76f2.png")
+```
+
+:::
+
+```{r dist-tie, out.width = "50%", fig.cap = "Distribution of a Tie Occurring and Not Occurring for Series Rankings"}
+title_label <- glue("Distribution of a Tie Occurring in Series Rankings for Series {series_id}", series_id = ep9_env$series_id)
+
+caption_label <- glue("Seed: {seed_id}", n_cast = top_casts, seed_id = ep9_env$seed_id)
+
+
+plot_tie_dist <- ggplot(ties_df, aes(x = Ties_Flag)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1),
+             fill = "#FFFFC2", colour = "darkred", linewidth = 2) + 
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 15,
+              family = "elite"
+              
+    ) +
+    quack_theme() + 
+    labs(title = title_label,
+         subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Tie Occurs?") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+plot_tie_dist
+```
+
+:::{.insights}
+**2. What was the probability of a tie occurring?**
+
+We estimate that the **probability of a tie occurring in any series ranks is 29.4%**. This can be seen in Figure \@ref(fig:dist-tie). As one would expect, the chance of tie occurring is considerably smaller than a tie not occurring.
+:::
+
+```{r}
+title_label <- "Conditional Distribution of \nNumber of Ties Occurring"
+
+plot_num_ties <- ties_df %>% 
+    filter(Ties_Flag) %>%
+    ggplot(aes( x= as.factor(Num_Ties))) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 15,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+        theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Number of Ties") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+```
+```{r}
+title_label <- "Conditional Distribution of Tie \nInvolving Championship (Rank 1)"
+
+
+plot_champion_tie <-
+    ties_df %>% 
+    filter(Ties_Flag) %>%
+    ggplot(aes( x= Rank_1_Count > 1)) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 15,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+        theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Championship Tie") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+```
+
+```{r}
+title_label <- "Conditional Distribution of \nMax Size of Tie"
+
+
+plot_size_tie <- ties_df %>% 
+    filter(Ties_Flag) %>%
+    ggplot(aes( x= as.factor(Max_Tie_Size))) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 10,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+        theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Max Size of Tie") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+```
+```{r}
+title_label <- "Conditional Distribution of \n[AM, MA, PE] Tie for Championship"
+
+
+plot_triad_championship <- ties_df %>% 
+    filter(Ties_Flag) %>%
+    ggplot(aes( x= AM_MA_PE_1_Flag )) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 15,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+    theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Championship Tie between [AM, MA, PE]?") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+```
+
+```{r tie-cond-dist, cache = FALSE, out.width="50%", fig.cap = "Conditional Distributions, Conditional on a Tie being present. <br> (A): Number of Ties in Series Ranking, (B): Ties involving Championship <br> (C): Max Size of Ties, (D): Championship Tie between Holy Trinity `[AM, MA, PE]`"}
+ggdraw() +
+  draw_plot(plot_num_ties, x = 0, y = .5, width = 0.5, height = .5) +
+  draw_plot(plot_champion_tie, x = 0.5, y = 0.5, width = .5, height = .5) +
+  draw_plot(plot_size_tie, x= 0,  y = 0, width = .5, height = .5) +
+  draw_plot(plot_triad_championship, x= 0.5, y = 0, width = 0.5, height = 0.5) + 
+  draw_plot_label(c("(A)",
+                    "(B)",
+                    "(C)",
+                    "(D)"), c(0, 0.5, 0, 0.5), c(1, 1, 0.5, 0.5), size = 18,
+                  hjust = -1.5, vjust = 1.5) +
+    geom_hline(yintercept = 0.5, colour = "darkgray") +
+    geom_vline(xintercept = 0.5, colour = "darkgray")
+```
+
+
+```{r}
+
+### Non-Conditional distributions
+title_label <- "Non-Conditional Distribution of \nMax Size of Tie"
+
+
+plot_nc_size_tie <- ties_df %>% 
+    ggplot(aes( x= as.factor(Max_Tie_Size))) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 8,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+        theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Max Size of Tie") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+title_label <- "Conditional Distribution of \n[AM, MA, PE] Tie for Championship"
+
+
+plot_nc_triad_championship <- ties_df %>% 
+    ggplot(aes( x= AM_MA_PE_1_Flag )) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 15,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+    theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Championship Tie between [AM, MA, PE]?") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+
+### Uber Conditional
+title_label <- "Uber Conditional Distribution of \nMax Size of Tie"
+
+
+plot_uber_size_tie <- ties_df %>% 
+    filter(Ties_Flag & (Rank_1_Count > 1)) %>%
+    ggplot(aes( x= as.factor(Max_Tie_Size))) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 10,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+        theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Max Size of Tie") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+
+title_label <- "Uber Conditional Distribution of \n[AM, MA, PE] Tie for Championship"
+
+
+plot_uber_triad_championship <- ties_df %>% 
+    filter(Ties_Flag & (Rank_1_Count > 1)) %>%
+    ggplot(aes( x= AM_MA_PE_1_Flag )) +
+    geom_bar(aes(y = (..count..)/sum(..count..),
+                 group = 1), 
+             fill = "#FFFFC2",
+             colour = "darkred", linewidth = 2) +
+    geom_text(aes(label = percent(after_stat(prop), accuracy = 0.1),
+                                    group = 1
+                  ),
+              y = 0.15,
+              stat = "count",
+              position = position_stack(vjust = 0.5),  # Adjust label vertical position)
+              size = 15,
+              family = "elite"
+              
+    ) +
+        quack_theme() + 
+    theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+    labs(title = title_label,
+         #subtitle =  subtitle_label,
+         caption = caption_label) +
+    xlab("Championship Tie between [AM, MA, PE]?") + 
+    ylab("Probability") + 
+    scale_y_continuous(labels = label_percent(), limits = c(0,1))
+
+
+```
+
+```{r tie-uber-dist, cache = FALSE, out.width="50%", fig.cap = "Comparing Unconditional and Uber Conditional, Conditional on a Tie being present. <br> (A_): Non-Conditional Distributions, (B_): Uber Conditional Distributions, conditioning on a tie occurring **and** the tie being from the championship. <br> (_1): Size of Tie, (_2): Tie involving Holy Trinity of `[AM, MA, PE]`"}
+ggdraw() +
+  draw_plot(plot_nc_size_tie, x = 0, y = .5, width = 0.5, height = .5) +
+  draw_plot(plot_nc_triad_championship, x = 0.5, y = 0.5, width = .5, height = .5) +
+  draw_plot(plot_uber_size_tie, x= 0,  y = 0, width = .5, height = .5) +
+  draw_plot(plot_uber_triad_championship, x= 0.5, y = 0, width = 0.5, height = 0.5) + 
+  draw_plot_label(c("(A1)",
+                    "(A2)",
+                    "(B1)",
+                    "(B2)"), c(0, 0.5, 0, 0.5), c(1, 1, 0.5, 0.5), size = 18,
+                  hjust = -1.5, vjust = 1.5) +
+    geom_hline(yintercept = 0.5, colour = "darkgray") +
+    geom_vline(xintercept = 0.5, colour = "darkgray")
+```
+
+:::{.insights}
+
+**3. What were the chances of a tie occurring for the championship? Tie is between 2 or more contestants.**
+
+- **Conditional on knowing that a tie occurs some where in the series rankings, the chances that this involves a tie for championship is 26.3%**. This can be seen in Figure (\@ref(fig:tie-cond-dist), B).
+- **If we do not know if a tie has or has not occurred in the series ranking, the chances that there is a tie involving the championship is `r percent(sum(ties_df$Rank_1_Count >1)/length(ties_df$Rank_1_Count), accuracy = 0.1)`**. This is the  unconditional probability.
+
+```{r,  out.width="35%", fig.cap = "Little Alex Horne is finding these probabilities of ties highly amusing!"}
+knitr::include_graphics("https://64.media.tumblr.com/c9660de88b824310025f720506769916/4b22c2d462f4a44f-10/s1280x1920/cdf5633c1638c175de97597f08a1d027e17342d7.gifv")
+```
+
+**4. What were the chances of a 3 way tie for the championship?**
+
+- If we **condition on knowing that a tie does occur and that it is for the championship**, the **probability of it being a 3-way tie is 4.5%.**
+    - This is seen in Figure (\@ref(fig:tie-uber-dist), B1) which assess the maximum size of tie in the cast rankings.
+    - From Figure (\@ref(fig:tie-uber-dist), B1), we see that there is a inverse exponential relationship between maximum size of tie, and the associated probability. A 2-way tie is the most common with 95.3% probability, whilst a 4-way tie is relatively uncommon with 0.1% chance. This decrease exponential behaviour is expected.
+    - Yes, 4-way ties for the series championship were possible in our simulations, although a very occurrence! These all Reece joining the tied party. No surprise that Sanjeev was not part of this party, although I don't think he really minds or cares.
+- If we **condition only on a tie being present (not necessarily for championship)**, the **probability of the largest tie being a 3-way is 3.2%**. This is deduced from Figure (\@ref(fig:tie-cond-dist), C).
+- If **we do not condition on anything** and are simply considering the **probability of a 3-way tie occurring in any position** (regardless of whether a tie does or does not occur), the **estimated probability of this occurring is 0.9%** (see Figure \@ref(fig:tie-uber-dist), A1).
+    - This is the most relaxed conditioning and an unconditional probability.
+
+```{r,  out.width="35%", fig.cap = "Sanjeev's response to not being in the simulated 4-way ties..."}
+knitr::include_graphics("https://64.media.tumblr.com/ecb885f95aae76b476e9be5bcd47e84c/9060d4830c2fbd64-ef/s1280x1920/41ecfa585c8dcaa32368dc35f1a306939156d279.gifv")
+```
+
+
+**5. What were the chances of the 3-way championship tie being between (Ania, Maisie and Phil), henceforth known as _the holy trinity_?**
+
+- **Conditioning that tie does occur and that it is for the championship**, the **probability that it is a 3-way tie between this holy trinity is 3.0%**. See Figure (\@ref(fig:tie-uber-dist), B2).
+- If we **condition on just a tie occurring but not that it is for the championship**, the **conditional probability of a 3-way between the holy trinity is 0.8%** (see Figure (\@ref(fig:tie-cond-dist), D)). 
+- And if we **do not condition on any criteria**, the **unconditional probability of a 3-way tie occurring for the championship involving the holy trinity is 0.2%**; see Figure (\@ref(fig:tie-uber-dist), A2).
+
+:::
+
+```{r three-way-tie, out.width= "50%", fig.cap = "Ménage à trois: Deep Diving into all 3-way Championship Ties"}
+menage_df <- ep9_env$sim_cast_summary_df %>% filter(Universe_ID %in% ties_df[ties_df$Rank_1_Count == 3, ]$Universe_ID)
+
+title_label <- "All 3-way Championship Ties Combinations"
+subtitle_label <- "Conditional on a 3-way Championship Tie occurring, regardless of who is involved"
+
+menage_df %>% group_by(Full_Cast_Rank) %>%
+    reframe(Num_Counts = n()) %>%
+ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Num_Counts), y= Num_Counts)) +
+    geom_bar(stat = "identity",  fill = "#FFFFC2",
+             colour = "darkred", linewidth = 1) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    #scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1), n.breaks = 10) +
+    ylab("Number of Occurrences") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+
+```
+
+:::{.insights}
+**Bonus Remark: Conditional Distribution on Number of Ties in Series Rankings**
+
+- Figure (\@ref(fig:tie-cond-dist), A) shows the **conditional distribution on the number of ties** occurring in a cast ranking, conditional on a tie occurring. A tie must include 2 or more contestants placing the same rank.
+    - **The conditional probability of 2 ties occurring is (understandably) considerably less than only 1 tie occurring (5.3% vs 94.7%).**
+    - The probability of 3 or more ties occurring in a cast ranking is 0%. This makes sense given that there are only 5 contestants in the cast, and a tie must feature 2 contestants or more; it's impossible to have more than 3 ties under these conditions.
+    
+**Bonus Insight: A deep dive into the ménage à trois championship ties**    
+
+- Figure \@ref(fig:three-way-tie) deep dives in all 3-way championship ties in our simulation of 100,000 timelines. **Championship 3-way ties involved all 5 contestants, and not just the holy trinity of interest.**
+    - The **aforementioned holy trinity of (Ania, Maisie, Phil) is the most common, occurring about 200 times in our simulated bubble.** 150 times featured Reece in 4th place and Sanjeev in 5th, whilst the remaining 50 had Reece in 5th and Sanjeev in 4th.
+    - The 2nd most common 3-way tie involved an alternative triad of (Ania, Phil, Reece), occurring about 75 times.
+    - It is also comforting to see that there are some 3-way ties involving Sanjeev, although these occurred with single digit occurrence.
+    - Another interesting observation is that Phil never slips down to 5th place in these 3-way tie scenarios. He is either part of the championship tie, or placed in 4th place. Even Maisie landed in 5th place in some of simulations.
+    
+```{r,  out.width="35%", fig.cap = "Ania's reaction to the fact that she isn't always in the 3-way championship ties..."}
+knitr::include_graphics("https://64.media.tumblr.com/5076b9be006b4a54178a999d8b3ddff8/9060d4830c2fbd64-64/s1280x1920/a9eafab3266386eaf17ddf345ea2d21ce1151983.gifv")
+```
+:::
+
+```{r,  out.width="25%", fig.cap = "We made it through all this talk about unconditional and conditional distributions. It isn't quite all Greek to me, but it certainly feels like it.", fig.show = "hold"}
+together_vec <- c("https://64.media.tumblr.com/6b066c34565e98f45130a8d455006262/8d3d0da1b8965e14-e6/s1280x1920/b18fcf82aa4e6f589c0dafa7630e179b4ef06235.gifv",
+                  "https://64.media.tumblr.com/1e744974bb14ae765c1d7e4f801e13f8/8d3d0da1b8965e14-75/s1280x1920/e171585837e2a1a3f733aaea91c1357c37607da0.gifv"
+)
+
+knitr::include_graphics(together_vec)
+```
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Series 20 ended in a nail biting finale, with a 3-way tie for championship!** The final scoreboard stood at:
+    - _Joint 1st: Ania, Maisie and Phil with 151 points._
+    - **4th: Reece with 148 points.**
+    - _5th: Sanjeev with 143 points._
+- The 3-way championship tie (a first in Taskmaster history) was settled by a somewhat controversial tie breaker. Contestants had to _"recall (guess) the number of a Ts in a painting at the Taskmaster house"_, a painting that they may not have seen for many months since recording at the house.
+    - **Maisie won this controversial tiebreaker and so was crowned champion of series 20.**
+- Based on information up to and including episode 9 of Series 20, we estimate that:
+    - There was a **0.15% chance of the eventual series ranking outcome occurring, and was the 62nd most probable outcome.**
+    - There was a _29.4% chance of the series ranking outcome featuring a tie._
+    - There was a **0.2% chance of a championship tie occurring between the holy trinity of (Ania, Maisie, Phil).**
+        - If we _condition ourselves knowing that a tie will occur in the series, this increases to 0.8%._
+        - If we further **condition ourselves to knowing that there is a tie and it occurs for the championship, this increases further to 3.0%**
+- The existence of one of the earliest practical joke devices in the world (Pythagoras' Cup) and the experience of being catfished by the Bernoulli legacy.
+    - These science tangents were also responsible for the delay in getting this post out in a timely fashion. Damn my my curiosity and _"thorough"_ research skills!
+    
+```{r,  out.width="40%", fig.cap = "Didn't we have a fun time!"}
+knitr::include_graphics("https://64.media.tumblr.com/e59983defb3b85a1881836b0eeb7cc41/80e9c663def9ed15-4f/s1280x1920/8833b4c0965549690d59327c1612868ec66c94e6.gifv")
+```
+    
+:::
+
