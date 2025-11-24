@@ -584,7 +584,6 @@ We've learnt that:
     - I am getting slightly worried however that I will be wrong as Ania's series lead and associated champion probability has decreased over the last 2 episodes or so.
     - I am also fully aware that I am being completely irrational about worries. We live in an uncertain world, and whilst it's nice to be correct some/most of the time[^dopamine], it's also expected and is okay to be wrong. 
 - **The most likely series outcome is `[1st: Ania, 2nd: Phil, 3rd: Maisie, 4th: Reece, 5th: Sanjeev]` with 18.87% chance occurring.**
-
 - **Uniform, flat distributions seem to be en vogue for each contestant's within episode ranking distribution.**
     - Even Ania has seen her within episode distribution being flatted from this episode.
 - **In contrast, our series ranking distributions are not flat and uniform in this penultimate set of analysis.**
