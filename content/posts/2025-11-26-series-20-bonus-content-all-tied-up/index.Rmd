@@ -1,0 +1,731 @@
+---
+title: 'Series 20, Bonus Content: All Tied Up'
+author: Christopher Nam
+date: '2025-11-26'
+slug: series-20-bonus-content-all-tied-up
+categories: [Series 20, Bonus]
+tags: [Series 20, Bonus]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+#  Your Task
+> Ba-Ba-Bonus Content and Task!!!
+> 
+> Provide alternative series tiebreakers to the one that was actually used for the Series 20 Tiebreaker.
+> Where possible, provide the alternative champions as a result of these alternative tiebreakers.
+
+```{r,  out.width="40%", fig.cap = "Fancy seeing you here for some bonus content!"}
+knitr::include_graphics("https://64.media.tumblr.com/19cff2bfa78a910c6d9651be2086d787/7ce6f1d5461a7f76-58/s1280x1920/8ec619c8d4d5a6264a99ade992ce116d15be1b91.gifv")
+```
+
+
+# The Actual Tiebreaker Controversy
+
+In Series 20, Episode 10, there was a 3-way tie for the series championship between the holy trinity of Ania, Maisie and Phil. The champion was determined through the following tiebreaker: 
+
+> _Guess how many letter 'T's there are in the portrait of Alex and Greg in the living room._
+>
+> _Closest wins._
+
+Maisie was crowned the champion of Series 20 as a result of this tiebreaker.
+
+```{r,  out.width="35%", fig.cap = "Maisie terrified that I am coming for her crown..."}
+knitr::include_graphics("https://64.media.tumblr.com/52bd148254d7b15e52ecdae8fbdb3f04/471b5597f635ba56-87/s1280x1920/d7f17d5224354bea9167eacf7c6fc90982dcb24a.gifv")
+```
+
+## Why So Controversial?
+The only skill that can really help in this tiebreaker is having a good memory skill. If we wanted to be completely fair, we would try and normalise all other aspects of the tiebreaker such that memory is the only variable amongst the cast.[^fair]
+
+[^fair]: Unfortunately, controlling for all other variables is near impossible. There are also some aspects that we can't humanly control and normalise such as the gender of the contestant. Also, there may be an argument that age and memory are inversely related. 
+
+For example, we might want to make sure that all contestants have had the same amount of time since they last saw the portrait (henceforth known as _portrait time_). All contestants were present for the studio recording, so the only way the _portrait time_ can vary is the contestants last day of filming pre-recorded tasks at the Taskmaster house. 
+
+Whilst we are not privy to filming schedules, it is very unlikely that all contestants had the same last day of filming at the Taskmaster house. Consequently the _portrait time_ will vary amongst the cast, and could vary as much as months between them. 
+Contestants who filmed their pre-recorded tasks many months ahead of the studio recording would therefore be at a disadvantage.
+
+Even if team tasks were the last to be filmed at the Taskmaster house, this wouldn't completely normalise the the portrait time as one team would be at a disadvantage.
+
+Consequently, some Taskmaster fans viewed this tiebreaker as controversial (not being particularly fair), and a rather anticlimactic way to crown the champion of the series. 
+
+```{r,  out.width="35%", fig.cap = "It's jamming time!"}
+knitr::include_graphics("https://64.media.tumblr.com/0c48a126414715f3133f356194db3352/94b354596854aed2-34/s1280x1920/9dc0d0063df2f25bd96ae8901cb0af3f1a95dcf0.gifv")
+```
+
+
+# Resolving the Controversy with Alternative Tiebreakers
+
+> No one likes a controversy!
+
+So how might we want to resolve this controversy? Tiebreaker solutions which may resolve potential controversy would be either of the following:
+
+- Use an existing pre-recorded tiebreaker. 
+- Use a Live Studio Tiebreaker which is not completely left to chance, or subject to Little Alex Horne's tom foolery.
+- Settle the tie by through a data driven approach. Contestants performance would be analysed through episode and task data.
+    
+## The Frugality of Pre-Records... 
+> Don't they have some pre-recorded tiebreakers already? Couldn't we use one of those?
+
+Yes, the Taskmaster UK crew do film a collection of tiebreakers. One of these tiebreakers was seen in Episode 4; it was between Ania and Sanjeev and involved shower cups and hair; Ania won. 
+
+Ania also alluded to another tiebreaker in the Series 20, Episode 2 podcast episode ([around 32:30](https://open.spotify.com/episode/2Wqihx88y3Eg3kHd55fWfY?si=a4bd66069bc94a29)) which seemed to involve a vibrating mechanism which caused some concern to Ania; this has not been broadcasted to my knowledge. Also, it didn't sound like it was favourable to Ania so she likely would not have won this tiebreaker. It's likely that more than 2 pre-recorded tiebreakers were filmed for the series, and one of these remaining pre-recorded tiebreakers could have been used. 
+
+
+# ...Comes With More Controversy
+**Whilst we could have used these pre-recorded tiebreakers to settle the 3-way championship tie, it likely would have caused controversy itself.** 
+
+We don't exactly know how tiebreakers are chosen, but one would expect that the producers (the Andys and Little Alex Horne) are involved in this choice. The problem with using a pre-recorded tiebreaker and not being privy of how was chosen, is that the producers may be accused of being biased and showing favouritism towards a particular contestant. Given that Champion of Champions III consists of 4 male champions prior to this Series 20s eventual outcome, the crew were likely secretly hoping for either Ania or Maisie to win so that there was a least some diversity in CoC III. Consequently, the crew may have chosen a tiebreaker favouring either of Ania or Maisie.
+
+Alternatively, the producers could have wanted to tell an exciting series narrative and favoured a contestant to best tell this narrative. For example, the redemption narrative of Phil (or Maisie) may have been appealing to them, and thus they would choose the tiebreaker based on this.
+
+There are ways to ensure that bias and favouritism is minimised. For example, the tiebreaker could be chosen randomly on stage (a trusted a ball out of a bag), and that tiebreaker is used to determine the champion. For complete transparency, all potential tiebreakers would be presented to the audience (task brief and assigned to a labelled ball), an unbiased individual would be the ball selector (the Taskmaster himself or a lucky audience member), and the corresponding tiebreaker would be shown soon after. The outcome of the tiebreaker would settle the tie.
+
+> The producers (the two Andys and Little Alex Horne) must be protected at all costs!
+
+This pre-recorded tiebreaker and its selection method could have worked. However, it could still be seen as an anti climatic way to end the series. The pre-recorded tiebreakers are suitable for settling episode ties, but for such a monumental event that is crowning the champion of Series 20 (and the subsequent appearance in Champion of Champions), the pre-recorded tiebreakers do not seem serious enough to settle a series tie.
+
+It is also worth noting that when these pre-recorded tiebreakers were filmed, contestants would not have been aware that these were used to decided a serious tie. Consequently, they may not have put in the corresponding effort, and they likely didn't have the adrenaline of the championship being on the line.
+
+```{r,  out.width="30%", fig.cap = "Sanjeev bopping to Greg and Alex's jam."}
+knitr::include_graphics("https://64.media.tumblr.com/7065f8312d7d5df0215e3ca34b424d4c/0839d203fe18bfab-a1/s1280x1920/6eb1607c0d2686309b98ee7ea5216b0d39284df6.gifv")
+```
+
+
+## Live Studio Tiebreaker
+
+### Using the Existing Broken Wheel
+One simple way to address the controversy of the broadcasted series tiebreaker is to turn the tiebreaker into a live studio tiebreaker. The portrait would be displayed (in person or on the screen), and the contestants would have 30 seconds or so to inspect the portrait and estimate the number of Ts in the portrait.
+
+This would certainly make it fairer (all contestants will have spent the same amount of time with the portrait, at exactly the same date and time, have the same portrait time), would be a greater test of memory and skill (the art of estimating[^guess]), and it would be more interactive for all involved. As there were only 4 Ts in the portrait, we may want to introduce more Ts so that there is more at jeopardy and contestants couldn't just simply count them within the allotted time.
+
+Figure \@ref(fig:mr-g) is a mock up of what a live studio tiebreaker could look like. It's in the same vein as the series tiebreaker (Gs replacing the Ts), but with hopefully with more jeopardy and skill involved[^mock]. 
+
+[^guess]: One of my pet peeves in life is the use of the word _"guesstimate"_ as there is redundancy by combining _"guess"_ with _"estimate"_. An estimate itself is a guess; some may be based on reasonable logic (an _educated_ guess based on assumptions, logic and reasoning), and some may have less reasoning behind them (a _random_ guess). Either way, an estimate is still a guess.
+
+```{r mr-g, fig.width=6, fig.height =4, out.width = "45%", fig.cap = "Estimate the number of Gs that have been randomly added to this portrait. <br>You have 30 seconds, closest estimate to the actual number wins. Your time starts now! [The Answer is at Footnote 3](#fn3)."}
+# Load the image
+img <- image_read("https://taskmaster.info/images/seasons/taskmaster_uk_20_framed.png")
+
+
+set.seed(2025-11-05)
+num_ts <- 20
+img_with_ts <- image_crop(img, geometry = "500x300", gravity = "Center", repage = TRUE)
+
+
+# Get image dimensions to determine coordinate ranges
+img_width <- image_info(img_with_ts)$width
+img_height <- image_info(img_with_ts)$height
+min_size <- 20
+max_size <- 100
+min_weight <- 600
+max_weight <- 700
+colour_vec <- c("#D6AF36", "#A7A7AD", "#A77044", "#e0e5e5", "#737473")
+
+border_amount <- 25 
+rand_size <- sample(min_size:max_size, num_ts, replace = TRUE)
+rand_x <- sample(((0 + border_amount): (img_width-border_amount)), num_ts, replace = TRUE)
+rand_y <- sample(((0 + border_amount): (img_height-border_amount)), num_ts, replace = TRUE)
+rand_location <- paste(
+    number(rand_x, style_positive = "plus", style_negative = "minus"),
+    number(rand_y, style_positive = "plus", style_negative = "minus"),
+    sep = ""
+)
+
+rand_col <- sample(colour_vec, num_ts, replace = TRUE)
+rand_angle <- sample(0:360, num_ts, replace = TRUE)
+rand_weight <- sample(min_weight:max_weight, num_ts, replace = TRUE)
+
+rand_df <- data.frame("Size" = rand_size,
+                      "Location" = rand_location,
+                      "Angle" = rand_angle,
+                      "Colour" = rand_col,
+                      "Weight" = rand_weight
+)
+                      
+                      
+# Add the letter 'R' to the image
+for(iter in 1:num_ts){
+    rand_info <- rand_df[iter,]
+img_with_ts <- image_annotate(img_with_ts, "G",
+                                size = rand_info$Size,
+                              location = rand_info$Location,
+                              degrees = rand_info$Angle,
+                                color = rand_info$Colour,
+                                weight = rand_info$Weight,
+                                gravity = "NorthEast", 
+                              font = "mono"
+                              )
+}
+
+img_with_ts
+```
+
+[^mock]: It's <span class="spoiler"> `r num_ts`</span>. The clue is in the portrait; the randomness is with respect to their location **not** the number of them. 
+
+## (Reduce, ) Recycle, Reuse ... a previous Live Studio Task
+A previous live studio task could potentially be used as the series tiebreaker. I personally am not a fan of live studio tasks which are heavily reliant on chance, or tasks in which Greg's competence is required (no charade guessing games with Greg as the guesser). I also don't think studio tasks involving drawing would be a fair tiebreaker for all contestants involved in the tiebreaker; those with clear artistic skills (namely Reece and Ania) would be at a clear advantage.
+
+Consequently, one of the following previous studio tasks are worthy potential candidates for the series tiebreaker:
+
+- _"End Up on your spot"_ from Episode 1.
+- _"Guess how many things Alex has on him"_ from Episode 2.
+    - Conditional on no trickery behaviour from Little Alex Horne.
+    - This is **essentially what I am proposing above** with the _"estimate the Gs in the portrait"_.
+- _"Turn your cup triangle upside-down"_ from Episode 3.
+- _"Avoid the Taskmaster's big ball"_  from Episode 7.
+
+And of course, live studio tasks from previous series could also be used as tiebreakers!
+
+```{r,  out.width="40%", fig.cap = "Things are about to go off..."}
+knitr::include_graphics("https://64.media.tumblr.com/902575b0e6461980cc78a4674d43d27a/aee039d6cb233a41-3c/s1280x1920/1f8020a3660f85f06273fe66ddf3d72314a072cc.png")
+```
+
+## Data Driven Tiebreakers
+Perhaps we don't want to put the tiebreaker contestants under additional stress and pressure! With such high stakes involved, contestants may not want this pressure, and may not perform at their best. 
+
+> Can we use contestant performance from existing tasks to settle the championship tie?
+
+Of course we can use existing tasks and data to settle this championship! 
+
+We can assess a **contestant's performance** during the series by considering their **episode performance, or individual task performance**. In addition to **average performance behaviour**, we may also be interested in their **consistency (and lack of variability)**, the **number of outstanding incidents**, and the **number of idiotic incidents**. 
+
+A data driven approach to breaking the series three-way tie may not be as entertaining from a TV perspective (graphs and stats can only get you so far in showbusiness), but it is a hopefully a fairer way to end a series, both for contestants and viewers. It will reward contestants who have been shown to have performed well during the series (with respect to a quantifiable metric), and not put contestants under additional stress.
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+```{r, cache = FALSE}
+s20_data_link <- "https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing"
+
+task_attempt_df <- range_read(s20_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(s20_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
+# Establish the variables and environment for our analysis
+tb_var_list <- list(seed_id = 2025-09-11, 
+                 sim_max_episode_used = 11,
+                 num_sims = 100000,
+                 num_eps_series = 11,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+tiebreak_env <- new.env()
+invisible(list2env(x = tb_var_list, envir = tiebreak_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = tiebreak_env)
+```
+
+```{r, include = FALSE}
+tiebreak_env$past_summary_df
+```
+
+```{r, include = FALSE}
+tiebreak_env$past_tasks_df
+```
+
+```{r,  out.width="30%", fig.cap = "Maisie awarding points for data driven tiebreakers..."}
+knitr::include_graphics("https://64.media.tumblr.com/2792f9afd9321d7e0e08096a61287568/14f7952b8fc9c5ad-28/s1280x1920/aaceb66fcd4431e428b9e49c4fc85e2201edc102.gifv")
+```
+
+### Tie Breaking Through Episode Based Statistics
+For each contestant, there are 10 episode observations that we can calculate a variety statistics over, each represent the outcome of an episode in the series. Some ways we might assess episode performance and consequently use as the series tiebreaker are:
+
+- **Episode Points Average:** On average, how many points has a contestant accumulated per episode over the series?
+- **Episode Points Variability:** For each contestant, how does their episode score vary with respect to their average performance?
+    - Variability is measured by standard deviation in this instance.
+- **Number of Episode Wins:** How many episodes has a contestant won (or rank 1st even if there is a tie) over the series.
+
+```{r}
+holy_trinity_init <- c("AM", "MA", "PE")
+
+episode_summary_df <- tiebreak_env$past_summary_df 
+ht_ep_df <- episode_summary_df %>% filter(Initials %in% holy_trinity_init) %>%
+    select(Contestant, Initials, Image_URL, Mean_Ep_Points, Std_Dev_Ep_Points)
+
+ep_wins_df <- tiebreak_env$past_df %>%
+    group_by(Contestant, Initials, Ep_Ranking) %>%
+    reframe(Ep_Count = n_distinct(Episode_ID)) %>% 
+    filter(Ep_Ranking == 1)
+
+
+tb_ep_df <- ht_ep_df %>%
+    left_join(ep_wins_df, by = join_by(Contestant == Contestant, Initials == Initials)) %>%
+    rename(Num_Ep_Rank_1_Wins = Ep_Count) %>%
+    select(-Ep_Ranking) %>%
+    mutate(Rank_Mean_Ep_Points = rank(-Mean_Ep_Points, ties.method = "min"),
+           Rank_Std_Dev_Ep_Points = rank(Std_Dev_Ep_Points, ties.method = "min"),
+           Rank_Ep_Wins = rank(-Num_Ep_Rank_1_Wins, ties.method = "min")
+    )
+```
+
+```{r ep-tb-table, fig.cap = "Breaking the Series Tie through <b>Episode based Statistics</b>. <br> Cells with gold background denote the tiebreaker winner if that statistic is used as the tiebreaker. <br>Corresponding logic used for tiebreaking: <b>Highest</b> Episode Points Average, <b>Lowest</b> Episode Points Variability, <b>Most</b> Number of Episode Wins", }
+react_tb_ep_df <-as.data.frame(tb_ep_df)
+
+reactable(
+    data = react_tb_ep_df,
+    columns = list(
+        `Contestant` = reactable::colDef(
+            cell = function(value, index) {
+                img_url <- react_tb_ep_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 35%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 150
+        ),
+        `Initials` = colDef(show = FALSE), 
+        `Image_URL` = colDef(show = FALSE), 
+        Mean_Ep_Points = colDef(name = "Episode Points Average",
+                                width = 150,
+                                style = function(value, index){
+                                    rank_value <- react_tb_ep_df[index, "Rank_Mean_Ep_Points"]
+                                          fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                                          list(background = fill_colour)
+                                          }
+                                ),
+        Rank_Mean_Ep_Points = colDef(show = FALSE),
+        Std_Dev_Ep_Points = colDef(name = "Episode Points Variability",
+                                   width = 150,
+                                   style = function(value, index){
+                                    rank_value <- react_tb_ep_df[index, "Rank_Std_Dev_Ep_Points"]
+                                          fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                                          list(background = fill_colour)
+                                          }
+                                   ),
+        Rank_Std_Dev_Ep_Points = colDef(show = FALSE),
+        Num_Ep_Rank_1_Wins = colDef(name = "Number of Episode Wins", 
+                                    width = 150,
+                                    format = colFormat(digits = 0),
+                                    style = function(value, index){
+                                    rank_value <- react_tb_ep_df[index, "Rank_Ep_Wins"]
+                                          fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                                          list(background = fill_colour)
+                                          }
+                                    ),
+        Rank_Ep_Wins = colDef(show = FALSE)
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 2),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE
+    #width = "100%"
+)
+```
+
+
+:::{.insights}
+Based on Episode Based Statistics as our series tiebreaker and as presented in Figure \@ref(fig:ep-tb-table), we see:
+
+Using **Episode Points Average to settle the series tiebreaker would have been rather point-less[^pun]** as we would **still end up in a 3-way championship tie**. 
+
+- This is to be expected; each of the contestants have accumulated the same number of total series points (151), and have participated in the same number of episodes.
+
+```{r,  out.width="20%", fig.cap = "Stop wasting our time with this point-less remark."}
+knitr::include_graphics("https://64.media.tumblr.com/a8c25ba98c26cd959f3bbe65fc2c28b9/221a412bdcbe1076-c4/s1280x1920/4ccaebab57554d4cac57d8d7a5127577b8a63076.gifv")
+```
+
+**Ania would win the tiebreaker if based on Episode Points Variability!**
+
+```{r,  out.width="20%", fig.cap = "Ania's appreciation for this insight!"}
+knitr::include_graphics("https://64.media.tumblr.com/4eac4a49a11e243ab132bf85e6363065/fa42350194a06719-04/s1280x1920/fe921a24c74572ab1faffde1b602e3cc9f692be9.gifv")
+```
+
+We would **still have a second tie if we used Number of Episode Wins** as the tiebreaker; the **second tie would be between Maisie and Phil** as they have both won 3 episodes each.
+
+```{r,  out.width="20%", fig.cap = "Awkward!"}
+knitr::include_graphics("https://64.media.tumblr.com/9f1d7448481245331f829d1175b4504e/b179d148f32fd130-2b/s1280x1920/63af5625b00bff9fa1131f874ff998a148fa05db.gifv")
+```
+
+
+[^pun]: Pun intended!
+:::
+
+```{r,  out.width="25%", fig.cap = "Ania getting ready for these new data driven tiebreakers!"}
+knitr::include_graphics("https://64.media.tumblr.com/5c82ccf78bc9996568e647856896b15b/2f1da855e29f2a2a-94/s1280x1920/fd937aa9fc66ba1d7ae0b0a2226a09215829d3a0.gifv")
+```
+
+### Tie Breaking Through Task Based Statistics
+For task based statistics, there are up to 50 task observations we can summarise into a single statistic to represent a contestant's task performance. The task based performance statistics could include:
+
+- **Task Points Average:** How many points has a contestant been awarded on average for a task in the series?
+- **Task Points Variability:** How do the task points awarded to a contestant vary with respect to their typical task points performance?
+    - Variability is measured by standard deviation.
+- **Number of Tasks Awarded 5 Points:** How many times was a contestant awarded 5 points over the series?
+    - These 5 points are associated with "moments of brilliance". 
+- **Number of Disqualifications (Tasks Award 0 Points):** How many times was a contestant disqualified from a task over the series?
+    - Disqualification is determined by 0 points being directly awarded by the Taskmaster. These are considered "idiotic incidents" for the contestant.
+    - Negative points are **not** considered disqualifications, as they are more active acts of penalisation from Little Alex Horne. 
+    
+#### Task Inclusion
+We may want to calculate the statistics over **all tasks**, **all solo tasks** and **all solo live tasks** to assess a contestants performance.
+
+- Considering **all tasks** provides the **best overall picture of a contestants performance over the series**, in all facets. This includes performance in team tasks.
+- Restricting to **all solo tasks** for a contestant, **isolates this performance to that contestant alone**. If the contestant benefitted from being in a team, or were handicapped in a team setting, these aspects would be removed by considering **solo tasks** only.
+- Considering **all solo live tasks** only, is really **assessing a contestant performance in a high pressure, in front of a live studio audience scenario**. 
+    - There were 9 of these tasks in this series. For other series, there were fewer with more team live studio tasks (series 19 had 7 solo live tasks); in any given series with 10 episodes, there can be at most 10 of observations.
+    - These tasks would be most comparable to a live studio tiebreaker being performed.
+
+
+    
+```{r}
+adj_task_attempt_df <- tiebreak_env$adj_task_attempt_df
+
+all_task_tb_df <- adj_task_attempt_df %>%
+    group_by(Series_ID, Contestant) %>%
+    reframe(
+        Mean_Task_Points = mean(Points),
+        StdDev_Task_Points = sd(Points),
+        Num_DQ_Points = sum(Points == 0),
+        Num_Top_Points = sum(Points == 5)
+        ) %>%
+    mutate(
+        Inclusion_Label= "A: All Tasks"
+    )
+
+solo_task_tb_df <- adj_task_attempt_df %>%
+    filter(Team_Task_Flag == "Solo") %>%
+    group_by(Series_ID, Contestant) %>%
+    reframe(
+        Mean_Task_Points = mean(Points),
+        StdDev_Task_Points = sd(Points),
+        Num_DQ_Points = sum(Points == 0),
+        Num_Top_Points = sum(Points == 5)
+        ) %>%
+    mutate(
+        Inclusion_Label= "B: Solo Tasks"
+    )
+
+live_solo_task_tb_df <- adj_task_attempt_df %>%
+    filter(Team_Task_Flag == "Solo" & Task_Type == "Live") %>%
+    group_by(Series_ID, Contestant) %>%
+    reframe(
+        Mean_Task_Points = mean(Points),
+        StdDev_Task_Points = sd(Points),
+        Num_DQ_Points = sum(Points == 0),
+        Num_Top_Points = sum(Points == 5)
+        ) %>%
+    mutate(
+        Inclusion_Label= "C: Live, Solo Tasks"
+    )
+
+
+```
+
+```{r}
+task_based_tb_df <- bind_rows(all_task_tb_df, solo_task_tb_df, live_solo_task_tb_df)
+
+ht_task_based_tb_df <- left_join(x= task_based_tb_df , y = contestants_df[c("Contestant_Name", "Initials", "Image_URL")], by = join_by(Contestant == Contestant_Name)) %>%
+    filter(Initials %in% holy_trinity_init) %>%
+    group_by(Inclusion_Label) %>%
+    mutate(
+        Rank_Mean_Task_Points = rank(-Mean_Task_Points, ties.method = "min"),
+        Rank_StdDev_Task_Points = rank(StdDev_Task_Points, ties.method = "min"),
+        Rank_Num_DQ_Points = rank(Num_DQ_Points, ties.method = "min"),
+        Rank_Num_Top_Points = rank(-Num_Top_Points, ties.method = "min")
+        ) %>%
+    select(Inclusion_Label, Contestant, Initials, Image_URL,
+           Mean_Task_Points, Rank_Mean_Task_Points,
+           StdDev_Task_Points, Rank_StdDev_Task_Points,
+           Num_Top_Points, Rank_Num_Top_Points,
+           Num_DQ_Points, Rank_Num_DQ_Points)
+           
+```
+
+```{r task-tb-table, fig.cap = "Breaking the Series Tie through <b>Task based Statistics</b>. <br> Cells with gold background denote the tiebreaker winner if that statistic is used as the tiebreaker. <br>Corresponding logic used for tiebreaking: <b>Highest</b> Task Points Average, <b>Lowest</b> Task Points Variability, <b>Most</b> Number of Episode Wins, <b>Least</b> Number of Disqualifications"}
+reactable(as.data.frame(contestants_df), 
+          height = 0.1, 
+          width = 1000,
+          fullWidth = TRUE,
+          theme = reactableTheme(
+        borderColor = "#AA6C39",
+        borderWidth = "1px",
+        color = "black"
+    ))
+
+rt_ht_task_based_tb_df <- as.data.frame(ht_task_based_tb_df)
+
+filter_dropdown <- function(values, name) {
+  # 'values' contains the unique values in the column
+  # 'name' is the column ID
+  options <- unique(values)
+  options <- c("", options) # Add an empty option for "clear filter"
+
+  htmltools::tags$select(
+    onchange = glue::glue(
+      "Reactable.setFilter('ht-tb-table', '{name}', event.target.value)"
+    ),
+    lapply(options, function(option) {
+      htmltools::tags$option(value = option, option)
+    })
+  )
+}
+
+reactable(
+    data = rt_ht_task_based_tb_df,
+    elementId = "ht-tb-table",
+    columns = list(
+        Inclusion_Label = colDef(show = TRUE, 
+                                 name = "Task Inclusions",
+                                 width = 250,
+                                 filterable = TRUE,
+                                 filterInput = filter_dropdown
+                                 ),
+        Contestant = colDef(
+            show = TRUE,
+            cell = function(value, index) {
+                img_url <- rt_ht_task_based_tb_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 35%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 200,
+            filterable = TRUE,
+            filterInput = filter_dropdown
+        ),
+        Initials = colDef(show = FALSE),
+        Image_URL = colDef(show = FALSE),
+        Mean_Task_Points = colDef(
+            name = 'Task Points Average',
+            width = 200,
+            style = function(value, index) {
+                rank_value <- rt_ht_task_based_tb_df[index, "Rank_Mean_Task_Points"]
+                fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                list(background = fill_colour)
+            }
+        ),
+        Rank_Mean_Task_Points = colDef(show = FALSE),
+        StdDev_Task_Points = colDef(
+            name = 'Task Points Variability',
+            width = 200,
+            style = function(value, index) {
+                rank_value <- rt_ht_task_based_tb_df[index, "Rank_StdDev_Task_Points"]
+                fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                list(background = fill_colour)
+            }
+        ),
+        Rank_StdDev_Task_Points = colDef(show = FALSE),
+        Num_Top_Points = colDef(
+            name = 'Number of Tasks Awarded 5 Points',
+            width = 200,
+            format = colFormat(digits = 0),
+            style = function(value, index) {
+                rank_value <- rt_ht_task_based_tb_df[index, "Rank_Num_Top_Points"]
+                fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                list(background = fill_colour)
+            }
+        ),
+        Rank_Num_Top_Points = colDef(show = FALSE),        
+        Num_DQ_Points = colDef(
+            name = 'Number of Disqualifications (Tasks Awarded 0 Points)',
+            width = 250,
+            format = colFormat(digits = 0),
+            style = function(value, index) {
+                rank_value <- rt_ht_task_based_tb_df[index, "Rank_Num_DQ_Points"]
+                fill_colour <- ifelse(rank_value == 1, "#D6AF36", "white")
+                list(background = fill_colour)
+            }
+        ),
+        Rank_Num_DQ_Points = colDef(show = FALSE)  
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 2),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    groupBy = "Inclusion_Label",
+    defaultExpanded = TRUE,
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE
+    #width = "100%"
+)
+```
+
+:::{.insights}
+As presented in Figure \@ref(fig:task-tb-table), which presents various task based statistics to assess each contestants series performance, the series 20champion would be:
+
+If we were to use **Task Points Average** as the series tiebreaker:
+
+- ...and consider all tasks we would **still end up in a three-way tie!**
+    - This is not surprising and follows the same reasoning as we can't use Episode Points Average. The holy trinity have all been awarded 151 series points, and all participated in the same number of tasks (50 tasks)
+- ...and **restrict to solo tasks only, Phil would be crowned champion.** This is **also true if we consider solo live tasks only.**
+
+```{r,  out.width="40%", fig.cap = "Phil's response to this tiebreaking news..."}
+knitr::include_graphics("https://64.media.tumblr.com/98b1d09e84584daa55024f5c3f8e126c/669e33d45b9a098f-a4/s1280x1920/a62c5d1e1b8116b2bb4d0af946e89dfaf886d0ee.gifv")
+```
+
+If we were to use **Task Points Variability,  rewarding the least variable contestant**:
+
+- **Phil would be crowned the champion in all three task inclusion scenarios.**
+
+```{r,  out.width="35%", fig.cap = "Phil realising he has quite the responsibility with these alternative tiebreakers!"}
+knitr::include_graphics("https://64.media.tumblr.com/de4679b22862397a5fe322711f076630/74b4687a46317ab9-f9/s1280x1920/e3b13892f97d60d0302a4a6f6b91f5c96f9773eb.gifv")
+```
+If the tiebreaker was based on the **Most Number of Tasks Awarded 5 Points (rewarding moments of brilliance)**, 
+
+- **Ania would be our Series 20 champion! This would be in all task inclusion scenarios considered.**
+
+```{r,  out.width="40%", fig.cap = "Ania and Maisie surprise to at least one tiebreaker not favouring Phil..."}
+knitr::include_graphics("https://64.media.tumblr.com/8825e84befc2fe874b0f9deb3c0288b6/c7922f142fda0690-74/s1280x1920/ec20734d47581128235c2966b9d49da1c3db1761.gifv")
+```
+
+If we were to penalise for moments of stupidity and assess this through who has the **Least Number of Disqualifications (awarded 0 points directly)**:
+
+- ... and we were to **consider all tasks, Maisie would be crowned our champion.**
+- ... and we only **considered solo tasks, or solo-live tasks, Phil would add to the testosterone filled CoC III by being crowned champion of Series 20.** 
+
+```{r,  out.width="40%", fig.cap = "...and the disapproval when the patriach returns."}
+knitr::include_graphics("https://64.media.tumblr.com/453957559300b8c38a9e9fda8a0bbc59/c7922f142fda0690-6e/s1280x1920/7d1b66909ba4d53f2758b0f3256170acc4856c77.gifv")
+```
+:::
+
+### Episode or Task Based Statistics? The choice is yours!
+One might wonder whether to choose episode or task based statistics as the series tiebreaker. For this, I do not have a conclusive answer and it largely depends on what we are trying to answer.
+
+Aggregating to an episode level can mask more volatile behaviour at the task level. This can be seen in Ania's episode and task variability statistic; at an **episode level Ania was the _least_ variable contestant**, however at a **coarser task level Ania was the _most_ variable contestant** amongst the holy trinity. Ania could be awarded 0 and 5 points for two different tasks in the same episode (and have high variability), but at episode level this variability is masked.
+
+Given that the show is called _"Taskmaster"_ and not _"Episode-master"_, one could make the argument that tiebreakers based on task based statistics would be more appropriate for the series tiebreaker.
+
+But I also have a soft spot and was rooting for Ania throughout the series so tiebreaking through episode based statistics would also be my preference. 
+
+```{r,  out.width="40%", fig.cap = "Crowning our potential new Taskmaster Champion of Series 20!"}
+knitr::include_graphics("https://64.media.tumblr.com/0488960d89cbdc7237bd38528900aaf1/80e9c663def9ed15-aa/s1280x1920/ce958a007d3b146eaf5436194d3fa0417733cafc.gifv")
+```
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- In my opinion, the **broadcasted series tiebreaker wasn't particularly a fair way of determining the series champion**. Contestants who most recently filmed at the Taskmaster house were at a general advantage compared to those who filmed less recently.  
+    - If this tiebreaker was a test of memory, controlling for other potential aspects, is the only way to make this a fair test of memory.
+- **Using an pre-recorded tie breaker likely wouldn't have been controversy free either** as the **producers could have selected based a tiebreaker to fit a narrative they wanted to tell.**
+    - For example, as Champion of Champions III already had 4 male champions, the producers may have selected to have at least some female representation.
+- We've **explored other, hopefully fairer, tiebreakers to determine the Series 20 Champion**. This included:
+    - **Repurposing the broadcasted series tiebreaker** as a live studio tiebreaker such that it controls for other variables and makes it a fairer task. 
+    - **Using existing episode and task performance statistics as the series tiebreaker.** 
+    
+```{r,  out.width="40%", fig.cap = "Phil being surprised that he could have been champion of Series 20 based on data."}
+knitr::include_graphics("https://64.media.tumblr.com/5fd06e4126ca89bd6b69e04cc4f1514f/669e33d45b9a098f-ac/s1280x1920/8291a2a56000e44fb5d272f678c8ec4934042968.gifv")
+```
+
+- If we were to use **Episode Points Variability as the tiebreaker**, selecting the contestant who exhibited the least variability, **our champion would be Ania**.
+
+```{r,  out.width="35%", fig.cap = "Ania coming for Maisie's championship crown."}
+knitr::include_graphics("https://64.media.tumblr.com/af2aef0567105f377e2cb3ca2ea6bc27/b5dc972efaeff0de-20/s1280x1920/30b1257beaf920d5c799e4f87dae829ee56368ff.gifv")
+```  
+
+- If we were to use **Task Points Variability instead**, **Phil would beour Series 20 Champion**. This is under all task inclusion scenarios (all, solo, solo-live).
+
+```{r,  out.width="35%", fig.cap = "Maisie not being happy that the data is not particularly favourable to her championship title."}
+knitr::include_graphics("https://64.media.tumblr.com/75009f538506e11f7a9af02aa212f065/4c588f9be08159a7-01/s1280x1920/023cfde83515d03c63cdfebb6468be6be5ead969.gifv")
+```  
+- If we were to **break the series tie by rewarding moments of task brilliance (most number of tasks awarded 5 points)**, **Ania would be crowned our champion and not brought a fifth Y chromosome to the CoC III party.**
+
+```{r,  out.width="35%", fig.cap = "That asking for help really helped Ania in this statistic!"}
+knitr::include_graphics("https://64.media.tumblr.com/95d99b37f1af474ee08493e96a68f1c4/dee650a312c6437f-8d/s1280x1920/fb78379930d69495728b7e96fcc5b50e1511232a.gifv")
+```  
+
+- If we were to **break the tie by rewarding the least disqualifications (least number of tasks awarded 0 points)**, **Maisie would be a welcome addition to the CoC III party _IF_ all tasks are considered.**
+    - If **only solo tasks, or solo-live tasks were considered, Phil would have brought extra sausages to the CoC III party.**
+    
+```{r,  out.width="35%", fig.cap = "Really?! You're taking my championship title away and giving it to this Preston Plonker?!"}
+knitr::include_graphics("https://64.media.tumblr.com/798be03c0dc717a8e701f4bb43ee768a/c6bfd8abbc9b69b2-58/s1280x1920/8b477e60f8bc03377c7c056be699ec5b95ef4ec8.gifv")
+```    
+- If we were to **break the series tie by considering the task points average for only solo or solo-live tasks, then Phil would have joined the CoC-fest.**
+
+```{r,  out.width="40%", fig.cap = "Phil's contribution to CoC-fest III."}
+knitr::include_graphics("https://64.media.tumblr.com/173e40daf913367f93c69f652cb5d093/abac52633fb0de1c-37/s1280x1920/068b3f9b3134a1fd8ac26e2fefe5d4159325e157.gifv")
+```
+
+
+- Some **statistical tie breakers could have been fruitless** and we would have ended up in another tiebreaker situation (albeit smaller). 
+    - A tiebreaker based on episode wins only would have lead to a Maisie and Phil tiebreaker.
+    - A tiebreaker based on average episode points or task points (on all tasks), would be a redundant tiebreaker. This is not a surprise given the circumstances that a tiebreaker occur; contestants have achieved the same number of series points and have presumably participated in the same number of episodes and tasks.
+- I hope that the **Taskmaster UK team can take on board potential ideas to deal with future series tiebreakers!** Feel to reach out to me if you would like to discuss this further!
+
+```{r,  out.width="40%", fig.cap = "Let's go and have a party now that this post is over!"}
+knitr::include_graphics("https://64.media.tumblr.com/f2d94a04caa14b60c3aa65aee4b4ad11/e62070dcefa24954-e6/s1280x1920/0aeed9a76d4264d72316a5ae59d1aebec9add160.gifv")
+```
+
+:::
