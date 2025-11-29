@@ -22,3 +22,5 @@ library(reactable)
 library(sparkline)
 library(ggnewscale)
 library(cowplot)
+
+library(magick)
