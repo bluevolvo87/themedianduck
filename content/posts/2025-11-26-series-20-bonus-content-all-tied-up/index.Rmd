@@ -95,7 +95,7 @@ Ania also alluded to another tiebreaker in the Series 20, Episode 2 podcast epis
 ### ...Comes With More Controversy
 **Whilst we could have used these pre-recorded tiebreakers to settle the 3-way championship tie, it likely would have caused controversy itself.** 
 
-We don't exactly know how tiebreakers are chosen, but one would expect that the producers (the Andys and Little Alex Horne) are involved in this choice. The problem with using a pre-recorded tiebreaker and not being privy of how was chosen, is that the producers may be accused of being biased and showing favouritism towards a particular contestant. Given that Champion of Champions III consists of 4 male champions prior to this Series 20s eventual outcome, the crew were likely secretly hoping for either Ania or Maisie to win so that there was a least some diversity in CoC III. Consequently, the crew may have chosen a tiebreaker favouring either of Ania or Maisie.
+We don't exactly know how tiebreakers are chosen, but one would expect that the producers (the Andys and Little Alex Horne) are involved in this choice. The problem with using a pre-recorded tiebreaker and not being privy of how was chosen, is that the producers may be accused of being biased and showing favouritism towards a particular contestant. Given that Champion of Champions IV consists of 4 male champions prior to this Series 20s eventual outcome, the crew were likely secretly hoping for either Ania or Maisie to win so that there was a least some diversity in CoC IV. Consequently, the crew may have chosen a tiebreaker favouring either of Ania or Maisie.
 
 Alternatively, the producers could have wanted to tell an exciting series narrative and favoured a contestant to best tell this narrative. For example, the redemption narrative of Phil (or Maisie) may have been appealing to them, and thus they would choose the tiebreaker based on this.
 
@@ -651,7 +651,7 @@ knitr::include_graphics("https://64.media.tumblr.com/8825e84befc2fe874b0f9deb3c0
 If we were to penalise for moments of stupidity and assess this through who has the **Least Number of Disqualifications (awarded 0 points directly)**:
 
 - ... and we were to **consider all tasks, Maisie would be crowned our champion.**
-- ... and we only **considered solo tasks, or solo-live tasks, Phil would add to the testosterone filled CoC III by being crowned champion of Series 20.** 
+- ... and we only **considered solo tasks, or solo-live tasks, Phil would add to the testosterone filled CoC IV by being crowned champion of Series 20.** 
 
 ```{r,  out.width="40%", fig.cap = "...and the disapproval when the patriach returns."}
 knitr::include_graphics("https://64.media.tumblr.com/453957559300b8c38a9e9fda8a0bbc59/c7922f142fda0690-6e/s1280x1920/7d1b66909ba4d53f2758b0f3256170acc4856c77.gifv")
@@ -680,7 +680,7 @@ We've learnt that:
 - In my opinion, the **broadcasted series tiebreaker wasn't particularly a fair way of determining the series champion**. Contestants who most recently filmed at the Taskmaster house were at a general advantage compared to those who filmed less recently.  
     - If this tiebreaker was a test of memory, controlling for other potential aspects, is the only way to make this a fair test of memory.
 - **Using an pre-recorded tie breaker likely wouldn't have been controversy free either** as the **producers could have selected based a tiebreaker to fit a narrative they wanted to tell.**
-    - For example, as Champion of Champions III already had 4 male champions, the producers may have selected to have at least some female representation.
+    - For example, as Champion of Champions IV already had 4 male champions, the producers may have selected to have at least some female representation.
 - We've **explored other, hopefully fairer, tiebreakers to determine the Series 20 Champion**. This included:
     - **Repurposing the broadcasted series tiebreaker** as a live studio tiebreaker such that it controls for other variables and makes it a fairer task. 
     - **Using existing episode and task performance statistics as the series tiebreaker.** 
@@ -700,21 +700,21 @@ knitr::include_graphics("https://64.media.tumblr.com/af2aef0567105f377e2cb3ca2ea
 ```{r,  out.width="35%", fig.cap = "Maisie not being happy that the data is not particularly favourable to her championship title."}
 knitr::include_graphics("https://64.media.tumblr.com/75009f538506e11f7a9af02aa212f065/4c588f9be08159a7-01/s1280x1920/023cfde83515d03c63cdfebb6468be6be5ead969.gifv")
 ```  
-- If we were to **break the series tie by rewarding moments of task brilliance (most number of tasks awarded 5 points)**, **Ania would be crowned our champion and not brought a fifth Y chromosome to the CoC III party.**
+- If we were to **break the series tie by rewarding moments of task brilliance (most number of tasks awarded 5 points)**, **Ania would be crowned our champion and not brought a fifth Y chromosome to the CoC IV party.**
 
 ```{r,  out.width="35%", fig.cap = "That asking for help really helped Ania in this statistic!"}
 knitr::include_graphics("https://64.media.tumblr.com/95d99b37f1af474ee08493e96a68f1c4/dee650a312c6437f-8d/s1280x1920/fb78379930d69495728b7e96fcc5b50e1511232a.gifv")
 ```  
 
-- If we were to **break the tie by rewarding the least disqualifications (least number of tasks awarded 0 points)**, **Maisie would be a welcome addition to the CoC III party _IF_ all tasks are considered.**
-    - If **only solo tasks, or solo-live tasks were considered, Phil would have brought extra sausages to the CoC III party.**
+- If we were to **break the tie by rewarding the least disqualifications (least number of tasks awarded 0 points)**, **Maisie would be a welcome addition to the CoC IV party _IF_ all tasks are considered.**
+    - If **only solo tasks, or solo-live tasks were considered, Phil would have brought extra sausages to the CoC IV party.**
     
 ```{r,  out.width="35%", fig.cap = "Really?! You're taking my championship title away and giving it to this Preston Plonker?!"}
 knitr::include_graphics("https://64.media.tumblr.com/798be03c0dc717a8e701f4bb43ee768a/c6bfd8abbc9b69b2-58/s1280x1920/8b477e60f8bc03377c7c056be699ec5b95ef4ec8.gifv")
 ```    
 - If we were to **break the series tie by considering the task points average for only solo or solo-live tasks, then Phil would have joined the CoC-fest.**
 
-```{r,  out.width="40%", fig.cap = "Phil's contribution to CoC-fest III."}
+```{r,  out.width="40%", fig.cap = "Phil's contribution to CoC-fest IV."}
 knitr::include_graphics("https://64.media.tumblr.com/173e40daf913367f93c69f652cb5d093/abac52633fb0de1c-37/s1280x1920/068b3f9b3134a1fd8ac26e2fefe5d4159325e157.gifv")
 ```
 
