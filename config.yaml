@@ -35,12 +35,15 @@ params:
       
   subtitle: vires in notitia
   description: "Educating Data Science through Taskmaster"
-  useCDN: no
+  useCDN: yes
   
   highlightjsVersion: "9.12.0"
   highlightjsCDN: "//cdnjs.cloudflare.com/ajax/libs"
-  highlightjsLang: ["r", "yaml"]
+
+  highlightjsLang: ["r", "yaml", "sql"]
   highlightjsTheme: "github"
+  MathJaxCDN: "//cdn.bootcss.com"
+  MathJaxVersion: "2.7.1"
   logo: "img/favicon/favicon.ico"
 menu:
   main:
@@ -77,4 +80,3 @@ markup:
   tableOfContents:
     startLevel: 1
     endLevel: 2
-

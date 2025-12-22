@@ -55,3 +55,5 @@ print("Database Connection, tm_db, is now ready to use.")
 
 
 suppressPackageStartupMessages(library(tidyverse))
+
+RSQLite::initExtension(tm_db, extension = "regexp")
