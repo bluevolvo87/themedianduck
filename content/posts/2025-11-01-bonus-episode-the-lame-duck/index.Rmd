@@ -1,0 +1,56 @@
+---
+title: 'Bonus Episode: The Lame Duck'
+author: Christopher Nam
+date: '2025-11-01'
+slug: bonus-episode-the-lame-duck
+categories: []
+tags: []
+draft: yes
+---
+
+
+# The Lament of the Lamé Duck
+Seeing as the Live Task was pivotal to the outcome of this episode and series, let's dive a bit further into the alternative outcomes.
+
+> Eat the lamé duck, or don’t eat the lamé duck.
+>
+> If you are the only person to eat the lamé duck, you win 5 points, and everybody else loses 1 point.
+> 
+> If more than one person eats the lamé duck, all lamé duck eaters lose 3 points, and the lamé duck refusers gain 3 points.
+> 
+> If no-one eats the lamé duck, you must each give Greg £25.
+> 
+> If everyone eats the lamé duck, Alex will give you each £25.
+> 
+> You have two minutes.
+
+- If everyone ate the duck, or everyone did not eat the duck, then the points would have remained the same. We refer to this scenario as the they "All Eat" or "All Refuse" scenarios.
+    - The contestants do end up with a lighter or heavier wallet/purse though...
+- In the case of only one person eating the duck, there are `r choose(5,1)` potential outcomes (from combinatorics, this is a case of ${5} \choose {1}$ logic; with 5 contestants, there are 5 different combinations in which only one contestant is the eater).
+- In the case when 2 to 4 people eat the duck there are `r choose(5,2) + choose(5,3) + choose(5, 4)` combinations (=${5} \choose {2}$+${5} \choose {3}$+${5} \choose {4}$)
+
+```{r}
+# ep_task_df <- task_attempt_df %>% filter(Episode_ID == 5) %>%
+#     group_by(Series_ID, Episode_ID, Contestant, Task_ID, Task) %>% 
+#     reframe(
+#         Task_Points = Points
+#     ) %>%
+#     group_by(Series_ID, Episode_ID, Contestant) %>%
+#     arrange(Series_ID, Episode_ID, Contestant, Task_ID) %>%
+#     mutate(
+#         After_Task_Ep_Points = cumsum(Task_Points),
+#         Before_Task_Ep_Points = After_Task_Ep_Points - Task_Points
+#     )
+# 
+# 
+# live_task_df <- ep_task_df %>% filter(Task_ID == 5)
+# 
+# all_in <- c(0,0,0,0,0)
+# all_out <- c(0,0,0, 0, 0)
+# 
+# one_eater <- c(5, -1, -1, -1, -1) #Example
+# 
+# two_eater <- c(-3, -3, 3, 3, 3)
+# three_eater <- c(-3, -3, -3, 3, 3)
+# four_eater <- c(-3, -3, -3, -3, 3)
+```

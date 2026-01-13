@@ -94,7 +94,7 @@ series_profanity <- profanity_enh %>%
 ```
 
 ```{r, include = FALSE}
-greg_image_url <- "https://taskmaster.info/images/people/0019_greg_davies_3.png"
+greg_image_url <- "https://taskmaster.info/images/people/0019_greg_davies_4.png"
 ```
 
 # The Profanity Rate Approach
@@ -118,7 +118,7 @@ xmax = 16, ymax = 5), fill = "#b0c6f3") +
     geom_line(linewidth = 1.5) +
     scale_x_continuous(breaks = seq(0, 20, 1)) + 
     scale_y_continuous(breaks = seq(0, 10, 1), limits = c(0, 10)) + 
-    geom_image(aes(image = image_url), size= 0.07) + 
+    geom_image(aes(image = greg_image_url), size= 0.07) + 
     xlab("Series") + ylab("Profanity Rate (Profanity per Episode)") +
     ggtitle("The Taskmaster's Potty Mouth")
 ```

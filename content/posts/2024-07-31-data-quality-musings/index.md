@@ -1,0 +1,55 @@
+---
+title: "Sidenote: Musings on TdlM"
+author: Christopher Nam
+date: '2024-07-17'
+slug: data-quality-musings
+categories: []
+tags: ["Musings", "TdlM"]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+    df_print: "default"
+---
+
+# Sidenote Introduction
+A few remarks and musings on the [Trabajo de las Mesas database (TdlM)](https://tdlm.fly.dev/).
+
+## Data Quality
+
+As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.
+
+I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from [taskmaster.info](https://taskmaster.info/), an equally exhaustive Taskmaster resource.
+
+For now, and to not derail me from my initial interest and excitement on The Median Duck project, I will assume that the data is of high quality (accurate, consistent etc.).
+
+If there are any instances where the data quality is suspect, and/or a contradictory insight or conclusion is identified, a deep dive will likely occur and the deep dive process will like provide useful insight for any inspiring individuals hoping to get into data analytics more.
+
+## Why This Datasource?
+
+As Taskmaster is a global phenomena, there is no doubt other data sources that could be used for this project. Most noticeably, Jack Bernhadt has an exhaustive [Google sheet document](https://docs.google.com/spreadsheets/d/1Us84BGInJw8Ef32xCVSVNo1W5mjri9CpUffYfLnq5xA/edit?usp=sharing) in which similar analysis and modelling could be performed.
+
+However, for the purposes of this project, being able to query from database has several advantages. This includes:
+
+-   **Quality:** Data being in a structured tabular format which often leads to better data quality
+-   **Manipulations:** Greater manipulation and transformations could potentially be employed (joins, group bys etc)
+-   **Automation, Repeatability and Scalabilty:** if we wanted to repeat the same or similar analysis but on a new subset of data (for example updated data due to a new series being broadcast, or new parameters being employed), it is more convenient to do this in a structured data source such as a database.
+
+However, a database approach is by no means perfect either. The barrier to entry is considerably higher than data stored in a spreadsheet (both adding, manipulating and analysing data), and spreadsheets are good for ad-hoc, interactive analysis through a visual interface.
+
+Considering overall vision of The Median Duck, I believe that a database approach is ideal.
+
+## Potential Articles to Explore in the Future
+
+-   **Greater understanding of how the data is being collected.**
+    -   Is it manual, and are their quality checks in place? Is there any opportunity to automate?
+    -   Can we introduce a SLA (service level agreement) of when the data can be expected to be populated. Data associated with more recent seasons don't appear to be present, despite being broadcasted already.
+    -   Introduction of an ETL timestamp.
+-   **Generate a data dictionary page**
+    -   What tables are available, samples of the data, what the table pertains to, and key columns.
+-   **A dashboard on data quality.**
+    -   A highlevel overview of the quality and how recent the data is.
+    - Can we be proactive in identifying data quality issues and resolve them before users of the data experience them.
+

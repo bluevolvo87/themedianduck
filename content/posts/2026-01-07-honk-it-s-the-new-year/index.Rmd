@@ -1,0 +1,434 @@
+---
+title: Honk! It's the New Year!
+author: Christopher Nam
+date: '2026-01-07'
+slug: honk-it-s-the-new-year
+categories: [misc, champion-of-champions, new-years-treat]
+tags: [misc, champion-of-champions, new-years-treat]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+    highlight: pygments
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+# Your Task
+> Provide a retrospective casserole featuring the Champion of Champions IV special, the clay based reason as to a previous post was delayed, and the the New Years Treat. 
+>
+> Most entertaining retrospective casserole commentary wins!
+
+
+# CoC IV: Nun in a Bush 
+
+```{r, out.width = "40%", fig.cap = "Welcome to the 4 Sausages and One Egg Party. <br>From left to right: The Man who Doesn't Believe in Tampons, The Only Good Guy Left in British Comedy, Ms. Forgetful, The Exposer and Sam Campbell."}
+knitr::include_graphics("https://64.media.tumblr.com/d0705ac6f5de43abbb39b5cd78e49652/72e9108b273c4ee9-54/s1280x1920/93b9e20416daae53964064476c46cdc446a44cbd.webp")
+```
+
+
+```{r, cache = FALSE}
+# Importing the new dataset
+coc4_data_link <- "https://docs.google.com/spreadsheets/d/102-U8_Xcb-azD8odaZQojwJSgifgvec_hidTy4bgXsc/edit?usp=sharing"
+
+task_attempt_df <- range_read(coc4_data_link, sheet = "Attempts-Tasks") %>%
+    filter(Task_Type != "TieBreaker") %>% #Remove these instances as no points are provided and mainly used for episode wins.
+    mutate(Series_ID = 'CoC-IV') #To Trick us into thinking this a legitimate series
+        
+colnames(task_attempt_df) <- make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(coc4_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+
+```{r, cache = FALSE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2025-09-11, 
+                 sim_max_episode_used = 11,
+                 num_sims = 10,
+                 num_eps_series = 11,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+```
+
+```{r, cache = FALSE}
+compare_df <- multiverse_env$compare_curr_ep_df
+
+ep_label <- "CoC-IV"
+kbl_col_names <- c("Contestant",
+                   glue("{ep} Points", ep = ep_label),
+                   glue("{ep} Ranking", ep = ep_label),
+                   glue("{ep} Performance Grade", ep = ep_label),
+                    glue("Summary Performance from Episodes from Champions Respective Series")
+                   )
+
+tbl_title <- glue("{ep_id} Performance Report Cards", ep_id = ep_label)
+tbl_foot <- glue("{curr_ep_id} Performance Grade is based on comparing the current episode performance, to the distribution of episode(s) performance in each champions respective series.", curr_ep_id =  ep_label)
+
+df_compared_df <- as.data.frame(compare_df)
+
+react_compare_df <- compare_df %>% 
+    select(Contestant, Current_Ep_Points, Current_Ep_Ranking, Current_Ep_Grade,  Ep_Performance_Summary)
+
+react_compare_df <-as.data.frame(react_compare_df)
+
+reactable(
+    data = react_compare_df,
+    columns = list(
+        `Contestant` = reactable::colDef(
+            name = kbl_col_names[1],
+            cell = function(value, index) {
+                img_url <- df_compared_df[index, "Image_URL"]
+                image <- img(src = img_url,
+                             style = "height: 25%;",
+                             alt = "Contestant.Image")
+                tagList(div(style = list(fontWeight = 1000), value),
+                        div(style = "display: inline-block; width: 25%;", image))
+            },
+            width = 150
+        ),
+        `Current_Ep_Points` = colDef(name = kbl_col_names[2], width = 150,
+                                     cell = 
+                                             reactablefmtr::data_bars(
+                                         react_compare_df["Current_Ep_Points"],
+                                         bar_height = 50,
+                                         text_size = 18,
+                                         fill_color = "#FFFFC2" ,
+                                         border_color = "darkred",
+                                         bold_text = TRUE,
+                                         border_style = "solid",
+                                         border_width ="thin"
+                                             )
+        ),
+        `Current_Ep_Ranking` = colDef(name = kbl_col_names[3], width = 150,
+                                      style = function(value, index){
+                                          fill_colour <- case_when(value == 1 ~  "#D6AF36",
+                                                    value == 2 ~  "#A7A7AD",
+                                                    value == 3 ~ "#A77044",
+                                                    value == 4 ~ "#e0e5e5",
+                                                    value == 5 ~ "#737473")
+                                          list(background = fill_colour)
+                                          }),
+        `Current_Ep_Grade` = colDef(name = kbl_col_names[4], width = 150, 
+                                    style = function(value, index){
+                                        list(background = df_compared_df[index, "Current_Ep_Grade_Colour"])
+                                    }
+                                        ),
+        `Ep_Performance_Summary` = colDef(name = kbl_col_names[5], minWidth = 350)
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    sortable = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = TRUE,
+    width = "100%"
+) %>%
+    reactablefmtr::add_title(
+        title = tbl_title,
+        text_decoration = 'underline',
+    font_size = 16,
+    font_color = "white",
+    background_color = "black"
+    ) %>%
+    reactablefmtr::add_subtitle(
+        subtitle = tbl_foot,
+            font_weight = 'normal',
+    font_style = 'italic',
+    font_size = 14,
+    margin = reactablefmtr::margin(t=0.5,r=0,b=0,l=0),
+    font_color = "white",
+    background_color = "black"
+    )
+```
+
+
+
+
+> Mathew Baynton is our latest addition to champion of Champions!
+
+:::{.insights}
+He'll be joining Josh Widdicombe (Series 1, CoC I), Richard Herring (Series 10, CoC II) and Dara Ó Briain (Series 14, CoC III) in the Champion of Champions of Champions (CoCoC) special, if this ever occurs.
+:::
+
+```{r mb-champ, out.width = "30%", fig.cap = "The Exposer Is Crowned Champion of CoC-IV!", fig.show="hold"}
+mb_trophy <- c("https://64.media.tumblr.com/c406aa5206dafaa0317f64a57ac35ac6/9c428c91abf5346c-c7/s1280x1920/0143b55940186ff8329518e73202e331fd0eda95.gifv",
+               "https://64.media.tumblr.com/86d952274d305ace28ceedd061340437/9c428c91abf5346c-b5/s1280x1920/46587661218abffe21323771c582f127a2fd3742.gifv"
+)
+
+knitr::include_graphics(mb_trophy)
+```
+
+
+> Did the more recent series champions fare better in the CoC fight?
+
+:::{.insights}
+There is potential evidence to suggest this as two most recent series champions (Series 19 and 20), ended in the top 2 positions in this CoC-IV special.
+
+- **Mathew Baynton (S19) and Maisie Adam (S20) both performed very well** in this Champion of Champion special episode, compared to episode their respective series. **They accumulated points in the top quartile of their episode points distribution** (20 and 19 points respectively), and ranked in the 1st and 2nd position.
+- **John Robins (S17) had the most disastrous performance in his Taskmaster journey so far.** He only accumulated 16 points in this CoC-IV special; his previous personal worst was 17 points.
+    - It's worth remarking that 16 episode points for any other contestant in this CoC fight would be considered good or average. John evidently had an extremely strong performance in his full series, and this special was (unfortunately) not the best representation of his skills.
+- **Both Andy Zaltzman (S18) and Sam Campbell (S16), rounded out our CoC-IV leaderboard, taking 4th and 5th place respectively.** 
+    - **Both had pretty bad performances in this special**, accumulated episodes points (11 and 10 respectively) which are in the bottom quartile of prior existing episode points distribution. 
+
+:::
+
+
+> How likely was the observed randking CoC-IV outcome of `[1st : Mathew, 2nd: Maisie, 3rd: John, 4th: Andy, 5th: Sam]`, prior to going into this special? How does it compare to the prediction we made, based on the most probable cast ranking?
+
+
+```{r, cache = TRUE}
+# Establish the variables and environment for our analysis
+# CoC 4 environment
+coc4_solo_var_list <- list(seed_id = 2025-12-03, 
+                 sim_max_episode_used = 10,
+                 num_sims = 1000000,
+                 num_eps_series = 11,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+# Only consider solo task attempts as part of CoC predictions
+solo_only_attempts_df <- task_attempt_df %>% filter(Team_Task_Flag == "Solo")
+
+# Enter modified task attempts dataframe into environment
+coc4_solo_var_list[["task_attempt_df"]] <- solo_only_attempts_df
+
+
+
+coc4_solo_env <- new.env()
+invisible(list2env(x = coc4_solo_var_list, envir = coc4_solo_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = coc4_solo_env)
+
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = coc4_solo_env)
+
+```
+
+
+```{r, cache = TRUE}
+joint_cast_rank_coc4_solo <- coc4_solo_env$episode_sample_summary_df %>%
+    left_join(contestants_df[,c("Contestant_Name", "Initials")], by = join_by(Contestant == Contestant_Name)) %>%
+    unite(Init_Rank, Initials, Ep_Rank, sep = ": ", remove = FALSE) %>%
+    group_by(Series_ID, Universe_ID) %>%
+    reframe(Cast_Rank = paste(Init_Rank, collapse= ", ")) %>%
+    group_by(Series_ID, Cast_Rank) %>%
+    reframe(Num_Count = n_distinct(Universe_ID)
+        ) %>% group_by(Series_ID) %>%
+    mutate(Num_Sims = sum(Num_Count),
+           Prop_Count = Num_Count/Num_Sims
+    ) %>%
+        ungroup() %>%
+    mutate(
+        Prob_Rank = rank(-Prop_Count),
+        MAP_Flag = (Prop_Count == max(Prop_Count)),
+        text = ifelse(MAP_Flag, paste0("Joint MAP Prediction (", scales::percent(Prop_Count, accuracy = 0.01), ")"),"")
+    ) %>%
+    arrange(-Prop_Count)
+```
+
+```{r, cache = FALSE}
+initials_vec <- c("AZ", "JR", "MA", "MB", "SC")
+
+observed_rank <- c(4,3,2,1,5)
+observed_outcome <- paste(paste(initials_vec, observed_rank, sep = ": "), collapse= ", ")
+
+marginal_pred_rank <- c(5,1,4,1,1)
+marginal_pred <- paste(paste(initials_vec, marginal_pred_rank, sep = ": "), collapse= ", ")
+```
+
+
+
+```{r}
+top_casts <- 10 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Rankings for {series_id}", series_id = coc4_solo_env$series_id)
+
+subtitle_label <- glue("Distribution Estimated with {num_sims} Simulations.", max_ep = coc4_solo_env$sim_max_episode_used, num_sims = scales::number(coc4_solo_env$num_sims), seed_id = coc4_solo_env$seed_id, remain_eps = coc4_solo_env$remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}. Only Solo Tasks Used.", n_cast = top_casts, seed_id = coc4_solo_env$seed_id)
+
+joint_coc4_solo_plt <- joint_cast_rank_coc4_solo %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag | (Cast_Rank %in% observed_outcome) | (Cast_Rank %in% marginal_pred)) %>%
+    mutate(text = ifelse(Cast_Rank %in% observed_outcome, paste("Observed Outcome:", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
+    mutate(text = ifelse(Cast_Rank %in% marginal_pred, paste("Marginal Prediction:", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
+ggplot(aes(x = forcats::fct_reorder(Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0, colour = MAP_Flag), family = "elite", nudge_y = 0.001, show.legend = FALSE, size = 20) +
+        scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.05), n.breaks = 5) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+```
+
+```{r cast-rank-dist, fig.cap = "Joint Predictive Distribution of Cast Rankings for CoC-IV", out.width="70%"}
+joint_coc4_solo_plt
+```
+:::{.insights}
+From Figure \@ref(fig:cast-rank-dist), we see that the observed ranking outcome had a 0.38% chance of occurring; this is the 71st most probable outcome from our joint distribution.
+
+This is approximately 3 times less likely than the most probable outcome `[AZ: 5, JR:1, MA:4, MB: 2, SC:3]` which had a estimated 1.24% chance of occurring.
+:::
+
+# The Great Pottery Throwdown
+As mentioned in [a prior post](/themedianduck/2025/12/coc-fest-predictions-for-champion-of-champions-iv/), my predictions were delayed due to my *great* idea[^sarcasm] to make Christmas gifts for loved ones. Remember that Friends episode where Monica and Chandler make a pact to make their Valentine's  presents, rather simply buy them? It very much reminded me of that, except I made the promise only on my end, and not on the recipient side.
+
+
+```{=html}
+
+<div class="flex-container">
+
+<iframe align="center" width="560" height="315" src="https://www.youtube.com/embed/OmJ2LnalQVM?si=CfazxqSfAsN3XBWg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+
+:::{.insights}
+My creations involved home pottery kits from [Pott'd](https://getpottd.com), and after quashing the initial ambitious efforts of creating vases and trinket dishes, I settled on creating coasters for all my recipients. My initial attempts to create vases and dishes just looked too amateur (even though I am), and I was slowly getting frustrated with the clay. Ultimately I settled on the *"simpler"* designs of coasters, but even coasters have their own challenges. 
+
+The stress ultimately came from having a hard deadline of Christmas Eve to stick to, whilst also factoring in clay drying, designing, painting and applying a varnish into the timeline. 
+
+
+```{r pot-finished, out.width = "50%", fig.cap = "At the End of the Rollercoaster, Lies the Finished product.", error = FALSE, warning=FALSE, echo=FALSE}
+misc_img_dir <- here("img", "misc", "pottery")
+knitr::include_graphics(path = file.path(misc_img_dir,"finished_coasters.jpg"), error = FALSE)
+```
+
+
+The final products are exhibited in Figure \@ref(fig:pot-finished). Whilst I am unlikely to participate in the next series of [The Great Pottery Thrown Down](https://en.wikipedia.org/wiki/The_Great_Pottery_Throw_Down), I am quietly proud of my creations despite the frustration and stress caused. The gifts were also well received by the recipients, with the personal designs being a nice touch. An additional side hustle on Etsy is not out of the question, but I don't think I would be that profitable in the long run.
+
+
+:::
+[^sarcasm]: Correction, a **silly** idea.
+
+# New Year's Treat: Justice for Honk
+The heralding of the new year has also seen a new New Year Treat being broadcasted. This year, the Taskmaster Gods were gracious enough to treat us to **two** episodes featuring the same cast. 
+
+:::{.insights}
+I won't bore my avid readers with my thoughts on the specials too much but:
+
+- **The special being 2 episodes was greatly appreciated.** The cast was excellent (as always), and would willing watch a full series of this cast.
+    - I would happily accept future Champion of Champions and other future special also being multi episode arcs.
+- **As an amateur oboist in my spare time, I was ecstatic to see an OBoE being performed on primetime TV.** Little Alex Horne sure did look like hot boy/hautbois when he played it. 
+- **The inclusivity and diversity exhibited by this show should be commended more.** It was fantastic to see a deaf person compete[^rose], and see Little Alex Horne cater to the gay bear community. 
+    - I do wonder if poking Alex in the quickest time would be sufficient for this task. The Taskmaster could argue however that Little Alex Horne is more of a cub or an otter than a bear though, so it would have been a risky attempt.
+
+[^rose]: and be victorious!
+:::
+
+## Honk! The Past Life of Little Alex Horne
+
+In the 2nd episode of the treat and in the first pre-recorded task *"Split something in half in a really exciting way."*, Susie Dent makes a passing comment about Alex's past mission crusade to get a new use of *honk* into the Oxford English Dictionary ([around 13:08 onwards](https://youtu.be/3dibidP-aU8?si=eUzG4_Gj-Ko2U9Os&t=788)). She then proceeds to calmly (and rather scarily) cut up a cuddly toy version of a goose, fiddles about with a horn, and states that she is going to "put this up for inclusion in the Oxford English Dictionary". 
+
+Susie's task attempt isn't the most immediately rational attempt, and as one would expect from her, is highly cerebral. 
+
+It would not surprise me if this was the first task that Susie filmed (and was also broadcasted, because yes, I know that all contestants do a warm up task first which is not broadcasted). Thus she was still getting used to the Taskmaster machinery, and hence her panicky, irrational attempt.  
+
+I suppose Susie did *"split"* a goose, and it was performed in a captivating manner (calmly and scarily). However, I believe the addition of the horn and the *"honk"*, whilst geese do honk, was ultimately a ploy by Susie to win over Little Alex Horne, pandering to his pre-Taskmaster escapades. Susie probably also forgot that the Taskmaster's Assistant doesn't awarded the points for task attempts themselves, but rather it's the Taskmaster (Greg Davies). 
+
+:::{.insights}
+So what was the pre-Taskmaster life of Little Alex Horne, and what was the one man mission involving *"honk"*? 
+
+- This mission is summarised in this [blog post](https://aggslanguage.wordpress.com/2011/01/05/can-one-person-invent-a-word-or-instigate-a-semantic-shift-honk/), and also Alex's book [Wordwatching](https://www.amazon.com/Wordwatching-How-Break-into-Dictionary/dp/1905264615).
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0rZ7hbbrcAc?si=hgTaDJQisqKZ106N" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+- Essentially, Alex wanted to get the following new definition and usage of "honk" into the dictionary
+
+> **Honk: Money (particularly cash)** [*(from Urban Dictionary)*](http://honk.urbanup.com/3312064)
+>
+> Example Usage: *I was out last night, I spent a lot of honk.*
+
+- Hannah Horne (previously Alex Horne) love of words is apparent and he even made a multi episode appearance on the daytime, less comedy focused version of Countdown as a contestant: [Part 1](https://youtu.be/L28b4c9y2II?si=IJb3XWlmdteUS9Dh), [Part 2](https://youtu.be/I_Q4qyJlWPs?si=v1_0U6EYZaE5k4N9), [Part 3](https://www.youtube.com/watch?v=TakQQkGye6M). 
+    - Eagle eyed viewers will also note that Susie Dent makes an appearance in this show (as the show's lexicographer), and former New Year's Treat alumni Carol Vorderman makes an appearance.
+    - I can't find the actual episode footage, but Alex has mentioned that he was so desperate to succeed in his word mission that in one round of Countdown, he submitted *"honk"* as his "longest" word in the letters round (and presumably gave his new definition), to which Susie confirmed was a valid word and definition. As one would expect from Mr Horne, he of course had longer words he could have submitted, but he sacrificed the points for his own mission and humour. 
+
+And so ends the story of "honk"... And if you ever wondered if Alex was always quite so eccentric, this clip should hopefully clear up this question.
+
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/L28b4c9y2II?si=X0y2uXP6wHiVwtcI&amp;clip=Ugkx9NZbS4L0DVA60EtaDvOIukSYs74aPWFe&amp;clipt=ELeeBhi45gk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+:::
+
+# What Have We Leart Today
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Mathew Baynton (Series 19, CoC IV) will join Josh Widdicombe (Series 1, CoC I), Richard Herring (Series 10, CoC II) and Dara Ó Briain (Series 14, CoC III) in the Champion of Champions of Champions (CoCoC) special.**
+
+```{r, out.width = "15%", fig.cap = "The Champion of Champion of Champions Line Up so far!", fig.show = 'hold'}
+
+cococ_vec <- c("https://taskmaster.info/images/people/0069_josh_widdicombe.png",
+               "https://taskmaster.info/images/people/0031_richard_herring.png",
+               "https://taskmaster.info/images/people/0378_dara_o_briain_1.png",
+               "https://taskmaster.info/images/people/0599_mathew_baynton_1.png",
+               "https://taskmaster.info/images/placeholder_thumb.jpg"
+)
+
+knitr::include_graphics(cococ_vec)
+```
+
+- Making Christmas presents can be quite stressful, particularly when having to factoring in drying, painting, varnishing times with a hard deadline.
+- Pottery, even when creating a simple object like a coaster, is difficult.
+- Honk can be used to refer to money in a slang.
+> Want to show your own honk-ing appreciation? Donate some [honk here](https://buymeacoffee.com/bluevolvo87)!
+
+:::

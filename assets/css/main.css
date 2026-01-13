@@ -535,3 +535,17 @@ table.dataTable.display tbody tr.even {
   color: black;
   background-color: yellow;
 }
+
+
+.center-container {
+    width: fit-content; /* Ensure the container only takes up the width of its content */
+    margin-left: auto;
+    margin-right: auto;
+    /* You can also use the shorthand: margin: 0 auto; for top/bottom margin 0 and auto left/right */
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center; /* Centers content horizontally */
+    align-items: center;     /* Centers content vertically (if needed) */
+}

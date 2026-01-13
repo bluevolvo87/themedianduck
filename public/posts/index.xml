@@ -7,14 +7,21 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Wed, 26 Nov 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://bluevolvo87.github.io/themedianduck/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CoC Fest: Predictions for Champion of Champions IV</title>
+      <link>https://bluevolvo87.github.io/themedianduck/2025/12/coc-fest-predictions-for-champion-of-champions-iv/</link>
+      <pubDate>Mon, 08 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/2025/12/coc-fest-predictions-for-champion-of-champions-iv/</guid>
+      <description>Your Task&#xD;My, That’s Some Out of Date Data There!&#xD;A New Data Challenger has arrived!&#xD;A Naive Approach&#xD;A Return to The Multiverse&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;With Champion of Champions IV being broadcasted on Monday 22nd December (Channel 4 in the UK, YouTube elsewhere), provide your predictions and rank distributions as to how that CoC-fest (with added Maisie Adam) could potentially pan out.&#xA;Figure 1: Quite the Sausage Party there, got to get back in the habit.</description>
+    </item>
     <item>
       <title>Series 20, Bonus Content: All Tied Up</title>
       <link>https://bluevolvo87.github.io/themedianduck/2025/11/series-20-bonus-content-all-tied-up/</link>
       <pubDate>Wed, 26 Nov 2025 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2025/11/series-20-bonus-content-all-tied-up/</guid>
-      <description>Your Task&#xD;The Actual Tiebreaker Controversy&#xD;Resolving the Controversy with Alternative Tiebreakers&#xD;…Comes With More Controversy&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Ba-Ba-Bonus Content and Task!!!&#xA;Provide alternative series tiebreakers to the one that was actually used for the Series 20 Tiebreaker.&#xD;Where possible, provide the alternative champions as a result of these alternative tiebreakers.&#xA;Figure 1: Fancy seeing you here for some bonus content!&#xD;The Actual Tiebreaker Controversy&#xD;In Series 20, Episode 10, there was a 3-way tie for the series championship between the holy trinity of Ania, Maisie and Phil.</description>
+      <description>Your Task&#xD;The Actual Tiebreaker Controversy&#xD;Resolving the Controversy with Alternative Tiebreakers&#xD;What Have We Learnt Today?&#xD;Your Task&#xD;Ba-Ba-Bonus Content and Task!!!&#xA;Provide alternative series tiebreakers to the one that was actually used for the Series 20 Tiebreaker.&#xD;Where possible, provide the alternative champions as a result of these alternative tiebreakers.&#xA;Figure 1: Fancy seeing you here for some bonus content!&#xD;The Actual Tiebreaker Controversy&#xD;In Series 20, Episode 10, there was a 3-way tie for the series championship between the holy trinity of Ania, Maisie and Phil.</description>
     </item>
     <item>
       <title>Series 20, Episode 10: A Swashbuckling Series Finale</title>
@@ -140,21 +147,21 @@
       <link>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</link>
       <pubDate>Mon, 21 Oct 2024 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2024/10/profanity-insanity/</guid>
-      <description>Your Task&#xD;Profanity Insanity&#xD;The Foulest Mouth of Them All…&#xD;What Have We Learnt Today?&#xD;💡 Warning This Post Contains Strong Language...Reader Discretion is advised! Your Task&#xD;Find the foulest mouthed contestant in UK Taskmaster to date.&#xD;Bonus points for finding the foulest mouth in each series.&#xA;A Side Amble in the Preamble&#xD;In the spirit of good code practices, namely avoiding duplicating code and centralising common code into a single location were possible, here is a set of preamble scripts that I will be sourcing at the beginning of each post.</description>
+      <description>Your Task Find the foulest mouthed contestant in UK Taskmaster to date. Bonus points for finding the foulest mouth in each series.&#xA;A Side Amble in the Preamble&#xA;In the spirit of good code practices, namely avoiding duplicating code and centralising common code into a single location were possible, here is a set of preamble scripts that I will be sourcing at the beginning of each post.&#xA;These R scripts:</description>
     </item>
     <item>
       <title>A Data Dic(tionary) pic of TdlM</title>
       <link>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</link>
       <pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</guid>
-      <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Summary of Findings&#xD;Final Thoughts&#xD;Appendix Details&#xD;Your Task&#xD;Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (database connection post).</description>
+      <description>Your Task Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this… This article assumes that you are able to connect to the TdlM database successfully (database connection post).&#xA;A reminder that these are the tables available to us in TdlM database are.</description>
     </item>
     <item>
       <title>Sidenote: Musings on TdlM</title>
       <link>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</link>
       <pubDate>Wed, 17 Jul 2024 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</guid>
-      <description>Sidenote Introduction&#xD;Data Quality&#xD;Why This Datasource?&#xD;Potential Articles to Explore in the Future&#xD;Sidenote Introduction&#xD;A few remarks and musings on the Trabajo de las Mesas database (TdlM).&#xA;Data Quality&#xD;As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.&#xA;I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from taskmaster.</description>
+      <description>Sidenote Introduction A few remarks and musings on the Trabajo de las Mesas database (TdlM).&#xA;Data Quality As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.&#xA;I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from taskmaster.</description>
     </item>
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>
