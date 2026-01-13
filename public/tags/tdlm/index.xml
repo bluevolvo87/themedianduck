@@ -14,14 +14,14 @@
       <link>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</link>
       <pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</guid>
-      <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Summary of Findings&#xD;Final Thoughts&#xD;Appendix Details&#xD;Your Task&#xD;Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (database connection post).</description>
+      <description>Your Task Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this… This article assumes that you are able to connect to the TdlM database successfully (database connection post).&#xA;A reminder that these are the tables available to us in TdlM database are.</description>
     </item>
     <item>
       <title>Sidenote: Musings on TdlM</title>
       <link>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</link>
       <pubDate>Wed, 17 Jul 2024 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2024/07/data-quality-musings/</guid>
-      <description>Sidenote Introduction&#xD;Data Quality&#xD;Why This Datasource?&#xD;Potential Articles to Explore in the Future&#xD;Sidenote Introduction&#xD;A few remarks and musings on the Trabajo de las Mesas database (TdlM).&#xA;Data Quality&#xD;As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.&#xA;I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from taskmaster.</description>
+      <description>Sidenote Introduction A few remarks and musings on the Trabajo de las Mesas database (TdlM).&#xA;Data Quality As with any analysis and modelling project, the insights and conclusions generated are only as good as the data supplied to it.&#xA;I do not know the specifics regarding how this data is collated and reviewed (my intention is that there will be a future article dedicated to this), but believe the data is inputted by fellow (hardcore) Taskmaster fans from taskmaster.</description>
     </item>
   </channel>
 </rss>

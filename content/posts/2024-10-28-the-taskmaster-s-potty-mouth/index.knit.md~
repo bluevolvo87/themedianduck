@@ -1,0 +1,67 @@
+---
+title: The Taskmaster's Potty Mouth
+author: Christopher Nam
+date: '2024-11-09'
+slug: the-taskmaster-s-potty-mouth
+categories: [analysis, profanity, greg davies]
+tags: [analysis, profanity, greg davies]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+
+
+
+```{=html}
+{{% callout text="Warning This Post Contains Strong Language...Reader Discretion is advised!" %}}
+```
+
+# Your Task
+
+> Find out whether the Taskmaster (Greg Davies) has become more or less foul mouth over time.
+
+<img src="https://static1.colliderimages.com/wordpress/wordpress/wp-content/uploads/2024/03/greg-davies-from-taskmaster.jpg" width="5%" style="display: block; margin: auto;" />
+
+This post is an extension of [this profanity based post](/themedianduck/2024/10/profanity-insanity).
+
+<img src="../../../img/gifs/greg_fuckingbus.gif" width="25%" style="display: block; margin: auto;" />
+
+
+
+
+
+
+
+
+
+
+# The Profanity Rate Approach
+One way to answer our question is to use Profanity Rate that we previously defined in the aforementioned [post](/themedianduck/2024/10/profanity-insanity).
+
+Recall that this sums up the number of profanity occurrences within a series for a particular person, and divides by the number of episodes in that series. This provides the number of times the person in question will swear in an episode of that series, on average.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

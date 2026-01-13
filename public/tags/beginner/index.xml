@@ -14,7 +14,7 @@
       <link>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</link>
       <pubDate>Sat, 31 Aug 2024 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/2024/08/tdlm-data-dictionary/</guid>
-      <description>Your Task&#xD;Don’t be a Data Dic (tionary) about this…&#xD;Summary of Findings&#xD;Final Thoughts&#xD;Appendix Details&#xD;Your Task&#xD;Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this…&#xD;This article assumes that you are able to connect to the TdlM database successfully (database connection post).</description>
+      <description>Your Task Obtain a good overview of the tables in the TdLM database, what these tables contain, how these tables are linked together, and which ones are the most important for this project.&#xA;Don’t be a Data Dic (tionary) about this… This article assumes that you are able to connect to the TdlM database successfully (database connection post).&#xA;A reminder that these are the tables available to us in TdlM database are.</description>
     </item>
     <item>
       <title>Strength in Data: Connecting to the Taskmaster Database</title>

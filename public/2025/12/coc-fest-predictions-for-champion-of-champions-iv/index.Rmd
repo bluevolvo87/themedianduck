@@ -1,0 +1,1074 @@
+---
+title: 'CoC Fest: Predictions for Champion of Champions IV'
+author: Christopher Nam
+date: '2025-12-08'
+slug: coc-fest-predictions-for-champion-of-champions-iv
+categories: [CoC Fest, Champion of Champions, Betting]
+tags: [CoC Fest, Champion of Champions, Betting]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+    highlight: pygments
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+# Your Task
+
+> With Champion of Champions IV being broadcasted on Monday 22nd December ([Channel 4 in the UK, YouTube elsewhere](http://youtube.com/post/UgkxpthjVNIJm0lbkkdEEigEaUmFvHWK_iw4?si=ysqI5D1x12W9XIfF)), provide your predictions and rank distributions as to how that CoC-fest (with added Maisie Adam) could potentially pan out.
+
+
+```{r fig.cap = "Quite the Sausage Party there, got to get back in the habit.", out.width = "40%"}
+knitr::include_graphics("https://yt3.ggpht.com/dWbudar3KHLF8el__zkoicxEZAuUFdRN5K_FgytYNZDpbo9fbVVov_SQ4Amzu4vh1vwV6pkn7XXl5t8=s1024-c-fcrop64=1,2f5b0000d0a4ffff-rw-nd-v1")
+```
+
+# My, That's Some Out of Date Data There!
+As CoC-IV features the champions of Series 16 to 20, and the fact that I only started actively posting from Series 19 onwards, I need to obtain contestant-task-attempt level data for the prior series (Series 16 to 18) in order to perform my analysis and predictions. 
+
+My plan was to use the [`TdlM` database](https://tdlm.fly.dev/) that was covered in prior posts ([initial connection](/themedianduck/2024/07/database-connection/), [musings](/themedianduck/2024/07/data-quality-musings/), [data dic(tionary)](/themedianduck/2024/08/tdlm-data-dictionary/)). Unfortunately, upon writing `SQL` queries to extract the necessary data, it soon became clear that `TdlM` had not been updated since Series 16.
+
+- When querying for data pertaining to each champion of the series, only Sam Campbell related records were returned.
+- When querying for the latest task-attempts data (`MAX task`), the final live task of Series 16 (_Throw a ball into the bathtub_) was returned for each contestant in Series 16.
+
+As contestant-task-attempt level data is essential for the insights and modelling approach that will be employed (namely the multiverse approach), an alternative data source is required. 
+
+<details>
+<summary>**The Unfortunate Tale of the Stale `TdlM` data...**</summary>
+
+
+**<u>A People Person</u>**
+```{sql coc-4-query, output.var = "coc4_people", connection = tm_db, echo = TRUE, fig.cap = "Information on the champions?"}
+-- Query to extract information on the champions participating
+SELECT * FROM people 
+WHERE name IN ('Andy Zaltzman',
+                'John Robins',
+               'Maisie Adam',
+                'Mathew Baynton',
+                'Sam Campbell'
+                )
+OR (series BETWEEN 16 AND 20 -- In case I got the names wrong
+    AND champion = 1)
+```
+
+```{r  ,fig.align = "center"}
+kable(coc4_people, align = "c", 
+      caption = "An attempt at getting information on the Champions involved in CoC-IV", 
+      label = 'coc4-people') %>%
+  kable_styling(position = "center", full_width = FALSE)
+```
+
+As indicated in Table \@ref(tab:coc4-people), which attempts to extract information on the champions involved in CoC-IV, only information on Sam Campbell is available in `TdlM`. Sam's TMI (Taskmaster Info Index) being 456 surely puts him in a great position[^curse] if Taskmaster was ever going to follow the exact plot of Series 1 Squid Game.
+
+[^curse]: also a cursed position. He'll have seen so much death...
+
+**<u>Casting a Spell</u>**
+```{sql people_query, output.var = "max_series_people", connection = tm_db, echo = TRUE}
+-- What is the latest series recorded in the database and the cast associated with it. 
+SELECT * FROM people 
+WHERE series = (
+    SELECT MAX(series) FROM people 
+    )
+LIMIT 10
+```
+
+```{r latest-series-cast, fig.align = "center"}
+kable(max_series_people, align = "c", caption = "What's the latest series recorded, and the cast associated with it?") %>%
+  kable_styling(position = "center", full_width = FALSE)
+```
+Table \@ref(tab:latest-series-cast) pulls the cast associated with the latest series available in `TdlM`; the cast of Series 16 has been extracted. It looks like 3 out of the cast of 5 were right handed, and the remaining 2 (who are coincidentally from the LGBTQA+ community) are left handed.
+
+
+**<u>What's the Situation?</u>**
+```{sql task_query, output.var = "latest_task",  connection = tm_db, echo = TRUE}
+--  What's the latest task that has been recorded, who was involved, and what points were awarded
+WITH max_task AS (
+    SELECT * FROM attempts 
+    WHERE task = (
+        SELECT MAX(task) FROM attempts 
+        )
+)
+SELECT 
+    mt.id as attempt_id,
+    mt.task as task_id,
+    tt.summary as task_summary,
+    tt.series as series_id,
+   --st.name  as series_name,
+    --tt.episode as episode_id,
+    et.episode as ep_in_series_num,
+    et.title as ep_title,
+    --CONCAT(et.series, "x", et.episode) as series_episode_label,
+    --mt.contestant as contestant_id,
+    pt.name as contestant_name,
+    mt.points as task_points
+FROM max_task mt
+LEFT JOIN people pt
+    ON mt.contestant = pt.id
+LEFT JOIN tasks tt
+    ON mt.task = tt.id
+JOIN series st 
+    ON tt.series = st.id
+JOIN episodes et
+    ON tt.episode = et.id
+```
+
+```{r latest-tasks, fig.align = "center"}
+kable(latest_task, align = "c", caption = "What's the latest task that has been recorded, what cast was involved, what was the points distribution?") %>%
+  kable_styling(position = "center", full_width = FALSE)
+```
+
+
+Table \@ref(tab:latest-tasks) displays the query associated with the latest task that is available in `TdlM` and various information associated with this task such as the task brief, the associated series and episode, the participating contestants, and the points they were awarded for their attempts. We see that the most recently recorded task is the _"Throw a ball into the bathtub"_ live studio task from Series 16, Episode 10 (episode title was _"Always forks and marbles"_); Sam Campbell was awarded 5 points, whilst all other cast members were awarded 1 point. 
+
+</details>
+
+```{r,  out.width="40%", fig.cap = "John Robins accepts our TdlM data situation..."}
+knitr::include_graphics("https://64.media.tumblr.com/6dbd5ad93dc94f0e2d9ceae17eb2dba8/689d9bc89fc9cd15-bc/s1280x1920/3e7b78ae97de0bb5d8d8622aeabd5f510443530a.jpg")
+```
+
+# A New Data Challenger has arrived!
+
+In need of a new data source which provides contestant-task-attempt level data, the following approach was taken in securing this data . 
+
+Through a mixture of using `TdlM`, manual data entry with help of [taskmaster.info](https://taskmaster.info/), and using the existing Google Sheets of Series 19 and 20, the required data was compiled into a dedicated CoC-IV Google Sheet. 
+
+In particular, the data for each series was obtained through:
+
+- Series 16: SQL queries of `TdlM` database.
+- Series 17 and 18: Manually entered with the help of [taskmaster.info](https://taskmaster.info/)
+- Series 19 and 20: Copied records from existing Google Sheets. 
+
+**N.B. Only data associated with the champion of each series was collated. We have no information on how the rest cast performed, and whether it was a close race series.**
+
+
+:::{.insights}
+For those interested, the final compiled data for CoC-IV can be found in the ["Attempts-Tasks" tab](https://docs.google.com/spreadsheets/d/102-U8_Xcb-azD8odaZQojwJSgifgvec_hidTy4bgXsc/edit?usp=sharing) of this Google Sheets.
+
+This compiled data was used for the subsequent analysis and modelling performed in this post.
+:::
+
+<details>
+<summary>**`Player 456` ... Extracted**</summary>
+
+```{sql, connection = tm_db, echo = TRUE, output.var = "coc4_info"}
+-- Using TdlM to extract all available task-attempt information associated with champions involved in CoC-IV
+WITH coc4_people AS (
+SELECT * FROM people 
+WHERE name IN ('Sam Campbell',
+                'John Robins',
+               'Andy Zaltzman',
+                'Mathew Baynton',
+                'Maisie Adam'
+                )
+OR (series BETWEEN 16 AND 20 
+AND champion = 1)
+), 
+coc_attempts AS (
+    SELECT 
+        at.id as attempt_id,
+        at.task as task_id,
+        tt.summary as task_summary,
+        tt.series as series_id,
+        st.name  as series_name,
+        tt.episode as episode_id,
+        et.episode as ep_in_series,
+        et.title as episode_title,
+        CONCAT(et.series, "x", et.episode) as series_episode_label,
+        at.contestant as contestant_id,
+        pt.name as contestant_name,
+        at.points as task_points,
+        at.team as team_task_flag,
+        tt.tags  as task_tags
+    FROM attempts at
+    JOIN people pt
+        ON at.contestant = pt.id
+    JOIN tasks tt
+        ON at.task = tt.id
+    JOIN series st 
+        ON tt.series = st.id
+    JOIN episodes et
+        ON tt.episode = et.id
+    WHERE at.contestant IN (SELECT id FROM coc4_people)
+    )
+SELECT 
+    series_id as Series_ID,
+    ep_in_series as Episode_ID,
+    RANK() OVER (PARTITION BY ep_in_series ORDER BY task_id) as Task_ID,
+    task_summary as Task,
+    --task_tags,
+    CASE WHEN REGEXP('prize', task_tags) THEN 'Prize'
+        WHEN REGEXP('filmed|homework', task_tags) THEN 'Pre-Record'
+        WHEN REGEXP('tie-breaker', task_tags) THEN 'TieBreaker'
+        WHEN REGEXP('live', task_tags) THEN 'Live'
+    END
+    as Task_Type,
+    IIF(team_task_flag IS NULL, 'Solo', 'Team') Team_Task_Flag,
+    contestant_name as Contestant,
+    task_points as Points
+FROM
+    coc_attempts
+```
+
+```{r, echo = TRUE, eval = FALSE}
+# Exporting the TdlM extract into the CoC-IV google sheet
+g_sheet_link <- "https://docs.google.com/spreadsheets/d/102-U8_Xcb-azD8odaZQojwJSgifgvec_hidTy4bgXsc/edit?usp=sharing"
+
+write_sheet(data = coc4_info, ss = g_sheet_link, sheet = "tdlm_coc4")
+```
+
+</details>
+
+```{r, cache = FALSE}
+# Importing the new dataset
+coc4_data_link <- "https://docs.google.com/spreadsheets/d/102-U8_Xcb-azD8odaZQojwJSgifgvec_hidTy4bgXsc/edit?usp=sharing"
+
+task_attempt_df <- range_read(coc4_data_link, sheet = "Attempts-Tasks") %>%
+    filter(Task_Type != "TieBreaker") %>% #Remove these instances as no points are provided and mainly used for episode wins.
+    mutate(Series_ID = 'CoC-IV') #To Trick us into thinking this a legitimate series
+        
+colnames(task_attempt_df) <- make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(coc4_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
+# Establish the variables and environment for our analysis
+# CoC 4 environment
+coc4_var_list <- list(seed_id = 2025-12-03, 
+                 sim_max_episode_used = 11,
+                 num_sims = 1000000,
+                 num_eps_series = 12,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+                )
+
+coc4_env <- new.env()
+invisible(list2env(x = coc4_var_list, envir = coc4_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = coc4_env)
+
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = coc4_env)
+```
+
+
+```{r,  out.width="40%", fig.cap = "That's the Data Situation Sorted ... Today!"}
+knitr::include_graphics("https://64.media.tumblr.com/1f9464214ea23a0bc773c09d7157d843/aa976ecf8d4641f2-c9/s1280x1920/069cc1df10c921162312e145aca8b2d3e84b8acd.gifv")
+```
+
+
+# A Naive Approach {#a-naive-approach}
+A natural starting point in analysing and making predictions about who might win Champion of Champions IV is to look at how each of the champions performed at a series, episode and task level.
+
+For example, we may compare and formulate predictions as follow:
+
+- The **Total Series Points accumulated by each champion in their series.**
+    - **The predicted winner would be that who accumulated the most series points amongst the champions.**
+- The **average (mean or median) episode points accumulated by each champion.**
+    - **Predicted winner achieves the highest average episode points.**
+- The average (mean or median) task points accumulated.
+    - **Predicted winner achieves the highest average task points.**
+    
+Along the way, we will also consider the variability of our champions with respect to episode and task points. This provides some insight as to how volatile our prediction may be; we will have less confidence in a predicted champion who is also volatile in their performances. 
+
+For Task Based analysis, we may want to exclude team tasks and the corresponding points, such that only solo tasks are considered. This is rooted in past CoCs not featuring any team tasks, and are solely solo task focused. Restricting to solo tasks only is a true assessment of a champions performance, and will remove any influence of team performance (whether it was advantageous, or not).
+
+Similar to the median and its limited influence by extreme values, we also consider **variants of the average statistic which also are less sensitive to these extreme values**. In particular we consider the [Trimmed](https://en.wikipedia.org/wiki/Truncated_mean) and [Winsorised Average](https://en.wikipedia.org/wiki/Winsorized_mean) of Tasks Points. 
+
+- **Trimmed Average: ** Exclude observations from which lie in the tails of the distribution. The tails are where the extreme values typically lie. 
+    - For this post and analysis, we **trimmed the top and bottom 5% of task point observations** for each contestant, and then calculated their arithmetic average. 
+    - The **sample size decreases** between a trimmed  average and standard average calculation.
+- **Winsorised Average: **Any observations which lie beyond an upper and lower threshold limit, are set to  threshold limits, before the average is taken.
+    - For this post and analysis, **we limit all task point observations to lie between 0 and 5 points**. Any task point observations lying outside of this range are censored accordingly, before taking the arithmetic average.
+    - The **sample size remains the same** between winsorised average and standard average.
+
+
+```{r,  out.width="40%", fig.cap = "Let's Get Down to Some Stats Business!"}
+knitr::include_graphics("https://64.media.tumblr.com/b1e1fe888cc4e14ed31fd80f54c15e79/37baeb4a36baea62-ea/s1280x1920/8973af5a7905db5c2621d6c91ed023a7e3490618.gifv")
+```
+
+
+
+## Series and Episode Based Analysis
+
+
+```{r}
+# Ep_Ranking makes no sense in this context as it assumes all contestants come from the same series
+# And ranking based on episode id of this fictional series.
+# This is not the same as the rank the contestant achieved from the series and episode that they are associated with.
+
+episode_summary_df <- coc4_env$past_summary_df 
+
+coc_ep_df <- episode_summary_df %>%
+    mutate(Series_Points = Mean_Ep_Points * Max_Ep_ID) %>%
+    select(Contestant, Initials, Image_URL, Series_Points, Mean_Ep_Points, Std_Dev_Ep_Points, Median_Ep_Points) %>%
+    mutate(Rank_Series_Points = rank(-Series_Points, ties.method = "min"), 
+        Rank_Mean_Ep_Points = rank(-Mean_Ep_Points, ties.method = "min"),
+           Rank_Std_Dev_Ep_Points = rank(Std_Dev_Ep_Points, ties.method = "min"),
+           Rank_Median_Ep_Points = rank(-Median_Ep_Points, ties.method = "min")
+    )
+
+rcoc_ep_df <- as.data.frame(coc_ep_df)
+```
+
+```{r coc4-ep-stats, fig.cap = "Episode Level Analysis", cache = FALSE}
+name_image_func <- function(data, value, index, img_width = "30%") {
+    img_url <- data[index, "Image_URL"]
+    image <- img(src = img_url,
+                 style = glue("width: {iw};", iw = img_width),
+                 alt = "Contestant.Image")
+    tagList(div(style = list(fontWeight = 1000), value),
+            div(style = "display: inline-block; width: 98%;", image))
+    
+}
+
+rank_1_highlight_func <- function(data,
+                                  col_name,
+                                  value,
+                                  index,
+                                  true_col = "#D6AF36",
+                                  false_col = "white") {
+    rank_value <- data[index, paste("Rank_", col_name, sep = "")]
+    fill_colour <- ifelse(rank_value == 1, true_col, false_col)
+    list(background = fill_colour)
+}
+
+reactable(rcoc_ep_df, height = 0.1, width = 0.1, fullWidth = FALSE)
+
+
+reactable(
+    data = rcoc_ep_df,
+    columns = list(
+        `Contestant` = reactable::colDef(
+            cell = function(value, index) {
+                name_image_func(data = rcoc_ep_df,
+                                value = value,
+                                index = index)
+            },
+            minWidth = 175
+        ),
+        `Initials` = colDef(show = FALSE),
+        `Image_URL` = colDef(show = FALSE),
+        
+        Series_Points  = colDef(
+            name = "Total Series Points",
+            minWidth = 150,
+            format = colFormat(digits = 0),
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc_ep_df, col_name = "Series_Points", value, index)
+            }
+        ),
+        Rank_Series_Points  = colDef(show = FALSE),
+
+        Mean_Ep_Points  = colDef(
+            name = "Episode Points Average",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc_ep_df, col_name = "Mean_Ep_Points", value, index)
+            }
+        ),
+        Rank_Mean_Ep_Points   = colDef(show = FALSE),
+
+        Std_Dev_Ep_Points  = colDef(
+            name = "Episode Points Variability",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc_ep_df, col_name = "Std_Dev_Ep_Points", value, index)
+            }
+        ),
+        Rank_Std_Dev_Ep_Points    = colDef(show = FALSE),        
+        
+        Median_Ep_Points  = colDef(
+            name = "Episode Points Median",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc_ep_df, col_name = "Median_Ep_Points", value, index)
+            }
+        ),
+        Rank_Median_Ep_Points     = colDef(show = FALSE)            
+    ),
+    defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 2),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE
+    #width = "100%"
+)
+```
+
+:::{.insights}
+From **Series and Episode Level Statistics** alone (Table \@ref(fig:coc4-ep-stats)), **John Robins (the Series 17 Champion), is our prediction of who will be crowned the champion of CoC-IV.**
+
+This can be seen from:
+    
+- Having accumulating the **highest number of series points** amongst out the champions (192 points). 
+- Having the **highest episode points average** (both arithmetic mean and median, 19.20 and 18.00 respectively).
+    - The median, which is included in case there are outliers and extreme values which would influence the arithmetic mean, shows that John doesn't have a single high performing episode which is inflating John's Total Series Points and Episode Points Average.
+
+
+**John also has the lowest episode points variability**, thus indicating that he is the most consistent in his average episode performance across the series, amongst the champions. 
+
+```{r,  out.width="40%", fig.cap = "A Potential Premonition of What the Potential CoC-IV outcome..."}
+knitr::include_graphics("https://64.media.tumblr.com/6613aa903eb8a40a57f3da511bcc220b/ac2f0912ecb572ff-f2/s1280x1920/44871d9332a36ee1f5248ab15f1a718362387f14.gifv")
+```
+
+
+**Who will end up at the bottom of scoreboard differs **based on which statistic we use:
+    
+- **Maisie Adam (Series 20) accumulated the lowest total series points and also has the lowest episode points average**, so would place 5th under these statistics.
+    - Maisie achieved 151 series points, and an average of 15.10 points per episode.
+- If using the **Episode Points Median** (less sensitive to outliers and extreme values), **Matthew Baynton (Series 19) or Sam Campbell (Series 16)** would satisfy this 5th place position.
+    - They both have Episode Points Median of 15.50
+
+**Sam also has the largest episode points variability, indicating he is a volatile contestant at a episode performance level.** This is not the biggest surprise based on what I can remember from Sam's performance, and erratic  behaviour on other entertainment outlets ([Off Menu Podcast Episode](https://open.spotify.com/episode/4gRYm2T3yeC6ubBiWSbWCo?si=5638ff009f7b422c), [Richard Osman's House of Games](https://youtu.be/5XMuH0on9VI?si=nQ2nWIoJy-4vScSN), [Lucy & Sam's Perfect Brains Podcast](https://open.spotify.com/show/0FpTF8CQ4ssEKyAkbhF9Lz?si=849b807eeae4420e)). 
+
+:::
+
+```{r,  out.width="20%", fig.cap = "Thinking Caps On!"}
+knitr::include_graphics("https://64.media.tumblr.com/be944219bfc24e1f2936b159ca39c793/0ce01c566cc0f0dd-09/s1280x1920/6b7baf26ef3ed61df8828d676822463a51763b15.gifv")
+```
+
+## Task Based Analysis
+```{r}
+adj_task_attempt_df <- coc4_env$adj_task_attempt_df
+
+trim_prop <- 0.05 #Trimming proportion on either end.
+winsor_limits <- c(0, 5) #Winsorised limits  
+
+all_task_df <- adj_task_attempt_df %>%
+    group_by(Series_ID, Contestant) %>%
+    reframe(
+        Mean_Task_Points = mean(Points),
+        StdDev_Task_Points = sd(Points),
+        Median_Task_Points = median(Points),
+        Trim_Mean_Task_Points = mean(Points, trim = trim_prop), 
+        Winsor_Mean_Task_Points = mean(pmax(pmin(Points, winsor_limits[2]), winsor_limits[1]))
+        ) %>%
+    mutate(
+        Inclusion_Label= "A: All Tasks"
+    )
+
+solo_task_df <- adj_task_attempt_df %>%
+    filter(Team_Task_Flag == "Solo") %>%
+    group_by(Series_ID, Contestant) %>%
+    reframe(
+        Mean_Task_Points = mean(Points),
+        StdDev_Task_Points = sd(Points),
+        Median_Task_Points = median(Points),
+        Trim_Mean_Task_Points = mean(Points, trim = trim_prop), 
+        Winsor_Mean_Task_Points = mean(pmax(pmin(Points, winsor_limits[2]), winsor_limits[1]))
+        ) %>%
+    mutate(
+        Inclusion_Label= "B: Solo Tasks"
+    )
+
+
+coc4_tasks_df <- bind_rows(all_task_df, solo_task_df) %>%
+    group_by(Series_ID, Inclusion_Label) %>%
+    mutate(
+        Rank_Mean_Task_Points = rank(-Mean_Task_Points, ties.method = "min"),
+        Rank_StdDev_Task_Points = rank(StdDev_Task_Points, ties.method = "min"),
+        Rank_Median_Task_Points = rank(-Median_Task_Points, ties.method = "min"),
+        Rank_Trim_Mean_Task_Points = rank(-Trim_Mean_Task_Points, ties.method = "min"),
+Rank_Winsor_Mean_Task_Points = rank(-Winsor_Mean_Task_Points , ties.method = "min")
+        ) %>%
+    left_join(contestants_df[, c("Contestant_Name", "Initials", "Image_URL")], by = join_by(Contestant == Contestant_Name)) %>% 
+    ungroup() %>%
+    select(Inclusion_Label, Series_ID, Contestant, Initials, Image_URL,
+           Mean_Task_Points, Rank_Mean_Task_Points,
+           StdDev_Task_Points, Rank_StdDev_Task_Points,
+           Median_Task_Points, Rank_Median_Task_Points,
+           Trim_Mean_Task_Points, Rank_Trim_Mean_Task_Points,
+           Winsor_Mean_Task_Points, Rank_Winsor_Mean_Task_Points)
+```
+
+```{r coc4-task-stats, fig.cap = "Task Based Analysis", cache = FALSE}
+rcoc4_tasks_df <- as.data.frame(coc4_tasks_df)
+
+reactable(rcoc4_tasks_df, height = 0.1, width = 0.1, fullWidth = FALSE)
+
+filter_dropdown <- function(values, name) {
+  # 'values' contains the unique values in the column
+  # 'name' is the column ID
+  options <- unique(values)
+  options <- c("", options) # Add an empty option for "clear filter"
+
+  htmltools::tags$select(
+    onchange = glue::glue(
+      "Reactable.setFilter('coc4-tasks-table', '{name}', event.target.value)"
+    ),
+    lapply(options, function(option) {
+      htmltools::tags$option(value = option, option)
+    })
+  )
+}
+
+
+    
+reactable(rcoc4_tasks_df,
+      elementId = "coc4-tasks-table",
+      columns = list(
+                     "Inclusion_Label" = colDef(show = TRUE,
+                                      name = "Task Inclusion",
+                                      minWidth = 200,
+                                      filterable = TRUE,
+                                 filterInput = filter_dropdown
+                                 ),
+           "Series_ID" = colDef(show = FALSE),
+           "Contestant" = colDef(show = TRUE,
+                                 cell = function(value, index) {
+                name_image_func(data = rcoc4_tasks_df,
+                                value = value,
+                                index = index,
+                                )
+            },
+            minWidth = 175,
+            filterable = TRUE,
+            filterInput = filter_dropdown
+            ),
+           "Initials" = colDef(show = FALSE),
+           "Image_URL" = colDef(show = FALSE),
+
+           "Mean_Task_Points" = colDef(show = TRUE,
+                                       name = "Task Points Average",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc4_tasks_df, col_name = "Mean_Task_Points", value, index)
+            }
+            ),
+           "Rank_Mean_Task_Points" = colDef(show = FALSE),
+           
+           "StdDev_Task_Points" = colDef(show = TRUE,
+                                         name = "Task Points Variability",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc4_tasks_df, col_name = "StdDev_Task_Points", value, index)
+            }),
+           "Rank_StdDev_Task_Points" = colDef(show = FALSE),
+           
+           "Median_Task_Points" = colDef(show = TRUE,
+                                         name = "Task Points Median",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc4_tasks_df, col_name = "Median_Task_Points", value, index)
+            }),
+           "Rank_Median_Task_Points" = colDef(show = FALSE),
+           
+           "Trim_Mean_Task_Points" = colDef(show = TRUE,
+                                            name = "Task Points Trimmed Average",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc4_tasks_df, col_name = "Trim_Mean_Task_Points", value, index)
+            }),
+           "Rank_Trim_Mean_Task_Points" = colDef(show = FALSE),
+           
+           "Winsor_Mean_Task_Points" = colDef(show = TRUE,
+                                              name = "Task Points Winsorised Average",
+            minWidth = 150,
+            style = function(value, index) {
+                rank_1_highlight_func(data = rcoc4_tasks_df, col_name = "Winsor_Mean_Task_Points", value, index)
+            }),
+           "Rank_Winsor_Mean_Task_Points" = colDef(show = FALSE)
+      ),
+    defaultSortOrder = "asc",
+    groupBy = "Inclusion_Label",
+    defaultExpanded = TRUE,
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 2),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+    ),
+    sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    height = 600,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE,
+    resizable = TRUE  
+)     
+```
+
+:::{.insights}
+If considering **Task Based Performance** (Figure \@ref(fig:coc4-task-stats)) for our prediction, **John Robins being crowned champion a second time is a relatively safe bet:**
+
+- **John achieved the highest Task Point Average, both across all tasks, and when restricting to solo tasks only.**
+- He also achieved the **highest Task Points Median (tied with 2 other champions), Trimmed Average and Winsorised Average,** under both task inclusion analysis scenarios. 
+    - This suggests that John's average is not heavily influenced by the presence of one or two extreme values. John is a pretty consistent performer.
+- **John also exhibits the least about of task points variability**, which again supports this insight that John is an incredibly consistent performer at both the episode and task level.
+
+```{r,  out.width="40%", fig.cap = "Warming up for That Second Championship Title"}
+knitr::include_graphics("https://64.media.tumblr.com/790dc3b1d63c3b1c29a0070c78945c06/ac2f0912ecb572ff-94/s1280x1920/7913498539fd18b04b45e06f670058248260a16a.gifv")
+```
+
+- **Andy Zaltzman (S18) and Mathew Baynton (S19) were the other two champions that John tied with when ranking according to the highest Task Points Median.** This is both when considering all tasks, and only solo tasks.
+    - After John, **Mathew is the second least volatile task performer**, and the **second ranked champion for the other "average" statistics considered.** 
+        - It is a relatively safe prediction that **Mathew will come 2nd in CoC-IV.** 
+    - Whilst **Andy shares the same median with John and Mathew, he typically places 3rd or 4th when considering the arithmetic average based statistics. **
+        - **Andy is considered the 2nd most volatile contestant in terms of task performance** and as measured by standard deviation. If we reduce the influence of potential extreme values (which clearly some do exist), and consider a trimmed or winsorised average, Andy performs better, typically tying 3rd with Sam.
+        
+```{r,  out.width="40%", fig.cap = "Mathew standing to attention for his 2nd place position...along with some Series 19 friends!"}
+knitr::include_graphics("https://64.media.tumblr.com/007e928cb9029f5f2a5607f1980b02b5/7d6f9075b460ba92-7b/s1280x1920/36c6443f2cf9cda21277808c27cca27175280700.gifv")
+```
+    
+- **Whilst Sam is considered the most variable at an episode level, Maisie takes this title at the task level.**
+    - **Maisie also  ranks bottom for all tasks points averages and median**, both when considering all tasks, and restricting just to solo tasks. Based on this information, **it would make sense to predict that Maisie will place 5th in CoC-IV based on task performance.*
+    
+```{r,  out.width="40%", fig.cap = "Getting All Defensive as the Wenches on the Benches!"}
+knitr::include_graphics("https://64.media.tumblr.com/170e59cfe3ca64dd126ebe3854515d78/32f66ec04adc5e9d-ba/s1280x1920/2c852f53512adb5846914441ce3dffe2e2b473e3.gifv")
+```
+    
+:::
+
+```{r, cache = FALSE}
+series_info <- range_read(coc4_data_link, sheet = "Series_Overview")
+rseries_info <- as.data.frame(series_info)
+```
+
+
+## It's Not Fair
+That's it, we've got a set of predictions based on using series, episode and task based performance statistics.
+Job done...stop the clock!
+
+```{r,  out.width="40%", fig.cap = "The Doctor Has Spoken!"}
+knitr::include_graphics("https://64.media.tumblr.com/5796d4a8ab050d15f9aac8812df87e70/5577e48f768dd303-eb/s1280x1920/62682915fc22dfcfc1056a9800fae32f61c68a52.gifv")
+```
+
+
+One potential drawback of comparing series champions in this way is that it does not account for the natural variations that occur between series, and/or any particular gimmicks that are specific to a particular series. 
+
+For example:
+ 
+- **Differences in the mix of solo and team tasks.**
+    - From Table \@ref(fig:coc4-series-info), we see that Series 17 and 19 had the most team tasks, whilst Series 16 had the least.
+- **The varying occurrence of _"winner takes all"_ tasks between series which can naturally deflate points.**
+    - Series 18 seemed to have an abundant number of _"winner takes all"_ tasks which I was not a particular fan of.
+    - From Table \@ref(fig:coc4-series-info), Series 18 has lowest number of total points awarded across the Series (that is the all points awarded by Greg for each contestant's task attempt). This low number of total points awarded could be due to the abundance of _"winner takes all"_ tasks throughout the series. 
+- **Series 18 saw a joker mechanism in which contestant could double their points for the proceeding task**, if they donned a hotdog costume. The costume was worn before the task was opened. Such a mechanism, has the potential to inflate the number of points awarded across the series. 
+    - This turned out to be inconsequential for the eventual champion of Series 18, Andy Zaltzman. Andy wore the hotdog joker costume in the final live studio task which was a _"winner takes all"_ task. Andy did not win this live task, was awarded 0 points and thus his hotdog wearing endeavours were fruitless.[^hotdog]
+    - Interestingly from Table \@ref(fig:coc4-series-info), Series 18 had exactly the median number of total points awarded. This is somewhat surprising (in my opinion), as in an optimal 5 points award setting which requires contestant to foresee that they will excel in the proceeding task, this would have inflated points to 10 being awarded. I guess the cast weren't being optimal and can't all make perfect predictions ... see Andy Zaltzman's usage.
+    - This suboptimal usage, combined with the abundant number of _"winner takes all"_ tasks could have balanced out and resulted in the median series points being awarded.
+- **In some series, Greg can be particularly generous with bonus points, or particularly vindictive with disqualification and penalty points.** In particular, from Table \@ref(fig:coc4-series-info) we can see that:
+    - Series 16 had the lowest number of total points awarded by Greg. Could this be because Greg was stricter in this series? This is is somewhat supported by the largest number of disqualifications seen in the 5 series.     - Series 17 saw Greg being the most generous with his points distribution? Had Greg softened up, as a response of the harsh critiques provided from Series 16. Were more bonus points available, compared to other series.
+    - Series 18 saw the least number of task attempt disqualifications. This could be because there were less tasks which had a disqualification clause (and thus less likely to occur), and/or the Series 18 cast were more competent and thus less likely to be disqualified.
+ 
+[^hotdog]: It is not entirely clear whether Andy purposefully didn't wear the hotdog costume until the very last task, whether he simply forgot that this joker mechanism was still available to play, or he was unsure of when to optimally wear the costume. If my memory serves me well, he was (humorously) angry that the live studio task was a _"winner takes all"_ task and thus his postponing strategy was going to lead to an 80% chance of being pointless (in both senses of the word). I also remember him mentioning on the associated Taskmaster podcast episode that he thought it would be most humorous to only play the joker until the very end.  This information all seems to suggest that he deliberately played the joker on the last task, and that it unfortunately did not result in anything. Despite this, he still won his series!
+
+
+```{r,  out.width="40%", fig.cap = "A Child of Divorce ... from This Method and Analysis?"}
+knitr::include_graphics("https://64.media.tumblr.com/d6977185d8d129c939e51e94aa4817ce/5577e48f768dd303-72/s1280x1920/cb323e5d0a0521419cbdef762710f2ea4013d846.gifv")
+```
+
+
+
+Whilst we have a clear insight and a viable prediction as to who could potentially place 1st, 2nd, 3rd etc. , we have no notion of the uncertainty associated with this ranking combination, or any others. The world is an inherently uncertain place, so it would be useful to quantify this where possible. Quantifying his uncertainty is particularly useful if we wanted to hedge our bets of potential outcomes and their likelihood. Capturing the variability of contestants performance (and uncertainty) through the standard deviation is one way to capture some of this uncertainty, but it is more implicit and does not give a particularly clear indication of how this group of champions will interact with each other.
+
+```{r coc4-series-info, fig.cap = "That's hardly fair! High level series comparisons for those involved in CoC-IV", cache = FALSE}
+
+reactable(rseries_info,
+          height = 0.1,
+          width = 0.1
+)
+
+reactable(rseries_info,
+          columns = list(
+              Series = colDef(show = TRUE,
+                              cell = function(value, index) {
+                name_image_func(data = rseries_info,
+                                value = value,
+                                index = index,
+                                img_width = "95%")
+            }),
+              Tasks_Assigned = colDef(show = TRUE, 
+                                      name = 'Number of Tasks Performed Across Series'
+                                      ),
+            Num_Solo_Tasks = colDef(name = "Number of Solo Tasks",
+                                    show = TRUE,
+                                    width = 150),
+            Num_Team_Tasks = colDef(name = "Number of Team Tasks",
+                                    show = TRUE,
+                                    width = 150),
+              Points_Awarded = colDef(show = TRUE,
+                                    name = 'Number of Points Awarded Across Series'),
+              Disquals = colDef(show = TRUE, 
+                                name = 'Number of Disqualifications Across Series'),
+              Image_URL = colDef(show = FALSE),
+              Source = colDef(show = TRUE,
+                              name = 'Data Source',
+                              html = TRUE, 
+                              cell = function(value, index) {
+                                  series_label <- rseries_info[index,]$Series
+                                  url_value <- value
+      sprintf('<a href="%s" target="_blank">%s</a>',
+              url_value,
+              glue('Series {sid} Data Source', sid = series_label)
+      )
+    }
+              )                         
+              ),
+
+              defaultSortOrder = "asc",
+    #groupBy = "Inclusion_Label",
+    #defaultExpanded = TRUE,
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        minWidth = 200
+    ),          
+          
+           sortable = TRUE,
+    bordered = TRUE,
+    height = 500,
+    highlight = TRUE,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = TRUE
+    #width = "100%"      
+          )
+```
+
+```{r,  out.width="40%", fig.cap = "Time to Get Down to Business; It'll Shake You to Your Core!"}
+knitr::include_graphics("https://64.media.tumblr.com/9d9912b0da236756650b53fb862e40b5/d15b3b7e5504a66b-9f/s1280x1920/b8bcab1e010cde1db1b935fbb87c72b9530603f9.gifv")
+```
+
+
+# A Return to The Multiverse
+If we do want to quantify the uncertainty associated with how each contestant will rank in CoC-IV, we return back to our Multiverse Timeline Approach. We consider the rank distributions (marginal and joint), using all tasks, and solo tasks only. 
+
+For the sake brevity, and the fact that CoCs are focused on a single champion and not teams, we will focus our conclusions and analysis which only consider solo task performance (that is Figure \@ref(fig:coc4-solo)). There are some minor differences in the distributions on whether all or solo tasks are included, but the overall shape, directions, and main conclusions remain largely the same.
+
+
+Figure \@ref(fig:coc4) and \@ref(fig:coc4-solo) show these distributions using 1,000,000 simulations; an increase from the 100,000 simulations of prior Series 20 posts. This increase is due to only one episode needing to be simulated for this CoC special, rather than many for a typical series. 
+
+
+```{r,  out.width="40%", fig.cap = "A Walk into the Multiverse and the Alternative Timelines."}
+knitr::include_graphics("https://64.media.tumblr.com/6700d114daf332ff492a85e97e95b3da/1ab792b139a1c5da-86/s1280x1920/14f09eaac29ec4f4dbb6fbd89fef700bdc01efa4.gifv")
+```
+
+
+
+:::{.insights}
+
+- **John Robins is the most likely to be crowned the champion of CoC-IV with a 40% chance of this occurring.**
+
+From the marginal distributions (left hand plot of Figure \@ref(fig:coc4-solo), **each contestants most probable placement** is:
+
+- __Andy Zaltzman: 5th with 26.85% probability.__
+- **John Robins: 1st with 40.17% likelihood.**
+- __Maisie Adam: 4th with 23.92% chance.__
+- **Mathew Baynton: 1st with 24.77% probability.**
+- __Sam Campbell: 1st with 21.64% chance.__ 
+
+
+```{r,  out.width="40%", fig.cap = "Get Out of the Way Greg! I'm here to win CoC fest!"}
+knitr::include_graphics("https://64.media.tumblr.com/6613aa903eb8a40a57f3da511bcc220b/ac2f0912ecb572ff-f2/s1280x1920/44871d9332a36ee1f5248ab15f1a718362387f14.gifv")
+```
+
+
+Many of these marginal distributions are incredibly flat and could plausibly pass as Uniform distributions; that is 20% probability of placing in each position. Sam Campbell has a distribution which could most plausibly pass as a Uniform distribution. 
+
+John's distribution however, does **not** pass for a Uniform distribution and is very clearly skewed towards the higher ranks, and 1st place in particular. Based on John's strong and least volatile performance from the statistics presented in the [Naive Approach Section](#a-naive-approach), it makes sense that this distribution is skewed towards the higher ranks.
+
+Using the most probable ranking from the marginal distribution may provide a misleading prediction at a cast level. For example, based on predictions from the separate marginal distributions for each contestant, we end up with John, Mathew and Sam all in the 1st place, and thus potentially in another ménage-a-trois situation. Is this really the most likelihood **cast** situation?
+
+Recall that a contestant's marginal distribution does not explicitly consider the placement of the other contestants (we have "summed" over all their potential placements). To explicitly consider the placement of all contestants simultaneously, a joint distribution needs to be considered. 
+
+```{r,  out.width="40%", fig.cap = "Noooo!!! My Precious Greg Head!"}
+knitr::include_graphics("https://64.media.tumblr.com/2ba0238c30047faa55920b61f05220c5/0843449bb6a53e21-e8/s1280x1920/9c746bee8b09ad1f67dfe21e34c92c8903aaf1e9.gifv")
+```
+
+From our the joint distribution over the entire casts potential ranking (right hand plot of Figure \@ref(fig:coc4-solo), the **most probable cast ranking and our cast ranking prediction is `[1st: JR, 2nd: MB, 3rd: SC, 4th: MA, 5th: AZ]`, with an estimated probability of 1.39% of occurring.**
+
+This probability doesn't instil the greatest amount of confidence in the final outcome; I would be an extremely hesitant person if I was to place a bet according to this outcome.
+
+Despite this low estimated probability, it does contain more nuance and shape than a uniform joint distribution in which all potential rank combination would have a `r percent(1/5^5, accuracy = 0.01)` likelihood of occurring (a flat joint distribution).
+
+Recalling that the most probable rank from each contestants individual marginal distribution is `[AZ: 5th, JR: 1st, MA: 4th, MB: 1st, SC: 1st]`. The estimated joint probability of this ranking combination occurring is 0.13%; an even lower amount of confidence than the most probable cast ranking from the joint distribution. This ranking is not even in the Top 20 most probable cast rankings from the joint distribution. This estimated probability is still more probable that if a Uniform distribution was to be assumed.
+
+```{r,  out.width="40%", fig.cap = "The Estimated Joint Probability Isn't <i>THAT</i> bad!"}
+knitr::include_graphics("https://64.media.tumblr.com/b18c2645f633807b6955c5506d61a39e/cdb0e0a112d0cf91-73/s1280x1920/34912f8070a249c6764a0db72035be1f0af8594f.gifv")
+```
+
+Andy Zaltzman's most probable placement being 5th place in both his own marginal distribution, and in the joint distribution, is some what surprising given that the episode and task based statistics presented in the [Naive Approach Section](#a-naive-approach) were reasonably promisin; I would have predicted that he would most likely between 2nd to 4th. Zaltzman fans[^AZ] would no doubt be disappointed from this prediction...
+
+
+```{r,  out.width="40%", fig.cap = "Is Andy Zaltzman <i>A</i> 5th Place Prick, or <i>THE</i> 5th Place Prick?"}
+knitr::include_graphics("https://64.media.tumblr.com/d6d8444564314d0b53d73fee64776cd3/0843449bb6a53e21-c5/s1280x1920/6532d0d6fb91c1caff7977e87f053923f26a0978.gifv")
+```
+
+[^AZ]: Perhaps Zaltz-fans or Zaltz-stans?
+:::
+
+```{r, cache = TRUE}
+coc4_solo_var_list <- coc4_var_list
+
+solo_only_attempts_df <- task_attempt_df %>% filter(Team_Task_Flag == "Solo")
+
+coc4_solo_var_list[["task_attempt_df"]] <- solo_only_attempts_df
+    
+coc4_solo_env <- new.env()
+invisible(list2env(x = coc4_solo_var_list, envir = coc4_solo_env))
+
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = coc4_solo_env)
+
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = coc4_solo_env)
+
+```
+
+```{r coc4-solo-ep-rankings, out.width = "80%", fig.show="hold", cache = FALSE}
+graph_title_label <- glue("Probability Distribution For Episode Ranking for Series {series_id}", series_id = coc4_solo_env$series_id)
+
+subtitle_label <- glue("Distribution Estimated with {num_sims} Simulations.", max_ep = coc4_solo_env$sim_max_episode_used, num_sims = scales::number(coc4_solo_env$num_sims), seed_id = coc4_solo_env$seed_id, remain_eps = coc4_solo_env$remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}. Only Solo Tasks Used.", seed_id = coc4_solo_env$seed_id)
+
+margin_coc4_solo_plt <-ggplot(coc4_solo_env$prop_ep_win_df, 
+       aes(y = Prop_Count, x= Ep_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8), colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+```{r}
+joint_cast_rank_coc4_solo <- coc4_solo_env$episode_sample_summary_df %>%
+    left_join(contestants_df[,c("Contestant_Name", "Initials")], by = join_by(Contestant == Contestant_Name)) %>%
+    unite(Init_Rank, Initials, Ep_Rank, sep = ": ", remove = FALSE) %>%
+    group_by(Series_ID, Universe_ID) %>%
+    reframe(Cast_Rank = paste(Init_Rank, collapse= ", ")) %>%
+    group_by(Series_ID, Cast_Rank) %>%
+    reframe(Num_Count = n_distinct(Universe_ID)
+        ) %>% group_by(Series_ID) %>%
+    mutate(Num_Sims = sum(Num_Count),
+           Prop_Count = Num_Count/Num_Sims
+    ) %>%
+        ungroup() %>%
+    mutate(
+        Prob_Rank = rank(-Prop_Count),
+        MAP_Flag = (Prop_Count == max(Prop_Count)),
+        text = ifelse(MAP_Flag, paste0("Current Prediction (", scales::percent(Prop_Count, accuracy = 0.01), ")"),"")
+    ) %>%
+    arrange(-Prop_Count)
+```
+
+```{r, cache = FALSE}
+initials_vec <- c("AZ", "JR", "MA", "MB", "SC")
+prev_ep_joint_pred <- c(5,1,4,1,1)
+
+full_prev_ep_pred <- paste(paste(initials_vec, prev_ep_joint_pred, sep = ": "), collapse= ", ")
+```
+
+
+```{r}
+top_casts <- 20 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Series Rankings for Series {series_id}", series_id = coc4_solo_env$series_id)
+
+subtitle_label <- glue("Distribution Estimated with {num_sims} Simulations.", max_ep = coc4_solo_env$sim_max_episode_used, num_sims = scales::number(coc4_solo_env$num_sims), seed_id = coc4_solo_env$seed_id, remain_eps = coc4_solo_env$remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}. Only Solo Tasks Used.", n_cast = top_casts, seed_id = coc4_solo_env$seed_id)
+
+joint_coc4_solo_plt <- joint_cast_rank_coc4_solo %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag | (Cast_Rank %in% full_prev_ep_pred)) %>%
+    mutate(text = ifelse(Cast_Rank %in% full_prev_ep_pred, paste("Marginal Prediction ", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
+ggplot(aes(x = forcats::fct_reorder(Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0, colour = MAP_Flag), family = "elite", nudge_y = 0.001, show.legend = FALSE) +
+        scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.05), n.breaks = 5) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+```
+
+```{r coc4-solo, fig.cap = "CoC-IV Ranking Prediction Distributions Using <b>All Solo Champion Tasks</b> from their Respective Season. <br> Left: <i>Margina</i>l Ranking Distributions for each Series Champion. <br> Right: <i>Joint</i> Ranking Distribution for all Champions participating in CoC-IV.", out.width="48%", fig.show = "hold", cache = FALSE}
+margin_coc4_solo_plt
+joint_coc4_solo_plt
+```
+
+```{r coc4-ep-rankings, out.width = "80%", fig.show="hold", cache = FALSE}
+graph_title_label <- glue("Contestant Ranking Distribution for {series_id}", series_id = coc4_env$series_id)
+
+subtitle_label <- glue("Distribution Estimated with {num_sims} Simulations.", max_ep = coc4_env$sim_max_episode_used, num_sims = scales::number(coc4_env$num_sims), seed_id = coc4_env$seed_id, remain_eps = coc4_env$remain_num_eps)
+
+caption_label <- glue("Simulation Seed: {seed_id}. All Tasks Used (Solo and Team).", seed_id = coc4_env$seed_id)
+
+margin_coc4_plt <- ggplot(coc4_env$prop_ep_win_df, 
+       aes(y = Prop_Count, x= Ep_Rank, image = Image_URL, label = scales::percent(Prop_Count, accuracy = 0.01))) +
+    geom_bar(stat = "identity", fill = "#FFFFC2") + 
+    facet_grid(Initials~., switch = "both") +
+    geom_image(size=1, x= 0, y = 0.5, by = "height") +
+    geom_text(stat = "identity", aes(y = pmin(Prop_Count+0.05, 0.8), colour = MAP_Flag), size = 7, family = "elite", show.legend = FALSE
+              ) +
+    scale_color_manual(values=c("black", "darkgreen")) + 
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    xlab("Within Episode Ranking") +
+    ylab("Probability") +
+    labs(caption = caption_label) + 
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+    scale_x_continuous(labels = c("", "1st", "2nd", "3rd", "4th", "5th")) +
+    coord_cartesian(xlim = c(0, 5))
+```
+
+```{r}
+joint_cast_rank_coc4 <- coc4_env$episode_sample_summary_df %>%
+    left_join(contestants_df[,c("Contestant_Name", "Initials")], by = join_by(Contestant == Contestant_Name)) %>%
+    unite(Init_Rank, Initials, Ep_Rank, sep = ": ", remove = FALSE) %>%
+    group_by(Series_ID, Universe_ID) %>%
+    reframe(Cast_Rank = paste(Init_Rank, collapse= ", ")) %>%
+    group_by(Series_ID, Cast_Rank) %>%
+    reframe(Num_Count = n_distinct(Universe_ID)
+        ) %>% group_by(Series_ID) %>%
+    mutate(Num_Sims = sum(Num_Count),
+           Prop_Count = Num_Count/Num_Sims
+    ) %>%
+        ungroup() %>%
+    mutate(
+        Prob_Rank = rank(-Prop_Count),
+        MAP_Flag = (Prop_Count == max(Prop_Count)),
+        text = ifelse(MAP_Flag, paste0("Current Prediction (", scales::percent(Prop_Count, accuracy = 0.01), ")"),"")
+    ) %>%
+    arrange(-Prop_Count)
+```
+
+```{r}
+top_casts <- 20 
+
+
+graph_title_label <- glue("Joint Distribution of Cast Rankings for {series_id}", series_id = coc4_env$series_id)
+
+subtitle_label <- glue("Distribution Estimated with {num_sims} Simulations.", max_ep = coc4_env$sim_max_episode_used, num_sims = scales::number(coc4_env$num_sims), seed_id = coc4_env$seed_id, remain_eps = coc4_env$remain_num_eps)
+
+caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}. All Tasks Used (Solo and Team).", n_cast = top_casts, seed_id = coc4_env$seed_id)
+
+joint_coc4_plt <- joint_cast_rank_coc4 %>% 
+    filter((Prob_Rank <= top_casts) | MAP_Flag) %>%
+ggplot(aes(x = forcats::fct_reorder(Cast_Rank, Prop_Count), y= Prop_Count)) +
+    geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
+    #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
+    geom_text(aes(label = text, hjust = 0, colour = MAP_Flag), family = "elite", nudge_y = 0.001, show.legend = FALSE) +
+        scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) +
+    quack_theme() +
+    ggtitle(label = graph_title_label, subtitle = subtitle_label) +
+    labs(caption = caption_label) +
+    scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.05), n.breaks = 5) +
+    ylab("Probability") +
+    xlab("Full Cast Ranking") +
+    coord_flip()
+```
+```{r coc4, fig.cap = "CoC-IV Ranking Prediction Distributions Using <b>All (Solo and Team)</b> Champion Tasks from their Respective Season. <br> Left: <i>Marginal</i> Ranking Distributions for each Series Champion. <br> Right: <i>Joint</i> Ranking Distribution for all Champions participating in CoC-IV.", out.width="49%", fig.show = "hold", cache = FALSE}
+margin_coc4_plt
+joint_coc4_plt
+
+```
+
+```{r,  out.width="40%", fig.cap = "Maisie Commenting on John Robbins Predicted performance in CoC-IV ... and also the Lack of Polish in this Blog Post...."}
+knitr::include_graphics("https://64.media.tumblr.com/96a56fac4be8e3ee7d74d5129e32b8da/8aebeeffab0c2693-85/s1280x1920/80b3f8cd5e29a642f90fbc6a56a3b276593b07a6.gifv")
+```
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- **John Robins is the favourite to win Champion of Champions IV. We estimate that he has a 40% chance of winning.**
+    - This probability  is estimated from the Multiverse Timeline approach, simulating timelines based on solo tasks from each champions series task performance.
+    - If John does win CoC-IV, he'll join Josh Widdicombe (S1), Richard Herring (S10) and Dara Ó Briain (S14) for Champion of Champion of Champions. It'll be quite the sausage-fest if this does occur...
+    
+```{r,  out.width="25%", fig.cap = "A Peek into the Future"}
+knitr::include_graphics("https://64.media.tumblr.com/42948b47408552eb0fadcc1493bda297/9f57988086cc24ff-20/s1280x1920/fcf7d3cbd24c101dcf21dfe4fe13cb341ff81325.gifv")
+```
+
+
+- The **most likely cast ranking is `[1st: John, 2nd: Mathew, 3rd: Sam, 4th: Maisie, 5th: Andy]`.** This has a **1.39% chance of occurring**, which does not distil the greatest amount of confidence if we were betting according to this.     
+    - There are many other cast rankings which have a similar chance (1%) of occurring which have variations along the following dimensions:
+        - John placing 1st or 2nd (top of the leaderboard).
+        - The remaining contestants placing between 2nd to 5th. 
+- Making individual craft Christmas presents which are customised to the recipient, can delay Median Duck progress quite a lot![^forte]
+
+[^forte]: It also turns out that pottery may not be my forte. I'll be sure to post photos of these creations once they are completed and distributed.
+
+```{r,  out.width="40%", fig.cap = "Maisie Commenting on the Sausage Fest that is Coc-IV and what Champion of Champion of Champions is potentially going to turn out to be..."}
+knitr::include_graphics("https://64.media.tumblr.com/e196d07395ebe49109b18ad137f37600/32f66ec04adc5e9d-4a/s1280x1920/5285dcad4cc8ee06cc9cb65db00ea6d3cca133b5.gifv")
+```
+
+
+:::
