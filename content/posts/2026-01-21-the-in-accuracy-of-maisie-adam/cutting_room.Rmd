@@ -1,0 +1,89 @@
+---
+title: "cutting_room"
+output: html_document
+---
+
+
+
+## The Weighting (and Standardisation) Game with Errors
+The errors we have considered so far have a scale and dimension associated with them (in this case task points, or number of tasks). If we were to 
+
+If we were to compare the prediction accuracy and error made by different models[^models] or contestants, or even different conditions (for example a different number of tasks, or even task points on a different scale), we might want to standardise the error metrics previously explored to allow for fair comparisons. 
+
+The measures previously mentioned have a scale and dimension associated with them (in this case task points, or number of tasks), are require a considerable amount of context as whether they are good or bad predictions (for example the number of predictions being made, that predictions and actuals lie between 0 and 5 points). This additional context 
+
+
+Only the *Mean Error* and the *Mean Absolute Error* measures would be suitable for valid comparisons if the number of predictions starts to vary. 
+
+[^models]: Models could be of a statistical nature, or even fashion models. My money is on Naomi Campbell having formidable prediction powers. 
+
+To be free of these scales and dimensions, we can consider scaleless and dimensionless measures such as ratios and percentages. These are normalised such that they do not require explicit context about the what is being forecasted. This allows for easier comparisons. 
+
+
+
+
+```{r error-rates, fig.cap = "Worth the Weight?"}
+error_df <- enh_ma_predictions_df %>% reframe(
+#    Num_Pred = n_distinct(Task),
+    MPE = mean(Error_Pct), 
+    MAPE = mean(Abs_Error_Pct),
+    WPE_1 = sum(Error)/sum(Observed),
+    WAPE_1 = sum(Abs_Error)/sum(Observed),
+    WPE_2 = sum(Error)/sum(Prediction),
+    WAPE_2 = sum(Abs_Error)/sum(Prediction)
+)
+
+reactable(error_df, 
+          columns = list(
+              MPE = colDef(name = "Mean Percentage Error (MPE)"),
+              MAPE = colDef(name = "Mean Absolute Percentage Error (MAPE)"),
+              WPE_1 = colDef(name = "Weighted Percentage Error 1 (WPE_1)"),
+              WAPE_1 = colDef(name = "Weighted Absolute Percentage Error 1 (WAPE_1)"),
+              WPE_2 = colDef(name = "Weighted Percentage Error 2 (WPE_2)"),
+              WAPE_2 = colDef(name = "Weighted Absolute Percentage Error 2 (WAPE_2)")
+          ),
+          columnGroups = list(
+              colGroup(name = "All Tasks and Predictions Weighted Equally", columns = c("MPE", "MAPE"), headerVAlign = "center"),
+              colGroup(name = "Weighted by Actual Points", columns = c("WPE_1", "WAPE_1"), headerVAlign = "center"),
+              colGroup(name = "Weighted by Predicted Points", columns = c("WPE_2", "WAPE_2"), headerVAlign = "center")
+          ),
+        defaultColDef = colDef(
+            format = colFormat(digits = 2, percent = TRUE),
+            minWidth = 200,
+            align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+            ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    defaultExpanded = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    fullWidth = FALSE
+)
+```
+
+## All Tasks are Equal 
+
+
+Let $T$ denote all the set of tasks that Maisie made a prediction for; $|T|$ will denote the number of tasks in which a prediction was made. $P_i$ and $A_i$ will denote the predicted and actual points associated with task $i \in T$. We assume that both predictions and actuals can take non-negative values; that is $P_i, A_i > 0$.
+
+The following errors rates are scaleless
+
+
+<center>
+| **Error Metric** | **Equation** | **Comments** |
+| :---------: | :----------: | :----------: |
+| Mean Percentage Error (MPE) | $$\frac{1}{|T|} \sum_{i \in T}{\frac{P_i-A_i}{A_i}}$$ | All Predictions and Tasks treated equally. |
+| Mean Absolute Percentage Error (MAPE) | $$\frac{1}{|T|} \sum_{i \in T}{\frac{|P_i-A_i|}{A_i}}$$ | All Predictions and Tasks treated equally. |
+| Weighted Mean Percentage Error (WPE_1) | $$\frac{\sum_{i \in T} P_i - A_i}{\sum_{i \in T} A_i}$$| Weighted with respect to Actuals |
+| Weighted Mean Absolute Percentage Error (WAPE_1) | $$\frac{\sum_{i \in T} |P_i - A_i|}{\sum_{i \in T} A_i}$$ | Weighted with respect to Actuals |
+| Weighted Mean Percentage Error (WPE_2) | $$\frac{\sum_{i \in T} P_i - A_i}{\sum_{i \in T} P_i}$$| Weighted with respect to Predictions |
+| Weighted Mean Absolute Percentage Error (WAPE_2) | $$\frac{\sum_{i \in T} |P_i - A_i|}{\sum_{i \in T} P_i}$$ | Weighted with respect to Predictions |
+
+</center>
+
