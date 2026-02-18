@@ -1,0 +1,601 @@
+---
+title: The (In)Accuracy of Maisie Adam
+author: Christopher Nam
+date: '2026-01-21'
+slug: the-in-accuracy-of-maisie-adam
+categories: [series 20, extra]
+tags: [series 20, extra]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
+    highlight: pygments
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+# Your Task
+> Assess the accuracy, or inaccuracy (error), of Maisie Adam and her task attempt predictions in Series 20 of Taskmaster. 
+
+```{r,  out.width="25%", fig.cap = "Maisie's opinion on this task and the grilling, or rather microwaving, she is going to endure.", fig.show  ="hold"}
+
+knitr::include_graphics("https://64.media.tumblr.com/8f94c755425ede770bd34937510002c8/ecac5a1b024d6d13-ef/s1280x1920/d0307a28c40facb69b0192513eeb32656434277b.gifv")
+```
+
+
+# The Source of Data
+```{r, cache = FALSE}
+# Importing the new dataset
+s20_link <- "https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing"
+
+task_attempt_df <- range_read(s20_link, sheet = "Attempts-Tasks")
+colnames(task_attempt_df) <- make.names(colnames(task_attempt_df))
+task_attempt_df$Task_Type <- factor(task_attempt_df$Task_Type, levels = c("Prize", "Pre-Record", "Live"))
+task_attempt_df$Team_Task_Flag <- factor(task_attempt_df$Team_Task_Flag, levels = c("Solo", "Team"))
+
+contestants_df <- range_read(s20_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+
+ma_predictions_df <- range_read(s20_link, sheet = "MA_Predictions")
+colnames(ma_predictions_df) <- make.names(colnames(ma_predictions_df))
+```
+
+
+
+:::{.insights}
+Data has been compiled manually from the [Bonus Content Youtube Clip](https://youtu.be/66HUjlaOpw8?si=tZV_FSmfHIVKWFN_). 
+
+Data can be found in the [*"MA_Predictions"* tab](https://docs.google.com/spreadsheets/d/1E-2mJLON8k8AUvgAZb8XDJp2pxcrSIdbZ9Ih1iJAFEI/edit?usp=sharing) of the Google Sheets doc.
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/66HUjlaOpw8?si=FKaahMLxDN5wdQfS" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+
+:::
+
+
+## Data of Discrepancies
+Upon collating this data, I noticed the follow discrepancies in the data.
+
+### A Squirt of Error 
+For the *"Make water squirt out of you in a surprising way."* task, Maisie verbally states her prediction as 5 points. However, the on screen graphics show her prediction as 4 points. 
+
+This task attempt is discussed starting at the [13:54 mark](https://youtu.be/66HUjlaOpw8?si=mlHqwNeXlKhuXcbY&t=834). 
+
+
+### The Final Tally?
+
+As indicated in Figures \@ref(fig:video-tally) and \@ref(fig:tally-ho), there is a discrepancy in what the final tally is, both predicted and actuals, from the video source and when aggregated from the manually collated data.
+
+1. The Predicted Total Scores are lower in the on-screen graphic than manually collated (87 vs 88).
+    - This off by one discrepancy is accounted for in the [previous section](#a-squirt-of-error) where there is a clear discrepancy between Maisie's verbal prediction doesn't match the on screen graphic. 
+
+2. The Actual Total Score is higher in the on-screen graphic than manually collated (75 vs 64).
+    - This is a much larger discrepancy and requires a deep dive into how the onscreen actuals could have been derived.
+
+```{r video-tally, out.width="50%", fig.cap = "The supposed final tally as presented in the video."}
+
+img_dir <- here("img", "highlights", "series_20")
+
+knitr::include_graphics(path = file.path(img_dir, "ma_predictions_final_tally.png"), error = FALSE)
+```
+
+```{r tally-ho, fig.cap = "The final tally according to my spreadsheet, which like Sharkira's hips, do not lie!", cache = FALSE}
+tally_df <- ma_predictions_df %>%
+    reframe(
+        Contestant = "Maisie Adam",
+        Image_URL = contestants_df[contestants_df$Contestant_Name == "Maisie Adam", ]$Image_URL,
+        Num_Records = n(),
+        Prediction = sum(Prediction),
+        Observed = sum(Observed)
+    )
+
+rtally_df <- as.data.frame(tally_df)
+
+reactable(rtally_df, height = 0.01, width = 0.01 )
+
+reactable(rtally_df,
+          columns = list(
+        `Contestant` = reactable::colDef(
+            cell = function(value, index) {
+                name_image_func(data = rtally_df,
+                                value = value,
+                                index = index,
+                                img_width = "70%")
+            },
+            minWidth = 175
+        ),
+        Image_URL = colDef(show = FALSE),
+        Num_Records = colDef(name = "Number of Predictions Made"),
+        Prediction = colDef(name = "Maisie's Predicted Total Score"),
+        Observed = colDef(name = "Maisie's Actual Total Score")
+         ),
+        
+        defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        minWidth = 150
+    ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE
+    #width = "100%"
+)
+```
+
+```{r points-break, fig.cap = "Break-it-Down-Now: A Breakdown of Ms Adam's Points", cache = FALSE}
+
+ma_obs_points <- task_attempt_df %>% 
+    group_by(Contestant, Task_Type, Team_Task_Flag) %>%
+    reframe(
+        Num_Tasks = n(),
+        Sum_Points = sum(Points)
+        ) %>%
+    left_join(contestants_df[,c("Contestant_Name", "Image_URL")], by = join_by(Contestant == Contestant_Name)) %>%
+    filter(Contestant == "Maisie Adam")
+
+
+rma_obs_points <- as.data.frame(ma_obs_points)
+reactable(rma_obs_points, width = 0.01, height = 0.01)
+          
+          
+reactable(rma_obs_points,
+          columns = list(
+              Contestant = colDef(show = TRUE, 
+                                  cell = function(value, index) {
+                name_image_func(data = rtally_df,
+                                value = value,
+                                index = index,
+                                img_width = "70%")
+            },
+            minWidth = 175),
+            Task_Type = colDef(show = TRUE,
+                               name = "Task Type"
+            ),
+            Team_Task_Flag = colDef(show = TRUE,
+                                    name = "Team Task Flag"
+            ),
+            Num_Tasks = colDef(show = TRUE,
+                               name = "Number of Tasks",
+                               aggregate = "sum"
+            ),
+            Sum_Points = colDef(show = TRUE,
+                                name = "Total Task Points Awarded",
+                                aggregate = "sum"
+              ),
+            Image_URL = colDef(show = FALSE)
+          ),
+           defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        minWidth = 175
+    ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    groupBy = c("Contestant", "Task_Type"),
+    defaultExpanded = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE
+)
+```
+
+
+Table \@ref(fig:points-break) shows a breakdown of the points accumulate by Maisie of the series, with respect to task type (Prize, Pre-Record, Live) and whether it was a team task or not. Note that:
+
+- Maisie's predictions were only for the Pre-Recorded Solo Tasks, and one outlier Team task (not with the usual team, other team mates were not present when task was being performed). 
+- From Table \@ref(fig:points-break), Maisie accumulated 65 points in all her pre-recorded solo tasks, and the outlier team task earned her an additional 5 points. By this reasoning, I deduce that Maisie's actual points received **for the the tasks she made predictions on** to be 70, and not 75 as presented on the screen.
+- If the on screen actual points is for **all** pre-recorded tasks, both solo and live, then Maisie's actual points would be 85, and still not the presented 75 points.
+    - If this was the case, then it is not fair to compare predictions to actuals, where the number of tasks forming the predictions and actuals are different. In this case, the number of tasks the actuals are computed over is larger than those for the prediction, and thus the actual points will inherently be larger than predicted points (particularly since points are non-negative). 
+
+### The Absent Task
+On double checking and cross referencing my data, I noticed that Maisie did not provide a prediction in the task *"Make the most fantastic 15-second film featuring your face in full frame."* ([Task 4 in Episode 9](https://taskmaster.fandom.com/wiki/Make_the_most_fantastic_15-second_film_featuring_your_face_in_full_frame). This was a solo, pre-record task so would be a prime candidate for Maisie to provide a prediction. Maisie, and all other contestants, were awarded 5 points by Greg for this task.
+
+However, the absence of the prediction of this task, still doesn't provide closure to the discrepancy in the final tally.
+
+### So, what's the (Data) Situation?
+Despite the data issues, our analysis will proceed with using the data collated in the Google sheet, and not what was presented on screen in the Taskmaster source video. This is rooted in have a better understanding and more control over this dataset.
+
+```{r,  out.width="35%", fig.cap = "Little Alex Horne's opinion on this data situation, and making the most of what you have in life!", fig.show  ="hold"}
+
+knitr::include_graphics("https://64.media.tumblr.com/972fb3f3ab45120d55edbc3052246ccd/d6361b872b03a35b-9e/s1280x1920/3f501f728eec4610682573d020809c3e688d9048.gifv")
+```
+
+
+# A Comedy of Prediction Errors
+
+```{r, cache = FALSE}
+const <- 0.5
+
+enh_ma_predictions_df <- ma_predictions_df %>% mutate(
+    Row_Index = row_number(),
+    Reorder_Mag_Index = rank(Mag_Index),
+    Index_Task = paste(Reorder_Mag_Index, Task, sep = ": "),
+    Error = Prediction - Observed,
+    Error_Pct = Error/pmax(Observed, const),
+    Error_Sign = sign(Error),
+    Abs_Error = abs(Error),
+    Abs_Error_Pct = Abs_Error/pmax(Observed, const)
+    )
+```
+
+:::{.insights}
+It is clear from Figures \@ref(fig:video-tally) and \@ref(fig:tally-ho), that **at an overall level, Maisie was overly confident and optimistic with her task predictions; her predicted score total exceeds her actual total score by 24 points.**
+:::
+
+This is a good starting point in assessing Maisie's prediction ability. However, we may also want to know if Maisie was overly confident on only a select number of tasks (which was sufficient to show over prediction at the total level), or if she was overly optimistic in the majority of her predictions.
+
+
+## The General Overview
+```{r error-table, fig.cap = "A Comedy of Prediction Errors", cache = FALSE}
+naive_error_df <- enh_ma_predictions_df %>% 
+    reframe(
+        Num_Predictions = n_distinct(Task),
+        Total_Prediction = sum(Prediction),
+        Total_Observed  = sum(Observed),
+        Total_Error = sum(Error),
+        Mean_Error = mean(Error),
+        Total_Abs_Error = sum(Abs_Error),
+        Mean_Abs_Error = mean(Abs_Error),
+        Under_Pred = sum(Error_Sign == -1),
+        Over_Pred = sum(Error_Sign == 1),
+        Perfect_Pred = sum(Error_Sign == 0),
+        Under_Error = sum(pmin(Error, 0)),
+        Over_Error = sum(pmax(Error, 0))
+    )
+
+rnaive_error_df <- as.data.frame(naive_error_df)
+
+reactable(rnaive_error_df,
+          columns = list(
+              Num_Predictions = colDef(name = 'Number of Task Predictions',
+                                      show = FALSE),
+              Total_Prediction = colDef(name = 'Total of Predicted Points',
+                                        show = FALSE),
+              Total_Observed = colDef(name = 'Total of Actual Points',
+                                      show = FALSE),
+              Total_Error = colDef(name = 'Sum of Error', 
+                                   show = TRUE),
+              Total_Abs_Error = colDef(name = "Sum of Absolute Error",
+                                       show = TRUE),
+              Mean_Error = colDef(name = "Mean Error",
+                                  show = TRUE, 
+                                  format = colFormat(digits =2)),
+              Mean_Abs_Error = colDef(name = "Mean Absolute Error",
+                                      show = TRUE,
+                                      format = colFormat(digits =2)),
+              Under_Pred = colDef(name = "Number of Under Predictions",
+                                  show = TRUE),
+              Over_Pred = colDef(name = "Number of Over Predictions",
+                                 show = TRUE),
+              Perfect_Pred = colDef(name = "Number of Perfect Predictions",
+                                    show = TRUE)
+              
+          ),
+          
+          defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        minWidth = 160,
+        show = FALSE
+    ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    defaultExpanded = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    fullWidth = FALSE
+)
+```
+
+
+:::{.insights}
+Figure \@ref(fig:error-table) shows various statistics on the prediction errors with particular interest in the error at the task prediction level, rather than just the overall total level. We can see that: 
+
+- **Maisie was predominantly overly optimistic with her predictions.** Out of the `r naive_error_df$Num_Predictions` task predictions she made, she was **overly optimistic in `r naive_error_df$Over_Pred` tasks (`r percent(naive_error_df$Over_Pred/naive_error_df$Num_Predictions)`)**.
+    - Conversely she was **pessimistic in `r naive_error_df$Under_Pred` tasks (`r percent(naive_error_df$Under_Pred/naive_error_df$Num_Predictions)`)**, and made **perfect predictions in `r naive_error_df$Perfect_Pred` tasks (`r percent(naive_error_df$Perfect_Pred/naive_error_df$Num_Predictions)`)**.
+- **Maisie was out by an error of `r naive_error_df$Total_Error` points overall, an average error of `r number(naive_error_df$Mean_Error, accuracy = 0.01)` per task prediction.** This encompasses both positive and negative prediction errors, some of which may cancel out when presenting the overall totals.
+    - If we were interested in the pure size of errors (and not the sign or direction), **Maisie was out by an absolute error of `r naive_error_df$Total_Abs_Error`, with an average error of `r number(naive_error_df$Mean_Abs_Error, accuracy = 0.01)` per task prediction.** 
+    - Maisie was overly optimistic with her predictions with an **over prediction error of `r naive_error_df$Over_Error` points (`r percent(naive_error_df$Over_Error/naive_error_df$Total_Abs_Error)` of absolute error).**
+    - Conversely, she was pessimistic with her predictions with an **under prediction error of `r abs(naive_error_df$Under_Error)` points (`r percent(abs(naive_error_df$Under_Error)/naive_error_df$Total_Abs_Error)` of absolute error).**
+
+:::
+
+```{r,  out.width="35%", fig.cap = "Just your bog standard nun in a bush!", fig.show  ="hold"}
+
+knitr::include_graphics("https://64.media.tumblr.com/c59f907093705690d13a0c85b97a93e0/d57fdda9e53a75b9-7a/s1280x1920/a54022288411ee24db5d9cfd42a6cd84827ba340.gifv")
+```
+
+
+## [It Will All Get Better With Time?](https://youtu.be/qSxyffSB7wA?si=EuT0275k6ItNaRrP)
+
+We may also be interested in knowing how Maisie's predictions evolve over time, and similarly how the prediction error changes over time. For example:
+
+- Was Maisie overly optimistic at the beginning (thus providing high valued predictions), before adjusting her predictions accordingly downwards once she had performed several tasks and had a better grasp of her ability.
+- Or was Maisie overly optimistic throughout her pre-recorded tasks tenure?
+
+We consider two notions of time:
+
+1. *Prediction Presentation Order:* This is the order in which the predictions were presented to us in the video. This order is in line with the order in which tasks were presented across the series.
+2. *Magliano Task Index (Task Recording Order):* This is the inferred order in which tasks were recorded in. The order has been inferred by Ania's social media posts ([sample post](https://www.instagram.com/p/DOfuRdJjRpO/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)) in which she logged and reflected on each task shortly after she had attempted them. As not all tasks received predictions, and not all tasks were broadcasted, gaps do exist in this index and order does not increase at a steady rate. Consequently, we consider a reordered version of the Magliano Task Index to address these gaps.
+
+We make a big assumption that Ania's order in which tasks were performed and recorded is the same for Maisie, and other contestants in this series. This may not be necessarily true due to recording and availability constraints. If the task order is different between contestants, this severely undermines whether Taskmaster is facilitating fair and valid scientific experiments. By changing the order in which contestants perform task, we are introducing additional variability which could have been controlled for (and avoided).[^science] 
+
+[^science]: This remark is a joke! I am fully aware that this is an entertainment show and not a science show. 
+But it is entertaining to think of the contestants as lab rats. There is a *lab* in the house after all...
+
+Table \@ref(fig:task-order-df) provides a complete mapping between the tasks and what order they came under with respect to our two notions of time. The prediction, actuals and error are also presented.
+
+
+```{r task-order-df, fig.cap = "Maisie's Task Predictions over Time", cache = FALSE}
+
+task_order_df <- enh_ma_predictions_df %>% select(Row_Index, Mag_Index, Reorder_Mag_Index, Episode_ID, Task, Prediction, Observed, Error)
+rtask_order_df <- as.data.frame(task_order_df)
+
+
+#reactable(rtask_order_df, width = 1, height = 1)
+          
+reactable(rtask_order_df,
+          elementId = "cars-range-table", # Unique ID for JS API
+          columns = list(
+              Row_Index = colDef(name = "Task Presentation Order"),
+              Mag_Index = colDef(name = "Magliano Index"),
+              Reorder_Mag_Index = colDef(name = "Reordered Magliano Index"),
+              Episode_ID = colDef(name = "Episode"),
+              Task = colDef(name = "Task Brief", minWidth = 400),
+              Prediction = colDef(name = "Prediction",
+                                        filterInput = slider_filter,
+      filterMethod = slider_filter_method
+        ),
+              Observed = colDef(name = "Observed",
+                                filterInput = slider_filter,
+      filterMethod = slider_filter_method
+      ),
+              Error = colDef(name = "Prediction Error",
+                             style = function(value){
+                                 good_bad_styling_func(value)
+                                 },
+                                   filterInput = slider_filter,
+      filterMethod = slider_filter_method
+
+                             )
+          ),
+          
+                  defaultColDef = colDef(
+            format = colFormat(digits = 0),
+            minWidth = 150,
+            align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom"
+            ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    defaultExpanded = TRUE,
+    defaultSorted  = "Reorder_Mag_Index",
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = TRUE,
+    filterable = TRUE,
+    fullWidth = FALSE
+    
+    )
+```
+
+```{r task-pres-index, cache = FALSE}
+title_label <- "The Evolution of Maisie's Prediction and Actuals (Presentation Order)"
+subtitle_label <- "Prediction Presentation Order is akin to Task Presentation Order across Series."
+
+
+task_pres_plot <- enh_ma_predictions_df %>%
+ggplot(aes(x = Row_Index, alpha = 0.8)) +
+           geom_line(aes(y = Prediction, alpha = 0.8, colour = "Prediction") ,  linetype = 1, linewidth = 1.5, show.legend = TRUE) +
+    geom_point(aes(y = Prediction), colour = "darkred", size = 1.5) + 
+    geom_line(aes(y = Observed, alpha = 0.8, colour = "Actual"), linewidth = 2, show.legend = TRUE) + 
+    geom_point(aes(y = Observed), colour = "darkblue", size = 1.5) + 
+    xlab("Prediction Presentation Order") +
+    ylab("Points") + 
+            scale_colour_manual(
+            name = "",
+         values =c('Prediction' = "darkred", 'Actual' = 'darkblue'),
+         labels = c('Prediction','Actual'),
+         breaks = c("Prediction", "Actual")
+         )+
+    guides(alpha = "none") +
+    scale_x_continuous(breaks = seq(0, 40, by = 2)) +  
+    labs(title = title_label, caption = subtitle_label) +
+    quack_theme() + 
+    theme(element_text(size = 12))
+```
+
+```{r task-rec-index, cache = FALSE}
+title_label <- "The Evolution of Maisie's Prediction and Actuals (Task Recording Order)"
+subtitle_label <- "Magliano Task Index is a proxy for Task Recording order."
+
+
+mag_pred_plot <- enh_ma_predictions_df %>%
+ggplot(aes(x = Reorder_Mag_Index, alpha = 0.8)) +
+           geom_line(aes(y = Prediction, colour = "Prediction", alpha = 0.8), linetype = 1, linewidth = 1.5, show.legend = TRUE) +
+    geom_point(aes(y = Prediction), colour = "darkred", size = 1.5) + 
+    geom_line(aes(y = Observed, colour = "Actual", alpha = 0.8 ), linewidth = 2, show.legend = TRUE) + 
+    geom_point(aes(y = Observed), colour = "darkblue", size = 1.5) + 
+    xlab("Magliano Task Index (Task Recording Order)") +
+    ylab("Points") + 
+            scale_colour_manual(
+            name = "",
+         values =c('Prediction'='darkred','Actual'='darkblue'),
+         labels = c('Prediction','Actual'),
+         breaks = c('Prediction','Actual')) +
+    guides(alpha = "none") +
+    scale_x_continuous(breaks = seq(0, 40, by = 2)) +  
+    labs(title = title_label, caption = subtitle_label) +
+    quack_theme() + 
+    theme(element_text(size = 12))
+```
+
+```{r pred-plots, out.width="49%", fig.cap = "The Evolution of Maisie's Predictions over Time. <br> <b>Left: Presentation Order as Time.</b> <br> <i>Right: Recording Order as Time. Recording Order determined by Ania Magliano's sketches over time.</i>", cache = FALSE, fig.show = "hold"}
+task_pres_plot
+mag_pred_plot
+```
+
+```{r error-pres-index, cache = FALSE, out.width = "60%"}
+title_label <- "The Evolution of Prediction Error, with respect to Task Presentation Order"
+subtitle_label <- "Prediction Presentation Order is akin to Task Presentation Order across Series."
+
+
+error_pres_plt <- enh_ma_predictions_df %>%
+ggplot(aes(x = Row_Index, alpha = 0.8)) +
+           geom_line(aes(y = Error, colour = "Error", alpha = 0.8), linetype = 1, linewidth = 1.5, show.legend = TRUE) +
+    geom_point(aes(y = Error), colour = "darkred", size = 1.5) + 
+    stat_smooth(aes(y = Error, colour = "Trend Line"), method = "loess", se = FALSE, linetype = 2) + 
+    geom_hline(yintercept = 0, linetype = 4, alpha = 0.6) +
+    xlab("Prediction Presentation Order") +
+    ylab("Prediction Error") + 
+            scale_colour_manual(
+            name = "",
+         values =c('Error'='darkred', 'Trend Line' = "darkblue"),
+         labels = c('Error', "Trend Line"),
+         breaks = c('Error', "Trend Line")) +
+    guides(alpha = "none") +
+    scale_x_continuous(breaks = seq(0, 40, by = 2)) +  
+    labs(title = title_label, caption = subtitle_label) +
+    quack_theme() + 
+    theme(element_text(size = 12))
+```
+
+```{r error-rec-index, cache = FALSE, out.width = "60%"}
+title_label <- "The Evolution of Prediction Error, with respect to Task Recording Order"
+subtitle_label <- "Magliano Task Index is a proxy for Task Recording order."
+
+
+error_rec_plt <- enh_ma_predictions_df %>%
+ggplot(aes(x = Reorder_Mag_Index, alpha = 0.8)) +
+           geom_line(aes(y = Error, colour = "Error", alpha = 0.8), linetype = 1, linewidth = 1.5, show.legend = TRUE) +
+    geom_point(aes(y = Error), colour = "darkred", size = 1.5) + 
+    stat_smooth(aes(y = Error, colour = "Trend Line"), method = "loess", se = FALSE, linetype = 2) + 
+    geom_hline(yintercept = 0, linetype = 4, alpha = 0.6) +
+    xlab("Magliano Task Index (Task Recording Order)") +
+    ylab("Prediction Error") + 
+            scale_colour_manual(
+            name = "",
+         values =c('Error'='darkred', 'Trend Line' = "darkblue"),
+         labels = c('Error', "Trend Line"),
+         breaks = c('Error', "Trend Line")) +
+    guides(alpha = "none") +
+    scale_x_continuous(breaks = seq(0, 40, by = 2)) +  
+    labs(title = title_label, caption = subtitle_label) +
+    quack_theme() + 
+    theme(element_text(size = 12))
+```
+
+
+```{r error-plots, cache = FALSE, out.width="49%", fig.cap = "The Evolution of Maisie's Predictions Error over Time. <br> <b>Left: Presentation Order as Time.</b> <br> <i>Right: Recording Order as Time. Recording Order determined by Ania Magliano's sketches over time.</i>", cache = FALSE, fig.show = "hold"}
+error_pres_plt
+error_rec_plt
+```
+
+Figures \@ref(fig:pred-plots) and \@ref(fig:error-plots) shows the evolution of Maisie's task predictions, actuals and prediction error over the two notions of time; left for presentation order, right for recording order.
+
+
+There is no obvious trend or pattern in both Maisie's prediction and the associated prediction error when using Prediction Presentation Order as our notion of time. The prediction seems to be equally volatile and variable across the entire stretch of time. The errors also plateau at a value of 1, which is the average error as displayed in Table \@ref(fig:error-table). This is an encouraging artefact of randomisation, potentially providing evidence that the Taskmaster crew really do not show any favouritism or discrimination against contestants, or inject artificial arcs and journeys for contestants.
+
+In contrast, there is a slightly more obvious trend when considering the Task Recording Order; Maisie's predictions seem more erratic at the beginning of her recording tenure (oscillating between 1 and 5 points), before encompassing the point values in between. The prediction error shows a more evident downward trend error, suggesting that as Maisie was subjected to more tasks, she had a better grasp of her performance and started to provide more accurate predictions. 
+
+The Task Recording Order (through the Magliano Task Index) makes the most sense as a notion of time, compared to the presentation order. This strongly relies on Magliano's recording order being applicable to Maisie's recording experience, but this seems like a fair assumption. 
+
+
+:::{.insights}
+Using the Magliano Task Index as our notion of time, we see from the right side plots of Figures \@ref(fig:pred-plots) and \@ref(fig:error-plots) that:
+
+- Maisie was **optimistic in her performance from the very first task she did** (*`r as.character(filter(enh_ma_predictions_df, Reorder_Mag_Index == 1) %>% select(Index_Task))`*).
+    - *Maisie was almost binary with her predictions on the first 10 or so task she performed.* She predicted herself either 5 points (she thought she did well in the task), or 1 points (she thought she did badly in the task) for the majority of the time. 
+    - She only predicted herself a middling performance (3 or 4 points) for two tasks.
+- **From Task 11 onwards, Maisie exhibited more shades of gray in her predictions and ability.** We see more prediction instances between  2 to 4 points, in addition to occasional instances of 5 and 1 point predictions. These extreme predictions are not in the majority however, compared to the first 10 tasks.
+- **Maisie's gradual pessimism does pay off as her prediction ability does seem to improve over time.** There is downward trend in her prediction error as she was opposed to more tasks, to extent that Maisie started to under mark herself.
+- **Maisie did not make any predictions in which she would receive 0 points.** She did receive 0 points through disqualification in the task *`r as.character(filter(enh_ma_predictions_df, Observed == 0) %>% select(Index_Task))`*.
+    - This is surprising/interesting as it was very clear that Maisie had not achieved the task goal (she even admits this on site), yet she still thought she would earn 2 points. Knowing Maisie's memory (or rather the lack of), this may not be that surprising.
+
+:::
+
+```{r,  out.width="25%", fig.cap = "Maisie's delight that her prediction ability may have improved over time.", fig.show  ="hold"}
+
+knitr::include_graphics("https://64.media.tumblr.com/6f38a148415f3f5123d89f22e06bee32/d57fdda9e53a75b9-25/s1280x1920/bde937651cd2f7063dba4a4f5177491aeb90fc56.gifv")
+```
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Maisie was overly optimistic in her task predictions;** she predicted herself getting more points than she was actually awarded in reality.
+- This over confidence is not just restricted to a handful of tasks, **Maisie was overly optimistic in 58% of her task predictions.**
+- **Maisie'a average prediction error was 1.00 per task**, and her **average absolute prediction error is 1.67 per task.**
+- **There is evidence to suggest that Maisie's prediction ability improved over time.** 
+    - Maisie's predictions started of as overly confident (almost binary between 0 and 5), eventually becoming more pessimistic (more shades of gray, and actuals exceeding predictions). 
+    - The notion of time was deduced from the Magliano Task Index and the inferred Task Recording Order.
+- We've identified **data inconsistencies in the video source where the predictions were made and presented**. We've done our best to work past these issues. We do not believe the main conclusions made in this post change however; Maisie was overly confident with her prediction overall.
+    - If the the Taskmaster UK team want to reach out to me to review their data infrastructure, please do!
+- **Writing (and statistical reporting) is hard!**
+    - This post was supposed to be published much earlier, but I struggled to  find the motivation and produce (hopefully) good quality work. 
+    = I doubt this really matters in the grand scheme of things, but it does make me question my abilities and skills in life...
+    
+```{r,  out.width="45%", fig.cap = "Writer's Block is No Laughing Matter...", fig.show  ="hold"}
+
+knitr::include_graphics("https://64.media.tumblr.com/562ff9a0928dd93bc016864d1cce4bf4/d57fdda9e53a75b9-64/s1280x1920/98f894e267c4abc42ccf650aabd25833b4056734.gifv")
+```
+:::
