@@ -56,7 +56,7 @@ In the first episode of the 2026 New Year's Treat at around the [1:45 mark](http
 As seen from Figure \@ref(fig:oboe-reed), Little Alex Horne should take extra care of his oboe and the reeds when it is not in immediate use. Being able to pull it from behind your back with an exposed reed, whilst convenient, is no doubt an easy way to damage the reed. 
 
 
-```{r oboe-reed, out.width = "40%", fig.cap = "I thoroughly disapproval of how Little Alex Horne stores his oboe and the exposed reed when it is not in immediate use.", fig.show = 'asis'}
+```{r oboe-reed, out.width = "40%", fig.cap = "I thoroughly disapprove of how Little Alex Horne stores his oboe and the exposed reed when it is not in immediate use.", fig.show = 'asis'}
 reed_gif <- "LAH_Oboe_Reed.gif"
 knitr::include_graphics(path = file.path(img_dir, reed_gif), error = FALSE)
 ```
@@ -89,7 +89,7 @@ However, on closer inspection, the blue circles (indicating the bell of the oboe
 
 > Did Alex Horne add an appendage to his oboe's bell end? Was this appendage purely for the joke of pulling out a snake from the bell end? 
 
-It's not clear why such an appendage is was required. The toy snake could have been placed in the oboe's existing bell comfortably in my opinion. The sound would have been muffled and muted no doubt; but this audio effect could be used to a player's advantage in the correct circumstances[^sock]. However, I doubt Mr Horne was worried about the sound quality he was going to produce. 
+It's not clear why such an appendage was required. The toy snake could have been placed in the oboe's existing bell comfortably in my opinion. The sound would have been muffled and muted no doubt; but this audio effect could be used to a player's advantage in the correct circumstances[^sock]. However, I doubt Mr Horne was worried about the sound quality he was going to produce. 
 
 [^sock]: I was once instructed by one of my oboe teachers to place an old sock into my bell in order to play pianissimo for low notes. These low notes are notoriously difficult to play, let alone quietly, due to the extra amount of air required to make a sound. 
 
