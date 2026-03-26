@@ -8,7 +8,7 @@ editor_options:
 
 <center>
 
-![](img/duck_tt.png)
+![](img/duck_tt.png){width=65%}
 
 </center>
 

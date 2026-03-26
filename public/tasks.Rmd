@@ -6,7 +6,7 @@ draft: false
 
 <center>
 
-![](../img/pyramid_ducks.jpg){width=75%}
+![](../img/pyramid_ducks.jpg){width=30%}
 
 </center>
 

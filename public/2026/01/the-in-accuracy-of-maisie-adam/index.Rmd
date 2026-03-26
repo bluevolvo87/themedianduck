@@ -592,7 +592,7 @@ We've learnt that:
     - If the the Taskmaster UK team want to reach out to me to review their data infrastructure, please do!
 - **Writing (and statistical reporting) is hard!**
     - This post was supposed to be published much earlier, but I struggled to  find the motivation and produce (hopefully) good quality work. 
-    = I doubt this really matters in the grand scheme of things, but it does make me question my abilities and skills in life...
+    - I doubt this really matters in the grand scheme of things, but it does make me question my abilities and skills in life...
     
 ```{r,  out.width="45%", fig.cap = "Writer's Block is No Laughing Matter...", fig.show  ="hold"}
 
