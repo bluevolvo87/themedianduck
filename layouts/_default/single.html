@@ -23,32 +23,30 @@
 		</section>
 		
 
-  
-		<div class="post-tags">
-			{{ if ne .Type "page" }}
-			{{ if gt .Params.tags 0 }}
-			
-			<nav class="nav tags">
-				<ul class="tags">
-				    {{- $BaseURL := ( .Site.BaseURL ) -}}
-				    Tags:  
-					{{ range .Params.tags }}
-					<a href="{{ $BaseURL}}{{ "/tags/" |relLangURL}}{{ . | urlize}}">{{ . }}</a>
-					{{ end }}
-				</ul>
-			</nav>
+<!-- Comments by Cusdis -->
+{{- partial "disqus.html" . -}}
+      
+<div class="post-tags">
+	{{ if ne .Type "page" }}
+	{{ if gt .Params.tags 0 }}
+	
+	<nav class="nav tags">
+		<ul class="tags">
+		    {{- $BaseURL := ( .Site.BaseURL ) -}}
+		    Tags:  
+			{{ range .Params.tags }}
+			<a href="{{ $BaseURL}}{{ "/tags/" |relLangURL}}{{ . | urlize}}">{{ . }}</a>
 			{{ end }}
-			{{ end }}
-		</div>
-		{{- $.Scratch.Set "isDisqus" true -}}
-		<!-- Check if disqus short name is given -->
-		{{ if not .Site.DisqusShortname }}
-		{{- $.Scratch.Set "isDisqus" false -}}
-		{{ end }}
+		</ul>
+	</nav>
+	{{ end }}
+	{{ end }}
+</div>
+		
 
-		{{- if eq ($.Scratch.Get "isDisqus") true -}}
-		{{- partial "disqus.html" . -}}
-		{{- end -}}
-	</article>
+      
+ 
+
+</article>
 </main>
 {{ end }}

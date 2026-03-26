@@ -45,6 +45,7 @@ params:
   MathJaxCDN: "//cdn.bootcss.com"
   MathJaxVersion: "2.7.1"
   logo: "img/favicon/favicon.ico"
+  isDisqus: true
 menu:
   main:
     - name: Home

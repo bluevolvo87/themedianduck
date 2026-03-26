@@ -60,7 +60,7 @@ You can now be e-mailed as to when a new post has been published. Simply use the
 2. In the *"URL of a feed or web site"* input field (or similarly labelled), provide the following address: [https://bluevolvo87.github.io/themedianduck/index.xml](https://bluevolvo87.github.io/themedianduck/index.xml).
 
 
-[^terms]: May be more (probably less than 10), if additional sign up and confirmations are required. The Median Duck has no responsibility in these additional steps/w
+[^terms]: May be more (probably less than 10), if additional sign up and confirmations are required. The Median Duck has no responsibility in these additional steps.
 
 :::
 
