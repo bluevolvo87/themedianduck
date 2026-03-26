@@ -1,0 +1,152 @@
+---
+title: Comment, Like, Subscribe!
+author: Christopher Nam
+date: '2026-03-25'
+slug: comment-like-subscribe
+categories: []
+tags: [extra, features]
+draft: no
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+    highlight: pygments
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+```
+
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cPbYFhG2lyM?si=Tdco-rimYi65oIYj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+
+
+# Your Task
+> Never miss a The Median Duck post; most up-to-date reader wins!
+> 
+> Participate in The Median Duck Peanut Gallery chatter; most active reader wins!
+
+```{r, out.width = "40%", fig.cap = "Daddy's interest has been piqued...and is disappointed by the lack of apostrophe for 'Papas attention'."}
+knitr::include_graphics("https://media1.tenor.com/m/hq---sEvZbsAAAAC/greg-davies-taskmaster.gif")
+```
+
+# Extra, Extra! Read All About It!
+**Readers!** 
+
+Have you found it highly inconvenient to find out if there is a newly published Median Duck post? If yes, then fear no more![^hope]
+
+[^hope]: hopefully
+
+You can now be e-mailed as to when a new post has been published. Simply use the RSS feed information associated with this site, and use [feedrabbit.com](https://feedrabbit.com/) to be e-mailed as to when there is a new post. Other RSS feed e-mailers are available ([follow.it](https://follow.it/), [blogtrottr](https://blogtrottr.com/)).
+
+
+:::{ .insights}
+**Signing up can be achieved in 2 simple steps! [^terms]**
+
+1. Choose your preferred RSS feed e-mailer platform: [feedrabbit.com](https://feedrabbit.com/), [follow.it](https://follow.it/) or  [blogtrottr](https://blogtrottr.com/).
+    - Signing up to these services may be required. 
+2. In the *"URL of a feed or web site"* input field (or similarly labelled), provide the following address: [https://bluevolvo87.github.io/themedianduck/index.xml](https://bluevolvo87.github.io/themedianduck/index.xml).
+
+
+[^terms]: May be more (probably less than 10), if additional sign up and confirmations are required. The Median Duck has no responsibility in these additional steps/w
+
+:::
+
+
+**Some considerations:**
+
+- Additional steps to sign up and confirm usage of these RSS feed e-mailers may be required.
+- By going with a external third party RSS e-mailer, The Median Duck does not have access to your e-mail address or personal information that you provided.
+    - This is great for readers who do not want to share their details with a mysterious blog poster who has questionable stats, writing and musical skills.
+- These dedicated third party e-mailers also allow for the reader to control the frequency in which they receive e-mails.
+    - The reader can control how frequently they are spammed, and confounded by the contents featured on this blog.
+
+```{r, out.width = "40%", fig.cap = "The Taskmaster himself giving an accurate portrayal of how to subscribe to The Median Duck feed..."}
+knitr::include_graphics("https://media1.tenor.com/m/9YD887uFEzIAAAAC/taskmaster-greg-davies.gif")
+```
+
+
+# Be the First to Say "First!"
+**Readers!**
+
+Have you ever wanted to:
+
+- interact with the writer of The Median Duck, but still remain safely anonymous?
+- interact with rest of The Median Duck community (henceforth known as **"The Flock"**)?
+- share your opinion on a Median Duck post?
+- point out incoherent (and correct) English that frequently occurs on this blog?
+- violently object to a statistical method or conclusion that is being stated?
+- add a redundant *"First!"* comment on a Median Duck post?
+
+...then look no further! Commenting on posts has now been enabled for The Median Duck.
+
+Thanks to [cusdis](https://cusdis.com/), a *"lightweight, privacy-first, open-source comment system"*, all posts now have a comment section at the very bottom of the page. 
+
+
+```{r, out.width = "40%", fig.cap = "How I anticipate the comment section to progress over time."}
+knitr::include_graphics("https://media1.tenor.com/m/O87z2UmDieEAAAAC/taskmaster-greg-davies.gif
+")
+```
+
+**Some considerations:**
+
+- No additional sign up is required to yet another third party website.
+- The Median Duck doesn't store any private information on the commenter.
+    - You (the reader) can stay anonymous behind the safety of your own screen! 
+    - Trolls and spammers can also rejoice at the low barrier of commenting entry.
+- Comments will be vetted and reviewed by the webmaster:
+    - Readers can no doubt expect some biased comment selection here.
+
+```{r, out.width = "40%", fig.cap = "The Flock's Mantra on The Median Duck."}
+knitr::include_graphics("https://media1.tenor.com/m/OpT8wvaIrK4AAAAC/destroy-taskmaster.gif")
+```
+
+
+The following resources were incredibly useful in enabling this commenting feature:
+
+- [Cusdis setup, specifically for hugo based websites.](https://discourse.gohugo.io/t/free-and-open-source-comments-for-hugo/32940)
+- [Detailed guide on how to add the Cusdis widget onto posts automatically](https://barthpaleologue.github.io/Blog/posts/add-and-customize-cusdis-hugo/)
+- [How to customise the style of Cusdis widget](https://talk.jekyllrb.com/t/comments-with-cusdis/6896)
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+
+```{r, out.width = "30%", fig.cap = "The seal of approval from the Little man himself."}
+knitr::include_graphics("https://media1.tenor.com/m/4Vu14pZOVFkAAAAC/alex-horne-taskmaster.gif")
+```
+
+We've learnt:
+
+- **How to never miss out on a Median Duck post!**
+    - Readers have been instructed on how to get e-mailed on latest post via an RSS feed.
+- **A commenting feature has been enabled on The Median Duck!**
+    - Readers can now object to the content being posted, and provide redundant comments such as *"First!"*, or *"Come to Brazil!!!!"*.
+- **The Median Duck is not interested in readers' personal information and respects their privacy!**
+    - The Median Duck is also a lazy cheapskate, favouring (free) open source third party platforms, and making his readers do all the work in terms of subscribing to a feed.
+- **The Median Duck community is henceforth known as The Flock.**
+
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OLXaJRjC5CE?si=wflKdNqlk8-D9w4z" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+:::
+
+

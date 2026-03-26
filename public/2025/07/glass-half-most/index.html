@@ -28,7 +28,7 @@ The aforementioned Series 19 predictions were discussed in a prior post. These p
         <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://bluevolvo87.github.io/themedianduck/css/main.a84209a49e6f6001e007f4e499db6e88d79dfbecc7ee452f551b83bb23aa214b.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://bluevolvo87.github.io/themedianduck/css/main.445e9db8388241bf31625603bfb892136e29f5e1a827c198833388959526499f.css" />
 		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://bluevolvo87.github.io/themedianduck/css/dark.2f92a4dc805bdb778890566c830a867a2611a0a63fa5879ca01a6c06ec982d35.css"  disabled />
 	
 
@@ -360,24 +360,78 @@ Figure 9: A Joint Distribution considers….EVERYBODY!
 		</section>
 		
 
-  
-		<div class="post-tags">
+<h1>Moderated Honks from The Flock</h1>
+
+<div style="border: 5px solid darkred; 
+    border-radius: 10px;
+    background-color: lightyellow;">
+    
+<div id="cusdis_thread" data-host="https://cusdis.com"
+        data-app-id="dd057731-7273-4784-9cde-11055d1e11fa"
+        data-page-id="111e065bb0862b82a7f141ea2445d748" 
+        data-page-url="https://bluevolvo87.github.io/themedianduck/2025/07/glass-half-most/"
+        data-page-title="Series 19 Retrospective Part 1: Sharing the Same Juice"
+        data-theme="auto"></div>
+        
+<script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+
+<script>
+
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length == 0) return;
+        const iframe = mutation.addedNodes[0];
+        if (iframe.tagName !== 'IFRAME') return;
+
+        const additionalStyles = `
+        .dark {
+            background-color: black;
+        }
+        
+        `;
+        
+        iframe.srcdoc = iframe.srcdoc.replace('</style>', additionalStyles + '</style>');
+    });
+});
+
+observer.observe(document.getElementById("cusdis_thread"), { childList: true, subtree: true });
+
+window.addEventListener('load', function () {
+    let iframe = document.querySelector("#cusdis_thread iframe");
+    if (iframe) {
+        let observer = new MutationObserver(() => {
+            let scrollHeight = iframe.contentWindow.document.body.scrollHeight;
+            iframe.style.height = scrollHeight + "px";
+        });
+        observer.observe(iframe.contentWindow.document.body, { childList: true, subtree: true });
+    }
+});
+</script>
+
+
+</div>
+<div class="post-tags">
+	
+	
+	
+	<nav class="nav tags">
+		<ul class="tags">Tags:  
 			
+			<a href="https://bluevolvo87.github.io/themedianduck//tags/series-19">Series 19</a>
 			
+			<a href="https://bluevolvo87.github.io/themedianduck//tags/retrospective">Retrospective</a>
 			
-			<nav class="nav tags">
-				<ul class="tags">Tags:  
-					
-					<a href="https://bluevolvo87.github.io/themedianduck//tags/series-19">Series 19</a>
-					
-					<a href="https://bluevolvo87.github.io/themedianduck//tags/retrospective">Retrospective</a>
-					
-				</ul>
-			</nav>
-			
-			
-		</div>
-		</article>
+		</ul>
+	</nav>
+	
+	
+</div>
+		
+
+      
+ 
+
+</article>
 </main>
 <footer>
 

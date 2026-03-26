@@ -1,0 +1,50 @@
+<h1>Moderated Honks from The Flock</h1>
+
+<div style="border: 5px solid darkred; 
+    border-radius: 10px;
+    background-color: lightyellow;">
+    
+<div id="cusdis_thread" data-host="https://cusdis.com"
+        data-app-id="dd057731-7273-4784-9cde-11055d1e11fa"
+        data-page-id="{{ .File.UniqueID }}" 
+        data-page-url="{{ .Permalink }}"
+        data-page-title="{{ .Title }}"
+        data-theme="auto"></div>
+        
+<script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+
+<script>
+
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length == 0) return;
+        const iframe = mutation.addedNodes[0];
+        if (iframe.tagName !== 'IFRAME') return;
+
+        const additionalStyles = `
+        .dark {
+            background-color: black;
+        }
+        
+        `;
+        
+        iframe.srcdoc = iframe.srcdoc.replace('</style>', additionalStyles + '</style>');
+    });
+});
+
+observer.observe(document.getElementById("cusdis_thread"), { childList: true, subtree: true });
+
+window.addEventListener('load', function () {
+    let iframe = document.querySelector("#cusdis_thread iframe");
+    if (iframe) {
+        let observer = new MutationObserver(() => {
+            let scrollHeight = iframe.contentWindow.document.body.scrollHeight;
+            iframe.style.height = scrollHeight + "px";
+        });
+        observer.observe(iframe.contentWindow.document.body, { childList: true, subtree: true });
+    }
+});
+</script>
+
+
+</div>
