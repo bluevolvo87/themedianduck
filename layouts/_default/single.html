@@ -24,8 +24,11 @@
 		
 
 <!-- Comments by Cusdis -->
-{{- partial "disqus.html" . -}}
-      
+{{ if eq .Type "posts" }}
+    {{- partial "disqus.html" . -}}
+{{ end }}
+
+
 <div class="post-tags">
 	{{ if ne .Type "page" }}
 	{{ if gt .Params.tags 0 }}

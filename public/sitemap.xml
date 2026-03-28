@@ -2,6 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://bluevolvo87.github.io/themedianduck/subscribe/</loc>
+    <lastmod>2026-03-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://bluevolvo87.github.io/themedianduck/</loc>
+    <lastmod>2026-03-26T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://bluevolvo87.github.io/themedianduck/2026/03/comment-like-subscribe/</loc>
     <lastmod>2026-03-25T00:00:00+00:00</lastmod>
   </url><url>
@@ -15,9 +21,6 @@
     <lastmod>2026-03-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://bluevolvo87.github.io/themedianduck/tags/</loc>
-    <lastmod>2026-03-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://bluevolvo87.github.io/themedianduck/</loc>
     <lastmod>2026-03-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://bluevolvo87.github.io/themedianduck/categories/</loc>
