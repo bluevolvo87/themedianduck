@@ -28,7 +28,7 @@ Bonus points for commenting on how how these distributions have changed since th
         <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://bluevolvo87.github.io/themedianduck/css/main.445e9db8388241bf31625603bfb892136e29f5e1a827c198833388959526499f.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://bluevolvo87.github.io/themedianduck/css/main.06f0d12750d502130a697d94313e8d27057b0b2755aa44967f36a95456d61db8.css" />
 		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://bluevolvo87.github.io/themedianduck/css/dark.2f92a4dc805bdb778890566c830a867a2611a0a63fa5879ca01a6c06ec982d35.css"  disabled />
 	
 
@@ -48,6 +48,8 @@ Bonus points for commenting on how how these distributions have changed since th
 	<div class="navbar">
 		
 		<a href="/themedianduck/">Home</a>
+		
+		<a href="/themedianduck/subscribe">Subscribe</a>
 		
 		<a href="/themedianduck/vision">The Vision</a>
 		
@@ -516,6 +518,7 @@ Figure 11: The current series leader has spoken!
 		</section>
 		
 
+
 <h1>Moderated Honks from The Flock</h1>
 
 <div style="border: 5px solid darkred; 
@@ -552,20 +555,13 @@ const observer = new MutationObserver((mutations) => {
 
 observer.observe(document.getElementById("cusdis_thread"), { childList: true, subtree: true });
 
-window.addEventListener('load', function () {
-    let iframe = document.querySelector("#cusdis_thread iframe");
-    if (iframe) {
-        let observer = new MutationObserver(() => {
-            let scrollHeight = iframe.contentWindow.document.body.scrollHeight;
-            iframe.style.height = scrollHeight + "px";
-        });
-        observer.observe(iframe.contentWindow.document.body, { childList: true, subtree: true });
-    }
-});
 </script>
 
 
 </div>
+
+
+
 <div class="post-tags">
 	
 	
