@@ -1,0 +1,420 @@
+---
+title: An Inconsequential Introduction to Series 21
+author: Christopher Nam
+date: '2026-04-04'
+slug: an-inconsequential-introduction-to-series-21
+categories: [Series 21, Betting]
+tags: [Series 21, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+---
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+# Your Task
+> Provide an inconsequential introduction to Series 21 of UK Taskmaster.
+>
+> Most inconsequential introduction wins!
+
+```{r, out.width = "50%", fig.cap = "Greg's Diner, the setting of Series 21 Taskmaster.", fig.retina = 1}
+knitr::include_graphics("https://cdn.nerdist.com/wp-content/uploads/2026/03/25102322/Taskmaster-series-21-poster.jpg", dpi = 1500)
+```
+
+# Save the Date!
+
+
+
+**Series 21 of UK Taskmaster is set to première on April 9th on Channel 4 at 9pm, and YouTube around the world at 10pm BST!** Find out what this latter time means for you at your [WorldTimeBuddy](https://www.worldtimebuddy.com/event?lid=14%2C5809844%2C2643743&h=14&sts=29594820&sln=22-23&a=show&euid=b22d94a1-3ae0-6004-91b6-fe404e7a27f0).
+
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VpzceQMcxkw?si=G5GFHspbb9__5gWV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+
+
+:::{.insights}
+
+- **Blue Green Yellow Green Yellow:** What does this all mean??!
+    - Litter Alex Horne and all contestants seem to be reciting this for one of the tasks. 
+- The trailer alludes to **Series 21's theme being American Diner**! This is perhaps even clearer in all the supplementary photos associated with the series.
+    - Here's hoping that Greg owns the diner and the series features a catchy song akin to [Tom's Diner](https://youtu.be/j4jtIDaeaWI?si=LZamvFKwLNtYLnWg)!
+- It's hard to tell what the vibe of this series will be (chaotic, surreal, cerebral), and what roles each contestant will play to in the typical Taskmaster cast chemsistry experiment. But here are some of my observations.
+    - The **on-location setting appears to be at a cricket, lawn bowls, minigolf or similar venue.**
+    - One of the on-location tasks involves a T-Shirt gun; Amy Gledhill is particularly excited by it.
+    - Joanna Page appears to be donning a costume very similar to Charlotte Ritchie's on Series 11. They are both wearing dungarees/overalls, with a yellow (Joanna) and purple (Charlotte) T-shirt on respectively.[^charlotte]
+    - Joel Dommett appears to be styled as the cool, slightly naughty, skateboarding kid. Cowabunga!
+    - Kumail Nanjiani appears to be giving birth in one of his task attempts. Push; I'm Locked In!
+    - We see a rare instance of Alex being broken by one of Greg's outbursts regarding Dr Frankenstein. Maybe Alex is  just happy (and amused) that Greg hasn't fallen into the trap of thinking Frankenstein was the bolted monster.
+    - No insight is given as to what the teams will be.
+        - Contestant interviews seem to indicate the teams being (Armando and Joanna), and (Amy, Joel and Kumail). Young versus old!
+
+
+[^charlotte]: Charlotte did remark on a Taskmaster podcast episode that she nearly wore a yellow T-shirt under her overalls but her flatmate at the time remarked that she looked like a Minion. She promptly changed this.
+:::
+
+# Who's Who?
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1PBYAOnBFOPmpobg2tUg871z64UuQuMNRRcJtw_Y0hZE/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r s21-ind-cast, fig.show = "hold", out.width = "15%", fig.cap = "Our unruly bunch for the next 10 weeks!<br>From left to right: Amy Gledhill (yellow), Armando Iannucci (green), Joanna Page (yellow), Joel Dommett (green), Kumail Nanjiani (blue)."}
+knitr::include_graphics(contestants_df$Image_URL)
+```
+
+
+Is it a coincidence that the backdrop colours for these individual contestant photos are one of blue, green, yellow?
+Could (Blue, Green, Yellow, Green, Yellow) correspond to final series ranking for this cast?
+
+If it does represent the contestants their series rankings, then this would be the final outcome:
+
+```{r blue-green-yellow, fig.cap = "The potential meaning behind BGYGY?"}
+colour_df <- data.frame(
+    "Colour" = c("Blue", "Green", "Yellow", "Green", "Yellow"),
+    "Colour_Hex" = c("#0095B6", "#53824B", "#EAC117", "#53824B", "#EAC117"), 
+    "Contestant" = c("Kumail", "Armando or Joel", "Amy or Joanna", "Armando or Joel", "Amy or Joanna"),
+    "Descending_Series_Ranking" =  c(1:5),
+    "Ascending_Series_Ranking" = c(5:1)
+)
+
+reactable(colour_df,
+          columns = list(
+              "Colour" = colDef(width = 125),
+              "Colour_Hex" = colDef(show = FALSE),
+              "Contestant" = colDef(width = 200),
+              "Descending_Series_Ranking" = colDef(width = 150, name = "Top to Bottom Series Rank"),
+              "Ascending_Series_Ranking" = colDef(width = 150, name = "Bottom to Top Series Rank")
+          ),
+          rowStyle = function(index){
+              row_colour <- colour_df[index, "Colour_Hex"]
+              list(background = row_colour)
+          },
+          
+           defaultSortOrder = "asc",
+    defaultColDef = reactable::colDef(
+        format = colFormat(digits = 0),
+        align = "center",
+        headerStyle = list(background = "#f7f7f8"),
+        vAlign = "center",
+        headerVAlign = "bottom",
+        minWidth = 200
+    ),
+        sortable = TRUE,
+    bordered = TRUE,
+    highlight = TRUE,
+    #height = 750,
+    striped = TRUE,
+    compact = TRUE,
+    pagination = FALSE,
+    theme = reactableTheme(
+        borderColor = "darkred",
+        borderWidth = "5px",
+        color = "black"
+    ),
+    fullWidth = FALSE)
+```
+
+## Richard Osman's House of Games
+The intersection between Taskmaster and [Richard Osman's House of Games (ROHOG)](https://en.wikipedia.org/wiki/House_of_Games) has been significant with many former Taskmaster contestant also having appeared on ROHOG. The original host of ROHOG[^osman] has even appeared on Taskmaster as a contestant himself in Series 2; he finished in 3rd place with Katherine Ryan being that series' champion.[^ryan]
+
+[^osman]: "Original host" as Richard is leaving ROHOG soon with renown actor Michael Sheen taking over as host.
+[^ryan]: A controversial series champion as in a live task involving rabbits and hats, the number of rabbits in a hat translated to actual series points, rather than just for that task. I believe Jon Richardson and Richard Osman are still bitter about this.
+
+
+This intersection is no different for the cast of Series 21; 3 out of the Series 21 cast have appeared on ROHOG (Amy Gledhill, Joanna Page, Joel Dommett). ROHOG consists of many different of games, typically requiring some basic general knowledge (nothing deep like on Only Connect or University Challenge), but with a unique twist. Word play and  use of codes is a common twist in the games; for example:
+
+- smashing two answers together into a natural portmanteau (Answer Smash).
+- providing a pair of answers which rhyme (Rhyme Time).
+- the answers being hidden in the question/a word/name, either in plain sight or as a anagram (Hidden In Plain Sight, The Answer's In The Question, It's All In The Name)
+- Finding commonalities in encrypted questions or clues. Example encryptions include numerical order in alphabet, first letter of words, encryption of vowels. (This Round Is In Code, Broken Karaoke, Z-A)
+
+A potential indicator to how some of the Series 21 cast will perform  is to consider their performance on ROHOG. ROHOG is a plausible indicator due to the use of creative word play, alternative interpretations, and general quick thinking skills that are heavily utilised in Taskmaster. It is of course not the only indicator, and could be a poor indicator!
+
+<!-- Amy Start -->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 25%"}
+
+```{r, fig.cap = "Me caveman, you cavewoman Amy Gledhill"}
+knitr::include_graphics(as.character(contestants_df[1, "Image_URL"]))
+```
+
+:::
+
+::: {style="flex-basis: 75%"}
+
+
+## Amy Gledhill
+**[Age (at time of first studio recording):]{.ul}** 37
+
+**[Occupation:]{.ul}** Stand-up Comedian, Podcaster.
+
+**[ROHOG History (ROHOGH):]{.ul}** 
+
+- Amy has appeared twice on ROHOG; one as a regular week contestant, one as a returning champion.
+- She has won 5 days overall; 2 in her initial tenure, 3 as a returning champion.
+- Her average points per day was 9.2 and 9.0 respectively, and she placed 1st in both of the weekly leader boards.
+
+**[My personal commentary:]{.ul}**
+
+I was first made aware of Amy from her Off Menu podcast episode ([link](https://open.spotify.com/episode/14Tm8UPhpy4CtvCqhSuDeQ?si=a893f1bceabc4b5a)); she memorably phoned her mum during the episode as she tried to remember the restaurant where she had mash with seeweed. There was also humorous discussion with James and Ed as to which crisps[^crisps] would be the best/worst to put into bodily backdoor orifices.
+
+Amy also recently appeared in the 2nd series of _"LOL: Last One Laughing UK"_. She made a valiant attempt[^lol] and was the 4th to be eliminated.
+
+Amy also provided a humorous reaction and commentary video (along with Huge Davies and Bennet Kavanagh), on the film [Movie 43](https://youtu.be/L-a0r2flTNM?si=Nkc2nR_nWpU53H17), an incredibly bad film that managed to rope in many high profile Hollywood actors. 
+
+**[Overall personal opinion:]{.ul}**
+Amy fulfils the young and upcoming comedian bucket. I've enjoyed her on ROHOG, other panel shows and general appearances on other shows. It was inevitable that she would make an appearance, and she is a welcome addition.
+I have high hopes for Amy in both being an amusing contestant, and being (chaotically) competent.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** Maisie Adam (S20), Ania Magliano (S20), Stevie Martin (S19).
+
+[^crisps]: For US readers, this would be chips.
+[^lol]: The whole cast of series 2 was very impressive, with eliminations only happening in the 2nd half of the series.
+:::
+
+
+::::
+<!-- Amy End -->
+
+<!-- Armando Start-->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 75%; justify-content: flex-end;"}
+
+
+## Armando Iannucci
+**[Age (at time of first studio recording):]{.ul}** 61
+
+**[Occupation:]{.ul}** Writer, Satirist, Director, Performer.
+
+**[ROHOG History (ROHOGH):]{.ul}** 
+
+Has not appeared on ROHOG; he's a busy man!
+
+**[My personal commentary:]{.ul}**
+Armando is best known for being the showrunner for *"The Thick of It"* and *"Veep"*, the golden standard of political comedy. 
+
+He was also the co-creator of Alan Partridge (along with Steve Coogan), and was heavily involved in Alan's initial foray into radio and television.
+
+He has appeared on the Off Menu podcast ([episode link](https://open.spotify.com/episode/3W6Y79ydEFyFC2elbdMJjS?si=4141d43129ff4c1a)), and had good banter with Ed and James (coming up with Sausage Restaurant puns). 
+
+
+**[Overall personal opinion:]{.ul}**
+Armando fulfils the legacy cast member slot. He can be pretty witty on panel shows I've seen ([Would I like to You?](https://youtu.be/8kAASeU8T8E?si=fChnKCa-csnDRaYO)), and willing to play along with the silliness. 
+
+I suspect that Armando will have moments of brilliance, but also have moments of idiocy that will likely be his downfall. I'm sure he will have witty remarks and banter with Greg, Alex and the rest of cast of the next 10 weeks.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** Sanjeev Bhaskar (S20), Reece Shearsmith (S20), Steve Pemberton (S17).
+
+:::
+
+::: {style="flex-basis: 25%"}
+
+```{r, fig.cap = "Armando Iannuci takes his sip from a Thick (of It) Milkshake..."}
+knitr::include_graphics(as.character(contestants_df[2, "Image_URL"]))
+```
+:::
+
+::::
+<!-- Armando End -->
+
+<!-- Joanna Start -->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 25%"}
+
+```{r, fig.cap = "Joanna Page stars in the live-action remake of <i>'Minions'</i>..."}
+knitr::include_graphics(as.character(contestants_df[3, "Image_URL"]))
+```
+
+:::
+
+::: {style="flex-basis: 75%"}
+
+
+## Joanna Page
+**[Age (at time of first studio recording):]{.ul}** 48
+
+**[Occupation:]{.ul}** Comedic Actress, Podcast.
+
+**[ROHOG History (ROHOGH):]{.ul}** 
+
+- Joanna has appeared twice on ROHOG; one as a regular week contestant, and in a festive week special.
+- She has won 4 days overall; 3 in her initial tenure, 1 as a festive contestant.
+- Her average points per day was 7.8 (regular week) and 6.8 (festive week), placing 1st and 3rd respectively in the weekly leader boards.
+- Joanna appeared to be quite competitive during both of her weeks, and seemed to take the competition a lot more seriously than needs to be.
+
+**[My personal commentary:]{.ul}**
+
+Best known for playing Stacey Shipman in _"Gavin & Stacey"_, Joanna has also acted in other shows and appeared on the typical British panel show circuit. She even appeared in one of the many intertwining subplots in the romantic comedy film _Love Actually_, albeit in one of the less prominent subplots together with Martin Freeman.
+
+Despite starring in the most popular UK comedy show of the last 10 years, I don't have a strong opinion on Joanna and mainly associate with her _Stacey_ character. In the show, she appears as a bubbly, optimistic and somewhat ditzy female lead. 
+
+Joanna hasn't even appeared on the Off Menu podcast like all other cast members have.
+
+Joanna did have a [strong, negative opinion on Lucia Keskin aka _Chi With A C_](https://metro.co.uk/video/bbc-star-best-response-tv-savaged-gavin-stacey-actor-3156475/?ito=vjs-link), a popular comedic Youtuber who has made an impressive breakthrough to writing her own TV sitcom, despite only having one GCSE.
+
+
+**[Overall personal opinion:]{.ul}**
+Joanna fulfils the comedy actor cast member role, and is recognisable to the UK general public. I suspect that she will be a very average contestant (both points and entertainment wise), with some moments of brilliance whilst in the company of others. It would not surprise me to see her being lost in the Taskmaster house.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** Charlotte Ritchie (S11), Katherine Parkinson (S10), Sian Gibson (S8).
+
+:::
+
+
+::::
+<!-- Joanna End -->
+
+
+<!-- Joel Start-->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 75%; justify-content: flex-end;"}
+
+
+## Joel Dommett
+**[Age (at time of first studio recording):]{.ul}** 40
+
+**[Occupation:]{.ul}** Comedian, Television Presenter.
+
+**[ROHOG History (ROHOGH):]{.ul}** 
+
+- Joel has appeared only once on ROHOG during a regular week.
+- He did not win any days during his week tenure.
+- His average points per day was 6.0, and he placed 3rd in the weekly leader board.
+- Joel likely needs some additional time to think creatively; thinking creatively on his feet may not be a forte.
+
+**[My personal commentary:]{.ul}**
+I mainly associate Joel for being a primetime TV presenter; he presents the popular primetime show _The Masked Singer UK_.
+
+I rarely associate with Joel for actually being a stand up comedian, or even an actor as Wikipedia seems to claim. 
+I am aware that James Acaster and Josh Widdicombe are in the same cohort of comedians with Joel, often doing gigs together when they were first starting off. 
+
+Joel has appeared on the Off Menu podcast ([episode link](https://open.spotify.com/episode/5xciFFLaRGEPVRVeKZ5SCn?si=839d71da01864949)), in which his dream menu was understandably derided and ridiculed. His dream main course involved sausages from a school lunch, and his dream drink was a protein shake. His dream menu was later further ridiculed by [Jen Brister](https://open.spotify.com/episode/0TFoEWhQGzKPvloppvccQs?si=6c7049b7c3ad46c4) when she was subjected to Joel's dream menu as a tasting menu.
+
+Joel was also unfortunate to have [revealed himself onscreen](https://youtu.be/WBvr0wWYWt4?si=xiiXaNdscHfQwidl&t=145) as part of a catfishing scheme. It is reassuring (and amusing) that he talks about this embarrassment so openly. 
+
+**[Overall personal opinion:]{.ul}**
+Joel is likely the most recognisable of the cast, although Joanna may give him some competition. As I mainly associate Joel as a TV presenter (rather than comedian), it will be interesting to see what skills and talents Joel may posses that are not exhibited on primetime TV so readily.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** Babatunde Aléshé (S18), Kiell Smith-Bynoe (S15), Chris Ramsey (S13).
+
+:::
+
+::: {style="flex-basis: 25%"}
+
+```{r, fig.cap = "Cowabunga Dude...it's Joel Dommett!"}
+knitr::include_graphics(as.character(contestants_df[4, "Image_URL"]))
+```
+:::
+
+::::
+<!-- Joel End -->
+
+<!-- Kumail Start -->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 25%"}
+
+```{r, fig.cap = "My milkshake brings the Hollywood boy (in this case Kumail Nanjiani) to the yard."}
+knitr::include_graphics(as.character(contestants_df[5, "Image_URL"]))
+```
+
+:::
+
+::: {style="flex-basis: 75%"}
+
+
+## Kumail Nanjiani
+**[Age (at time of first studio recording):]{.ul}** 47
+
+**[Occupation:]{.ul}** Stand-up comedian and actor.
+
+**[ROHOG History (ROHOGH):]{.ul}** 
+
+Of course he hasn't appeared on this just low key TV quiz show; he's a Hollywood star!
+
+**[My personal commentary:]{.ul}**
+
+A surprising curveball contestant; we rarely expect to see US Hollywood stars on UK Taskmaster!
+
+One could assume that this casting is the Jason Mantzoukas effect, but Kumail is very quick to point out that he asked to be on Taskmaster **before** Jason ([interview source](https://youtu.be/3mVc_bO_4J0?si=36ze0PWhFaynv6ko)). With the somewhat surprising facilitators of Tim Key (and James Acaster) being pivotal in Kumail's casting, it is clear that Kumail is a motivated fan of the show and it would not surprise me if Kumail is also competent.
+
+I hope that Kumail embraces the UK culture and cast, and based on the interview source, I have no doubt that he fully embraced UK Taskmaster and its lower pay compared to US counterparts. 
+
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3mVc_bO_4J0?si=8RfLDLRW8TnfXKf_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+
+Kumail is best known (to me) for appearing in the ~~documentary~~ comedy show _Silicon Valley__, and writing/starring/exec producing the film _"The Big Sick"_. He's even part of the Marvel Cinematic Universe (a crossover first with UK Taskmaster), and appeared on Time magazine's _"one of the 100 most influential people in the world"_ list. 
+
+Kumail has even appeared on the Off Menu podcast ([episode link](https://open.spotify.com/episode/28gO9WfW7Lm6McEBml2Q72?si=1e75879249f0452a)) where he recalls an amusing story of crawling into a big pot of biriyani as a baby. 
+
+**[Overall personal opinion:]{.ul}**
+A surprising Hollywood shaped curveball, but a welcome addition. It's clear that Kumail is a big fan of the show, campaigning to get on the show through the Taskmaster back alleys (Tim Key and James Acaster), and appears to be less destructive and more competent than Jason Mantzoukas. I have high hopes for Kumail.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** Jason Mantzoukas (S19, although potentially less destructive), Dara Ó Briain (S14, for sheer dedication), John Robins (S17, hopefully less obviously competitive). 
+
+:::
+
+
+::::
+<!-- Kumail End -->
+
+```{r, out.width = "20%", fig.cap = "What is this nonsense?"}
+knitr::include_graphics("https://64.media.tumblr.com/f7c33f571b622f0032e9b9b691d108ed/e1004960672adabb-18/s640x960/07bd88ebbb5626cfa15458531bc718609291658e.jpg")
+```
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Blue Green Yellow Green Yellow!** 
+    - What is the potential meaning of this sequence?
+- We've had a brief introduction with personal commentary on each of the Series 21 contestants.
+    - **3 out of the 5 contestants have appeared on Richard Osman's House of Games**; an equally creative, silly and inconsequential TV quizshow.
+    - **4 out of the 5 contestants have appeared on the Off Menu podcast** and provided their dream menu.
+    - Taskmaster UK is having its **first crossover with the Marvel Cinematic Universe**.
+- Based on the limited (and biased) information considered, **Amy Gledhill and Kumail Nanjiani are my initial favourites for Series 21.**
+
+```{r, out.width = "40%", fig.cap = "Not long now my dear child..."}
+knitr::include_graphics("https://64.media.tumblr.com/041804fdb3a8a470278c2790c6584c91/21301f32291ce737-c1/s1280x1920/0a03328232587f5df91b3e52082f1cc7ed07fa54.gifv")
+```
+
+:::
