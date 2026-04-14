@@ -84,12 +84,14 @@ task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
         
 colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
 
-contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+contestants_df <- range_read(gs_data_link, sheet = "Intro_Contestants")
 colnames(contestants_df) <- make.names(colnames(contestants_df))
 ```
 
-```{r s21-ind-cast, fig.show = "hold", out.width = "15%", fig.cap = "Our unruly bunch for the next 10 weeks!<br>From left to right: Amy Gledhill (yellow), Armando Iannucci (green), Joanna Page (yellow), Joel Dommett (green), Kumail Nanjiani (blue)."}
-knitr::include_graphics(contestants_df$Image_URL)
+```{r s21-ind-cast, fig.show = "hold", out.width = "70%", fig.cap = "Our unruly bunch for the next 10 weeks!<br>From left to right: Amy Gledhill (yellow), Armando Iannucci (green), Joanna Page (yellow), Joel Dommett (green), Kumail Nanjiani (blue).", cache = FALSE}
+
+img_dir <- here("img", "highlights", "series_21")
+knitr::include_graphics(file.path(img_dir, "s21_cast_blue_yellow_green.png"), error = FALSE)
 ```
 
 

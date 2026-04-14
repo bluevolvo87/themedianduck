@@ -1,0 +1,362 @@
+---
+title: "Series 21, Episode 1: The Statistical Bookworm"
+author: Christopher Nam
+date: '2026-04-10'
+slug: series-21-episode-1
+categories: [Series 21, Betting]
+tags: [Series 21, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: "Some (statistical) commentary on Series 21, Episode 1 of Taskmaster. 'He's so famous!'; Words that are never uttered towards Greg, because who is Greg exactly?!"
+---
+
+<script src="{{< blogdown/postref >}}index_files/core-js/shim.min.js"></script>
+<script src="{{< blogdown/postref >}}index_files/react/react.min.js"></script>
+<script src="{{< blogdown/postref >}}index_files/react/react-dom.min.js"></script>
+<script src="{{< blogdown/postref >}}index_files/reactwidget/react-tools.js"></script>
+<script src="{{< blogdown/postref >}}index_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="{{< blogdown/postref >}}index_files/reactable/reactable.css" rel="stylesheet" />
+<script src="{{< blogdown/postref >}}index_files/reactable-binding/reactable.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#your-task" id="toc-your-task">Your Task</a></li>
+<li><a href="#episode-recap" id="toc-episode-recap">Episode Recap</a></li>
+<li><a href="#series-scoreboard-tracker" id="toc-series-scoreboard-tracker">Series Scoreboard Tracker</a></li>
+<li><a href="#may-the-odds-be-in-your-favour" id="toc-may-the-odds-be-in-your-favour">May the Odds be in Your Favour</a></li>
+<li><a href="#what-have-we-learnt-today" id="toc-what-have-we-learnt-today">What Have We Learnt Today?</a></li>
+</ul>
+</div>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<p class="caption">
+Figure 1: Making our grand entrance into this post.
+</p>
+<img src="https://64.media.tumblr.com/912f366055c1fa152bea912a248ff7d9/407d5384b770e190-3c/s1280x1920/822c16aac7b95a50d35e0b887badfa1e97536ef8.gifv" alt="Making our grand entrance into this post." width="40%" />
+</div>
+<div id="your-task" class="section level1">
+<h1>Your Task</h1>
+<blockquote>
+<p>Provide a statistical commentary of Episode 1 of <del>Season</del> Series 21 of Taskmaster.</p>
+<p>The raw data (each contestants task attempt) for Series 21 can be found in the following <a href="https://docs.google.com/spreadsheets/d/1PBYAOnBFOPmpobg2tUg871z64UuQuMNRRcJtw_Y0hZE/edit?usp=sharing">Google Sheets File</a>.</p>
+</blockquote>
+</div>
+<div id="episode-recap" class="section level1">
+<h1>Episode Recap</h1>
+<div class="insights">
+<blockquote>
+<p>Wow! What an incredibly strong start series 21 has got off to!</p>
+</blockquote>
+<p>Each contestant got to display their individual personality (Joel’s committment to his personal task, Joanna’s manic excitement), team dynamics were established (<em>“He’s so famous!”</em> versus the energy juxtaposition of Joanna and Armando), and the cast were bouncing off each other in the studio (Amy seemed to be extremely supportive of Joanna’s triumph in the live task). The tasks were also not too complicated and seemed like genuine fun!</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
+<p class="caption">
+Figure 2: Hollywood infiltrates the Taskmaster house for Series 21!
+</p>
+<img src="https://64.media.tumblr.com/228215054740077c75b02dbe5659fa17/da646ddf7ba62f89-c1/s1280x1920/cec2c9a85cd0dce11449a482b9ed5cf5e0bc3cfb.gifv" alt="Hollywood infiltrates the Taskmaster house for Series 21!" width="40%" /><img src="https://64.media.tumblr.com/84d0df2fe3e2abd7f67131ad3d20cbb1/da646ddf7ba62f89-db/s1280x1920/0acd6c0b40b01e63d9ca8078feb52cd3f870da2c.gifv" alt="Hollywood infiltrates the Taskmaster house for Series 21!" width="40%" />
+</div>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep1-performance-grade"></span>
+<h1 style="color:white;background:black;text-align:left;font-size:16px;font-style:normal;font-weight:bold;text-decoration:underline;letter-spacing:px;word-spacing:px;text-transform:;text-shadow:;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px">Episode 1 Performance Report Card</h1>
+<h2 style="color:white;background:black;text-align:left;font-size:14px;font-style:italic;font-weight:normal;text-decoration:;letter-spacing:px;word-spacing:px;text-transform:;text-shadow:;margin-top:0.5px;margin-right:0px;margin-bottom:0px;margin-left:0px">Episode 1 Performance Grade is based on comparing the current episode performance, to the prior 0 episode(s) performance and where it lies in the distribution.</h2>
+<div id="htmlwidget-1" class="reactable html-widget" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Contestant":["Joanna Page","Amy Gledhill","Armando Iannucci","Joel Dommett","Kumail Nanjiani"],"Current_Ep_Points":[22,16,11,11,9],"Current_Ep_Ranking":[1,2,3,3,5],"Current_Ep_Grade":["???","???","???","???","???"],"Ep_Performance_Summary":["[Min: NA, P25: NA, Median: NA, P75: NA, Max: NA, Mean: NA:, StdDev: NA]","[Min: NA, P25: NA, Median: NA, P75: NA, Max: NA, Mean: NA:, StdDev: NA]","[Min: NA, P25: NA, Median: NA, P75: NA, Max: NA, Mean: NA:, StdDev: NA]","[Min: NA, P25: NA, Median: NA, P75: NA, Max: NA, Mean: NA:, StdDev: NA]","[Min: NA, P25: NA, Median: NA, P75: NA, Max: NA, Mean: NA:, StdDev: NA]"]},"columns":[{"id":"Contestant","name":"Contestant","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"cell":[{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Joanna Page"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/JOANNA.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Amy Gledhill"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/AMY.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Armando Iannucci"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/ARMANDO.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Joel Dommett"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/JOEL.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Kumail Nanjiani"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/KUMAIL.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]}],"minWidth":100},{"id":"Current_Ep_Points","name":"Episode 1 Points","type":"numeric","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"cell":[{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center"}},"children":[{"name":"div","attribs":{"style":{"boxShadow":null,"textAlign":"right","display":"flex","alignItems":"center","justifyContent":"flex-end","boxShadow.1":null,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","border":"thin solid darkred","background":"#FFFFC2FF","backgroundImage":null,"color":"black","fontWeight":"bold","fontSize":18,"width":"100%","height":50,"transition":"width 1s ease","textOverflow":"ellipsis","whiteSpace":"nowrap"}},"children":["22"]}]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center"}},"children":[{"name":"div","attribs":{"style":{"boxShadow":null,"textAlign":"right","display":"flex","alignItems":"center","justifyContent":"flex-end","boxShadow.1":null,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","border":"thin solid darkred","background":"#FFFFC2FF","backgroundImage":null,"color":"black","fontWeight":"bold","fontSize":18,"width":"72.7272727272727%","height":50,"transition":"width 1s ease","textOverflow":"ellipsis","whiteSpace":"nowrap"}},"children":["16"]}]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center"}},"children":[{"name":"div","attribs":{"style":{"boxShadow":null,"textAlign":"right","display":"flex","alignItems":"center","justifyContent":"flex-end","boxShadow.1":null,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","border":"thin solid darkred","background":"#FFFFC2FF","backgroundImage":null,"color":"black","fontWeight":"bold","fontSize":18,"width":"50%","height":50,"transition":"width 1s ease","textOverflow":"ellipsis","whiteSpace":"nowrap"}},"children":["11"]}]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center"}},"children":[{"name":"div","attribs":{"style":{"boxShadow":null,"textAlign":"right","display":"flex","alignItems":"center","justifyContent":"flex-end","boxShadow.1":null,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","border":"thin solid darkred","background":"#FFFFC2FF","backgroundImage":null,"color":"black","fontWeight":"bold","fontSize":18,"width":"50%","height":50,"transition":"width 1s ease","textOverflow":"ellipsis","whiteSpace":"nowrap"}},"children":["11"]}]}]}]},{"name":"div","attribs":{},"children":[{"name":"div","attribs":{"style":{"flexGrow":1,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","background":"#EEEEEE"}},"children":[{"name":"div","attribs":{"style":{"display":"flex","alignItems":"center"}},"children":[{"name":"div","attribs":{"style":{"boxShadow":null,"textAlign":"right","display":"flex","alignItems":"center","justifyContent":"flex-end","boxShadow.1":null,"borderTopLeftRadius":"0px","borderBottomLeftRadius":"0px","borderTopRightRadius":"0px","borderBottomRightRadius":"0px","border":"thin solid darkred","background":"#FFFFC2FF","backgroundImage":null,"color":"black","fontWeight":"bold","fontSize":18,"width":"40.9090909090909%","height":50,"transition":"width 1s ease","textOverflow":"ellipsis","whiteSpace":"nowrap"}},"children":["9"]}]}]}]}],"width":150},{"id":"Current_Ep_Ranking","name":"Episode 1 Ranking","type":"numeric","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"width":150,"style":[{"background":"#D6AF36"},{"background":"#A7A7AD"},{"background":"#A77044"},{"background":"#A77044"},{"background":"#737473"}]},{"id":"Current_Ep_Grade","name":"Episode 1 Performance Grade","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"width":150,"style":[{"background":null},{"background":null},{"background":null},{"background":null},{"background":null}]},{"id":"Ep_Performance_Summary","name":"Summary Performance from Previous 0 Episodes","type":["glue","character"],"format":{"cell":{"digits":0},"aggregated":{"digits":0}},"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"minWidth":350}],"sortable":false,"pagination":false,"highlight":true,"bordered":true,"striped":true,"compact":true,"width":"100%","theme":{"color":"black","borderColor":"darkred","borderWidth":"5px"},"dataKey":"2b08e9737d49d73f3e0c68f58bdd5fd5"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 3: Episode 1 Performance Report Cards
+</p>
+</div>
+<div class="insights">
+<blockquote>
+<p>But how did our contestants do?</p>
+</blockquote>
+<p>Table <a href="#fig:ep1-performance-grade">3</a> shows the outcome and performance grade of Episode 1 for each contestant. However, as our current performance grade is based purely on a contestants prior episode performance in the series, we are unable to assign performance grades. We likely won’t be able to grade these contestants meaningfully until Episode 4, when we can compare their performance from Episodes 1 to 3.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Nevertheless, here are some of my initial remarks, particularly in light of the previous post on this blog (<a href="/themedianduck/2026/04/an-inconsequential-introduction-to-series-21/">inconsequential introduction</a>).</p>
+<ul>
+<li><strong>Joanna scored an impressive 22 points in the episode and thus won the episode.</strong>
+<ul>
+<li>I didn’t rate Joanna strongly prior to going to the episode, but her overly enthusiastic energy was thoroughly entertaining (the over talking, the Welsh accent, the manic energy).</li>
+<li>Her impressive episode points, and the gap between her fellow contestants, is no doubt exacerbated from the live studio task being winner takes all. However, prior to this live studio task, Joanna was still leading the episode with a 1 point lead over 2nd place (Amy Gledhill).</li>
+</ul></li>
+<li>Regular readers will know that I am not a fan of <em>“winner takes all”</em> tasks as it provides creates a great deal of imbalance in the series and the competition.
+<ul>
+<li>However, given the nature of the task (be the first to find five oranges under the tins), it is unclear how points could distributed for those not in first place.</li>
+<li>This type of task also makes the odds of winning an episode and series considerably less exciting.</li>
+</ul></li>
+<li>Amy lived up to my delightful expectation and I hope she continues to rank highly.
+<ul>
+<li>She was also practically glowing in the studio.</li>
+</ul></li>
+<li>Kumail had an unlucky episode in my opinion, and hopefully not representative of his future performance. Maybe his strong arms and wrinkle free forehead will come to his rescue.
+<ul>
+<li>It was genuinely heart warming to see Amy and Joel slightly starstruck by a Hollywood teammate.</li>
+</ul></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<p class="caption">
+Figure 4: Kumail’s unfortunate weak start.
+</p>
+<img src="https://64.media.tumblr.com/375afa1fc282a2ce3878423e6317e156/73ad9055e5398086-b5/s1280x1920/f5e771df63137183bbb12c0433c857bfbe62765f.gifv" alt="Kumail's unfortunate weak start." width="40%" />
+</div>
+</div>
+<div class="insights">
+<blockquote>
+<p>Is this the earliest in a series that we have seen a team task?</p>
+</blockquote>
+<p>It was a bit surprising to see the teams being established in the 1st episode of the series. I would suspect teams usually debut in the 2nd or 3rd episode, once individual personalities have been established and once we (the audience) have become familiar with each contestant individually. The production crew must have great faith in the Series 21 cast for the teams to be established this early!</p>
+<p>In answer to whether this is the earliest we have seen team tasks in a series, the answer is <strong>no</strong>.</p>
+<p>Series 14, 16 and 17 also had team tasks in episode 1. Episode 2 is the most common episode in UK Taskmaster in which teams are established, with Series 1 being latest debut (Episode 4). Team tasks debuting in Episode 1 are not the norm, but have occurred in the past.</p>
+<table>
+<thead>
+<tr>
+<th align="left"><u>Team Task Episode Première</u></th>
+<th align="left"><u>Series</u></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="left">14, 16, 17</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 18, 19, 20</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">1</td>
+</tr>
+</tbody>
+</table>
+<!-- 4, 3, 2, 2, 2 -->
+<!-- 2, 2, 2, 2, 2 -->
+<!-- 2, 2, 2, 1, 2 -->
+<!-- 1, 1, 2, 2, 2 -->
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
+<p class="caption">
+Figure 5: Teamwork makes the dreamwork!
+</p>
+<img src="https://64.media.tumblr.com/098113fa62b92d3029f3c84aa79099f6/407d5384b770e190-6f/s1280x1920/ac5e3b9b802b714766ca2708cee97b217123f7f6.gifv" alt="Teamwork makes the dreamwork!" width="40%" />
+</div>
+</div>
+<div class="insights">
+<blockquote>
+<p>How fr will Joel continue with his addtional personal task?</p>
+</blockquote>
+<p>Joel’s egg-xtra<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> task was highly amusing and definitely heightens the entertainment factor throughout the series (assuming Joel keeps up with presenting in a timely manner).</p>
+<ul>
+<li>Considering Greg stated that he won’t award any additional points for this additional task (although perhaps he was joking about this), it’s commendable that Joel is still committing to this egg-xtra task.
+<ul>
+<li>However, bonus tasks like this do add some unnecessary complexity to my analysis.</li>
+</ul></li>
+<li>I suspect a more competitive and easily irritable contestant (see Ed Gamble) would have smashed the Gr-egg up as soon as they found out that this was a specific task for them alone.</li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<p class="caption">
+Figure 6: Joel’s Egg-istential Crisis…
+</p>
+<img src="https://64.media.tumblr.com/33a806fb8e2d53dd7b582d12dd4c9a81/1c3a786bb8b6038f-fa/s1280x1920/5f78953286734d9c4d2926490bd1839a68755cc6.gifv" alt="Joel's Egg-istential Crisis..." width="30%" /><img src="https://64.media.tumblr.com/e595c1a05929539dcb438b240d1fdd07/1c3a786bb8b6038f-8a/s1280x1920/8df15106e8fc7bfe678e68b9805bbd2412d78c65.gifv" alt="Joel's Egg-istential Crisis..." width="30%" /><img src="https://64.media.tumblr.com/200e888374486ae4812697c45c1b2720/1c3a786bb8b6038f-0c/s1280x1920/27871420ce3069ec073e8ff6bbcc25a2b05cb485.gifv" alt="Joel's Egg-istential Crisis..." width="30%" />
+</div>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep1-task-performance"></span>
+<h1 style="color:white;background:black;text-align:left;font-size:16px;font-style:normal;font-weight:bold;text-decoration:underline;letter-spacing:px;word-spacing:px;text-transform:;text-shadow:;margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px">Series 21 Task Points Distribution.</h1>
+<h2 style="color:white;background:black;text-align:left;font-size:14px;font-style:italic;font-weight:normal;text-decoration:;letter-spacing:px;word-spacing:px;text-transform:;text-shadow:;margin-top:0.5px;margin-right:0px;margin-bottom:0px;margin-left:0px">Past covers tasks up to Episode 0, Current Ep covers tasks in Episode  1.</h2>
+<div id="htmlwidget-2" class="reactable html-widget" style="width:100%;height:500px;"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Contestant":["Amy Gledhill","Armando Iannucci","Joanna Page","Joel Dommett","Kumail Nanjiani"],"Image_URL":["https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/AMY.png","https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/ARMANDO.png","https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/JOANNA.png","https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/JOEL.png","https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/KUMAIL.png"],"Period":["Current Ep","Current Ep","Current Ep","Current Ep","Current Ep"],"<0":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>"],"0":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>"],"1":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>"],"2":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>"],"3":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(52, 151, 169, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 17px;\" >2 (40.0%)<\/span>"],"4":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(52, 151, 169, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 17px;\" >2 (40.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>"],"5":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(57, 93, 156, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 23px;\" >3 (60.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(96, 206, 172, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 11px;\" >1 (20.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>"],"6+":["<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>","<span style=\"   font-family: monospace;  color: black !important;padding-right: 4px; padding-left: 4px; background-color: rgba(222, 245, 229, 64) !important;justify-content: center; text-align: center; align-items:center; margin: 0px; padding: 0px; padding-right:-4px; padding-left: -4px; border: 0px; display: flex;  width: 100%; height: 200%;text-align: c;font-size: 5px;\" >0 (0.0%)<\/span>"]},"columns":[{"id":"Contestant","name":"Contestant","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"filterable":true,"cell":[{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Amy Gledhill"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/AMY.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Armando Iannucci"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/ARMANDO.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Joanna Page"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/JOANNA.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Joel Dommett"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/JOEL.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]},{"name":"Fragment","attribs":[],"children":[{"name":"div","attribs":{"style":{"fontWeight":1000}},"children":["Kumail Nanjiani"]},{"name":"div","attribs":{"style":{"display":"inline-block","width":"98%"}},"children":[{"name":"img","attribs":{"src":"https://taskmaster.tv/sites/default/files/styles/contestant_in_frame/public/contestant/KUMAIL.png","style":{"width":"30%"},"alt":"Contestant.Image"},"children":[]}]}]}]},{"id":"Image_URL","name":"Image_URL","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"resizable":true,"show":false},{"id":"Period","name":"Period","type":"factor","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":false,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"},"filterable":true,"width":150},{"id":"<0","name":"<0","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"0","name":"0","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"1","name":"1","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"2","name":"2","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"3","name":"3","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"4","name":"4","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"5","name":"5","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}},{"id":"6+","name":"6+","type":"character","format":{"cell":{"digits":0},"aggregated":{"digits":0}},"html":true,"minWidth":100,"align":"center","vAlign":"center","headerVAlign":"bottom","headerStyle":{"background":"#f7f7f8"}}],"groupBy":["Contestant"],"sortable":false,"pagination":false,"defaultExpanded":true,"highlight":true,"bordered":true,"striped":true,"compact":true,"style":{"maxWidth":2000},"width":"100%","height":"500px","theme":{"color":"black","borderColor":"#AA6C39","borderWidth":"5px"},"dataKey":"e84815670598d5b8757ecdbff4bc3af0"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 7: Episode 1 Task Distributions
+</p>
+</div>
+<div class="insights">
+<blockquote>
+<p>How were the points allocated for each contestant in the episode at a task level? Are there any interesting insights?</p>
+</blockquote>
+<p>From an individual task performance perspective (Table <a href="#fig:ep1-task-performance">7</a>):</p>
+<ul>
+<li><strong>Kumail is the only contestant to have not received 5 points for a task.</strong> The most points he has been awarded for a task is 3 points.
+<ul>
+<li>His points distribution is skewed towards the left, the lower end of the points range.</li>
+</ul></li>
+<li>Unsurprisingly, <strong>Joanna and Amy have task points distributions which are skewed to the right</strong> (the higher end of the points range). It’s unsurprising since they finished in first and second place respectively.</li>
+<li><strong>Armando and Joel have the flatest, most uniform points distribution at the moment.</strong></li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-10"></span>
+<p class="caption">
+Figure 8: Alex vs the Wasp. Coming to a cinema near you.
+</p>
+<img src="https://64.media.tumblr.com/c24e8898b689ee2d43d426a697a3cc90/6292a3f879b9373b-83/s1280x1920/2bc694dbed8865b89514f39ca68433f490967d42.gifv
+" alt="Alex vs the Wasp. Coming to a cinema near you." width="40%" />
+</div>
+</div>
+</div>
+<div id="series-scoreboard-tracker" class="section level1">
+<h1>Series Scoreboard Tracker</h1>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:series-tracker"></span>
+<p class="caption">
+Figure 9: Series Scoreboard Tracker
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/series-tracker-1.png" alt="Series Scoreboard Tracker" width="60%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:series-tracker">9</a> shows the series scores at the end of each episode. It currently displays exactly the same information as Table <a href="#fig:ep1-performance-grade">3</a>, since only 1 episode has aired. Joanna is currently leading the series scoreboard having won episode 1.</p>
+<p>The race will no doubt be more exciting and insightful as the series progresses.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<p class="caption">
+Figure 10: Armando’s frustration to the lack of original, orange insights in this post.
+</p>
+<img src="https://64.media.tumblr.com/c543a43d5998eca0556a80b446aaf05f/51027b88773fa523-68/s540x810/bcfe6eae9981980d928f025960ce6cee9ba09b00.gifv" alt="Armando's frustration to the lack of original, orange insights in this post." width="40%" />
+</div>
+</div>
+</div>
+<div id="may-the-odds-be-in-your-favour" class="section level1">
+<h1>May the Odds be in Your Favour</h1>
+<div class="callout">
+<p>The following sections conclusions and probability distributions should be taken with a grain salt and <strong>not</strong> be used for gambling purposes.</p>
+</div>
+<p>These distributions are estimated, through sampling and simulation, on one episodes worth of tasks. Recall that the Multiverse Sampling approach samples with replacement the prize, pre-recorded and live tasks separately and in isoltion. That is, in sampling prize tasks for future episodes in the series, we sample only from existing prize task observations so far (in this case, only Episode 1’s Prize Task).</p>
+<p>Consequently, for both prize task and live task samples for future episodes, these will be identical to what occurred in episode 1. In turn, we assume the prize and live task outcome of Episode 1 will continue for the rest of the series; this is a strong, likely incorrect assumption.</p>
+<p>Add to this the live task of Episode 1 being a <em>“winner takes all”</em> situation, and thus the winner of this task being awarded the same advantageous win for the rest of the series. That is, Joanna (the winner of the Episode 1 live task), will permanently being awarded the full 5 points for all sampled live tasks in the series and the remaining contestants receiving 0 points.</p>
+<p>The <strong>consequence of this cold start sampling strategy</strong> (using Episode 1 data only) is that <strong>much of the uncertainty associated the series will not be captured adequately</strong>, and distributions may appear to be certain than they should be.</p>
+<p><em>If only there was a way to account for general uncertainty which may not have been encountered and observed by the contestants so far….</em><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<p class="caption">
+Figure 11: Amy’s response to my apology and caveating that my insights are pretty meaningless after just one episode…
+</p>
+<img src="https://64.media.tumblr.com/a040d866e97955986a7f72dc426a0d2c/ec8629a056c9dc60-ed/s1280x1920/059b9e913107926ffba3d1bf2627b0363af06a0f.gifv" alt="Amy's response to my apology and caveating that my insights are pretty meaningless after just one episode..." width="40%" />
+</div>
+<div id="within-episode-ranking-distributions" class="section level2">
+<h2>Within-Episode Ranking Distributions</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:ep-rankings"></span>
+<p class="caption">
+Figure 12: Within Episode Ranking Distribution: Using up to Episode 1 data.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/ep-rankings-1.png" alt="Within Episode Ranking Distribution: Using up to Episode 1 data." width="49%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:ep-rankings">12</a> shows each contestant’s probability distribution for their placement within an episode.
+These within episode ranking distributions, and the most probable episode rankings, are inline with the outcome of Episode 1; the distributions are centered and peaked around the episode rankings of Episode 1.</p>
+<p>The most probable episode rankings for each contestant (denoted in green) are:</p>
+<ul>
+<li>Amy: 2nd with 88.27% probability.</li>
+<li>Armando: 3rd with 31.64% probability.</li>
+<li>Joel: 3rd with 44.23% probability.</li>
+<li>Joanna: 1st with 99.95% probability.</li>
+<li>Kumail: 5th with 45.65% probability.</li>
+</ul>
+<p>We do see some uncertainty being accounted for which is not captured from the observed single episode outcome. This includes:</p>
+<ul>
+<li>Armando having 86.2% probability of placing 3rd or below.
+<ul>
+<li>He also has 0.13% chance of winning an episode.</li>
+</ul></li>
+<li>Similarly Joel has 92.3% probability of placing 3rd or below.
+<ul>
+<li>His chance of winning an episode is lower than Armando’s (0.01% vs 0.13%).</li>
+</ul></li>
+<li>Amy has a 0% chance of winning an episode.
+<ul>
+<li>Amy’s zero chance of willing an episode is surprising given that she did well in Episode 1, and when compared to Armando and Joel’s non zero probability.</li>
+<li>However, we remind readers that a stratified sampling approach is performed in estimating these probabilities (stratified with respect to tasks), and with replacement. Amy only achieved 5 points in the prize task, whilst Armando and Joel were awarded 5 points in pre-recorded tasks; a typical Taskmaster episode will feature one prize task, and three pre-recorded tasks.
+<ul>
+<li>It is thus possible in one of the simulated episodes and universes that Armando and Joel win the episode by being awarded 5 points in all three of the pre-recorded tasks, and with enough of a lead that even Joanna’s win in the live studio task is not enough to topple them.</li>
+</ul></li>
+</ul></li>
+<li>Kumail has a 19.21% and 35.14% chance of placing 3rd and 4th respectively.</li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
+<p class="caption">
+Figure 13: Slowly getting into the analysis swing of things again after Series 20. <br> <i> Is it just me or is Alex’s head the fraud here, are not the torso showing the muscle T-shirt? It looks like Alex’s head has been superimposed onto someone else’s entire body.</i>
+</p>
+<img src="https://64.media.tumblr.com/7409d2e3930263e47bb7a896826a3da1/ce840f747d6806fc-00/s1280x1920/624e9176fd39181dca0a5ffdd12e7701b7bde705.gifv" alt="Slowly getting into the analysis swing of things again after Series 20. &lt;br&gt; &lt;i&gt; Is it just me or is Alex's head the fraud here, are not the torso showing the muscle T-shirt? It looks like Alex's head has been superimposed onto someone else's entire body.&lt;/i&gt;" width="40%" />
+</div>
+</div>
+</div>
+<div id="end-of-series-ranking-distributions" class="section level2">
+<h2>End-of-Series Ranking Distributions</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:series-rankings"></span>
+<p class="caption">
+Figure 14: Series Ranking Distribution: Using Data up to Episode 1.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/series-rankings-1.png" alt="Series Ranking Distribution: Using Data up to Episode 1." width="49%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:series-rankings">14</a> shows each contestant’s probability distribution for their series placement. These distributions are inline with the outcome of Episode 1; they are centered and peaked (for the most part), around the observed rankings of Episode 1.</p>
+<p>The most probable series ranking for each contestant (green text) are:</p>
+<ul>
+<li>Amy: 2nd with 100% probability.</li>
+<li>Armando: 4th with 50.13% probability.</li>
+<li>Joel: 3rd with 60.72% probability.</li>
+<li>Joanna: 1st with 100% probability.</li>
+<li>Kumail: 5th with 88.43% probability.</li>
+</ul>
+<p>The majority of the uncertainty lies in whether Armando or Joel will place 3rd or 4th in the series. This is reflected in their flatter distributions, particularly for Armando. Kumail also has a 10% chance of placing 4th, which may provide some reassurance to his arms.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<p class="caption">
+Figure 15: Now that these odds have been announced, Amy has adopted her business attire to show she is a serious contestant.
+</p>
+<img src="https://64.media.tumblr.com/535047ee347dce66c8a07d049491dc1f/1dfbc89c1456d161-0a/s1280x1920/9ca3a5fc4875d7b778c7590ca7e17d3a481aedda.gifv" alt="Now that these odds have been announced, Amy has adopted her business attire to show she is a serious contestant." width="40%" />
+</div>
+</div>
+</div>
+<div id="joint-cast-ranking-distributions" class="section level2">
+<h2>Joint Cast Ranking Distributions</h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:joint-cast-ranking"></span>
+<p class="caption">
+Figure 16: Joint Distribution of Cast Series Ranking: Using Data up to Episode 1.
+</p>
+<img src="{{< blogdown/postref >}}index_files/figure-html/joint-cast-ranking-1.png" alt="Joint Distribution of Cast Series Ranking: Using Data up to Episode 1." width="49%" />
+</div>
+<div class="insights">
+<p>Figure <a href="#fig:joint-cast-ranking">16</a> shows the joint distribution for the entire cast’s series ranking. The distribution, yet again, is aligned with the outcome of Episode 1.</p>
+<p>The most probable cast outcome is <code>[AG: 2nd, AI: 4th, JP: 1st, JD: 3rd, KN: 5th]</code> with 48.66% probability. The second most probable outcome (about 35% chance) is the same configuration with with Armando and Joel’s position switching; that is <code>[AI: 3rd, JD: 4th]</code>.</p>
+<p>The remaining 16.34% probability features cast ranking with variations of how Armando, Joel and Kumail will place in the bottom positions.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<p class="caption">
+Figure 17: But who <b>IS</b> Greg exactly?
+</p>
+<img src="https://64.media.tumblr.com/10e37be2725a4118e61eb6a36d999e5e/e5aceefffc61cda6-b4/s1280x1920/8ad918a6d5724927108a3fb194f47980bcd9198e.gifv" alt="But who &lt;b&gt;IS&lt;/b&gt; Greg exactly?" width="30%" /><img src="https://64.media.tumblr.com/bcc69f0e4bbc44bdbdc687d76e70c348/e5aceefffc61cda6-f1/s1280x1920/3798dc7143613d5b19d778f817506f7b0edf0887.gifv" alt="But who &lt;b&gt;IS&lt;/b&gt; Greg exactly?" width="30%" /><img src="https://64.media.tumblr.com/21a03a803bad0ec23471009fca66a2a6/e5aceefffc61cda6-21/s1280x1920/127eeaf6a1188deca65a5c4a5bac5b67f6ee2de1.gifv" alt="But who &lt;b&gt;IS&lt;/b&gt; Greg exactly?" width="30%" />
+</div>
+</div>
+</div>
+</div>
+<div id="what-have-we-learnt-today" class="section level1">
+<h1>What Have We Learnt Today?</h1>
+<div class="infobox today">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
+<p class="caption">
+Figure 18: Series 21 has officially started and Greg means business!
+</p>
+<img src="https://64.media.tumblr.com/9f0c96d09105880de618167ca92a3ff4/1ad27887573cdf11-b2/s1280x1920/23de680f95d751f81f99025be90c2e1ef6f55f07.gifv" alt="Series 21 has officially started and Greg means business!" width="40%" />
+</div>
+<p>We’ve learnt that:</p>
+<ul>
+<li><strong>Series 21 is off to a strong start!</strong>
+<ul>
+<li>It’s amazing what the effect of having a Hollywood star can do to a series.</li>
+</ul></li>
+<li><strong>T-shirt cannons are cool!</strong>
+<ul>
+<li>Although Greg does not believe T-shirt cannons and musicians in concerts should <a href="https://youtube.com/shorts/M6f81br4Lww?si=RAtBcSCNhUfBos_5">mix</a>.</li>
+</ul></li>
+<li><strong>Team tasks premiering in episode 1 of a series are not the norm (typically it is in episode 2), but have occurred in the past before.</strong></li>
+<li><strong>Our insights and predictions for how the remainder of the series will pan out is incredibly limited and predominantly influenced by the outcome of episode 1.</strong>
+<ul>
+<li>Our distributions are based only on episode 1 data, and fail to capture uncertainty and variability beyond this episode and into the series</li>
+<li>The winner takes all nature of the live task also doesn’t help in displaying more variability in potential winners of episode and the series.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p><em>But perhaps we can compare the contestants episode performance to all contestants in the show, not just from this series… Readers can potentially watch out for this analysis and feature.</em><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>I’ll get my coat and leave…<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Again, readers may expect a follow up analysis and new feature will tackles this cold start problem.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>

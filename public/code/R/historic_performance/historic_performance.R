@@ -3,6 +3,9 @@
 # I want to compare each contestants performance in this episode, to their performance from prior episodes in the series.
 # This is both at a episode final score (and ranking), and individual task performance
 
+
+series_id <- unique(task_attempt_df$Series_ID)
+
 # Series Tracker data frame. Episode x Contestant granularity
 series_points_df <- task_attempt_df %>% group_by(Series_ID, Contestant, Episode_ID) %>%
     arrange(Episode_ID) %>%
@@ -56,7 +59,7 @@ grade_lookup_df <- data.frame("Grade" = grade_levels, "Colour" = rev(grade_colou
 
 
 compare_curr_ep_df <- past_summary_df[c("Series_ID", "Contestant", "Initials", "Image_URL", "Seat", "Num_Eps", "Min_Ep_Points", "P25_Ep_Points", "Median_Ep_Points", "P75_Ep_Points", "Max_Ep_Points", "Mean_Ep_Points", "Std_Dev_Ep_Points")] %>% 
-    left_join(latest_df[c("Series_ID", "Contestant", "Initials", "Image_URL", "Seat", "Episode_ID", "Ep_Points", "Ep_Ranking")], 
+    full_join(latest_df[c("Series_ID", "Contestant", "Initials", "Image_URL", "Seat", "Episode_ID", "Ep_Points", "Ep_Ranking")], 
               by = join_by(Series_ID == Series_ID, Contestant == Contestant, Initials == Initials, Image_URL == Image_URL, Seat == Seat )) %>%
     rename(Current_Ep_ID = Episode_ID,
            Current_Ep_Points = Ep_Points,
@@ -68,16 +71,16 @@ compare_curr_ep_df <- past_summary_df[c("Series_ID", "Contestant", "Initials", "
             ((Median_Ep_Points <= Current_Ep_Points) ) ~ grade_lookup_df[3,"Grade"],
             ((P25_Ep_Points <= Current_Ep_Points) ) ~ grade_lookup_df[4,"Grade"],
             ((Min_Ep_Points <= Current_Ep_Points)) ~ grade_lookup_df[5,"Grade"],
-            (Current_Ep_Points < Min_Ep_Points) ~ grade_lookup_df[6,"Grade"]
-          
+            (Current_Ep_Points < Min_Ep_Points) ~ grade_lookup_df[6,"Grade"],
+            .default = "???"
         ),
         Current_Ep_Grade_Colour = case_when(
-            Current_Ep_Grade == "A (Best Ever)" ~ grade_lookup_df[1,"Colour"],
-            Current_Ep_Grade ==  "B+ (Very Good)" ~ grade_lookup_df[2,"Colour"],
-            Current_Ep_Grade ==  "B (Good)" ~ grade_lookup_df[3,"Colour"],
-            Current_Ep_Grade == "C (Bad)" ~ grade_lookup_df[4,"Colour"],
-            Current_Ep_Grade ==  "C- (Very Bad)" ~ grade_lookup_df[5,"Colour"],
-            Current_Ep_Grade == "D (Worst Ever)" ~ grade_lookup_df[6,"Colour"]
+            Current_Ep_Grade == grade_lookup_df[1,"Grade"] ~ grade_lookup_df[1,"Colour"],
+            Current_Ep_Grade == grade_lookup_df[2,"Grade"] ~ grade_lookup_df[2,"Colour"],
+            Current_Ep_Grade == grade_lookup_df[3,"Grade"] ~ grade_lookup_df[3,"Colour"],
+            Current_Ep_Grade == grade_lookup_df[4,"Grade"] ~ grade_lookup_df[4,"Colour"],
+            Current_Ep_Grade == grade_lookup_df[5,"Grade"] ~ grade_lookup_df[5,"Colour"],
+            Current_Ep_Grade == grade_lookup_df[6,"Grade"] ~ grade_lookup_df[6,"Colour"]
         ),
         Ep_Performance_Summary = glue("[Min: {min}, P25: {p25}, Median: {med}, P75: {p75}, Max: {max}, Mean: {mean}:, StdDev: {sd}]", min = number(Min_Ep_Points), p25 = P25_Ep_Points, med = Median_Ep_Points, p75= P75_Ep_Points, max = Max_Ep_Points, mean = number(Mean_Ep_Points, accuracy = 0.1), sd = number(Std_Dev_Ep_Points, accuracy = 0.1), num_eps = Num_Eps)
     ) %>%
