@@ -7,8 +7,17 @@ series_score_plot <- ggplot(series_points_df, aes(x= Episode_ID, y= Series_Point
     #scale_color_manual(values = c("AM" = "darkred", "MA" = "darkblue", "PE" = "darkorange", "RS" = "darkgreen", "SB" = "purple")) +
     geom_image(data = latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5, y = Series_Points, image = Image_URL), size = 0.1, by = "height", inherit.aes = FALSE) + 
     new_scale_color() +
-    geom_text(data = latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5, y = Series_Points + floor(log(Series_Points)), label = Series_Ranking, colour = as.factor(Series_Ranking)), parse= TRUE, family = "elite", size = 14, show.legend = FALSE, inherit.aes = FALSE) + 
-    scale_color_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#e0e5e5", "5" = "#737473")) + 
+    geom_label(data = latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5,
+                                    y = Series_Points + 2*floor(log(Series_Points)),
+                                    label = Series_Ranking, colour = as.factor(Series_Ranking)),
+              parse= TRUE, family = "elite", show.legend = FALSE, inherit.aes = FALSE, 
+              size = 20, size.unit = "pt", fill = "lightyellow", label.padding = unit(0.1, "lines")) + 
+    scale_color_manual(values = c("1" = "#D6AF36", "2" = "#A7A7AD", "3" = "#A77044", "4" = "#737473", "5" = "black")) + 
+    geom_label(data = latest_df, aes(x= 10 + (rank(-Series_Points, ties.method = "first")-1)*0.5,
+                                     y = Series_Points - 2*ceiling(log(Series_Points)),
+                                     label = Series_Points, colour = as.factor(Series_Ranking)), 
+               parse= TRUE, family = "elite", show.legend = FALSE, inherit.aes = FALSE, 
+               size = 16, size.unit = "pt", label.padding = unit(0.1, "lines"), fill = "lightyellow") + 
     #coord_cartesian(xlim = c(1, 12)) +
     #coord_cartesian(ylim = c(0, 100)) +
     expand_limits(y = 0) + 
