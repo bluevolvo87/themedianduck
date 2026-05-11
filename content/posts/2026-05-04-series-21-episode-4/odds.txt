@@ -1,0 +1,86 @@
+## The Strategy
+If I was Ed Gamble are looking to place bets on outcomes
+
+- Placing a bet on Amy being crowned series champion has the `r 70.65/(100-70.65)`
+ 
+$$
+\begin{aligned}
+\mathbb{P}(\text{Amy winning the series}) &= 70.65\% \\
+\mathbb{P}(\text{Amy NOT winning the series}) &= 1 - \mathbb{P}(\text{Amy winning the series}) \\
+&= 100\% - 70.65\% = 29.35\% \\
+\text{Odds of Amy Winning the Series} &= \frac{\mathbb{P}(\text{Amy winning the series})}{\mathbb{P}(\text{Amy NOT winning the series})} = 2.41
+\end{aligned}
+$$
+
+In a naive betting scenario with British fractional odds in which the return from a bet is exactly the gambled amount multiplied by the odds with no additional fees, if I was to place a bet of £100 on Amy winning:
+
+- **If Amy does win**, I will receive £`r 100*2.41` as a return for my bet, and the profit would be £`r (100*2.41)-100`. 
+    - This is expected to occur with 70.65% probability.
+- **If Amy doesn't win**, I will receive £0, and the profit would be £`r 0-100`, that is, I would have incurred a loss of £100. 
+    - This is expected to occur with 29.35% chance.
+
+The expected profit from this bet would be:
+
+$$
+\begin{aligned}
+\mathbb{E}(\text{Profit on Betting that Amy Will Win the Series}) \\ &= \text{Profit from Amy winning the Series} \cdot \mathbb{P}(\text{Amy winning the series}) \\  &+\text{Profit from Amy NOT winning the Series} \cdot \mathbb{P}(\text{Amy NOT winning the series}) \\
+&= £141 \times 70.65\% + (-£100) \times 29.35\% \\
+&= £70.27
+\end{aligned}
+$$
+Betting on Amy would lead to a positive profit in the long run.
+
+### Odds, Returns and Profits
+Let $A$ be the event that we are are interested in betting on; for example, Amy being crowned champion for Series 21, or Armando coming in 5th place for the series.
+
+Then, we define $\mathbb{P}(A)$ to be the probability associated with event $A$ occurring. 
+
+We use $A^c$ and $\mathbb{P}(A^c)$ to denote the complement of event $A$ and the probability of this complement event. The complement, $^c$, represents event $A$ **not** occurring, and consequently, $\mathbb{P}(A^c) = 1 - \mathbb{P}(A)$.
+
+The [odds](https://en.wikipedia.org/wiki/Odds) [^odds] associated with event $A$, $\mathbb{O}(A)$ is defined as:
+
+
+
+[^odds]: Fractional odds are the common way to represent bets in the UK, and as Taskmaster UK is a British show, let's 
+$$
+\begin{aligned}
+
+\mathbb{O}(A) &= \text{Odds of Event } A \text{ occuring} \\ 
+&= \frac{\mathbb{P}(A)}{\mathbb{P}(A^c)} = \frac{\mathbb{P}(A)}{1- \mathbb{P}(A)} 
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\text{Let }&M \text{ be the monetary amount placed on betting on Event } A \\
+
+
+\text{The return on the bet if Event } A \text{ does occurr is} \\
+R_A = M \cdot \mathbb{O}(A) \\
+
+\text{If Event } A \text{ does not not occur, then we receive 0.} \\
+
+\end{aligned}
+
+$$
+The return on making a bet associated with Event A 
+$$
+Q_A = P_A - M = 
+\begin{cases} 
+      M \cdot \mathbb{O}(A) - M  = M \cdot [ \mathbb{O}(A) -M] &\quad \text{if } A \text{ does occur} \\
+      0 - M = -M&\quad \text{if } A \text{ does NOT occur}
+\end{cases}
+
+$$
+
+The associated profits, $Q_A$ 
+$$
+\begin{aligned}
+\text{The associated profits are } \\
+
+Q_A = \text{Profit if Event A occurs} &= R_A - M \\
+&= M \cdot \mathbb{O}(A) - M \\
+&=   M \cdot [\mathbb{O}(A) - 1] \\
+
+\end{aligned}
+$$
