@@ -1,0 +1,471 @@
+---
+title: "Series 21, Episode 5: Backwards in Time"
+author: Christopher Nam
+date: '2026-05-13'
+slug: series-21-episode-5
+categories: [Series 21, Betting]
+tags: [Series 21, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ""
+---
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1PBYAOnBFOPmpobg2tUg871z64UuQuMNRRcJtw_Y0hZE/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, cache = TRUE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2026-04-09, 
+                 sim_max_episode_used = 5,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+)
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+# Performance scripts
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# To calculate the odds through simulation
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+```
+
+
+# Your Task
+> It's the mid point of Series 21 of UK Taskmaster, or as some might say, the median point of the series! What interesting task shall I set for myself this week?
+>
+> Will I manage to get this post published before the broadcast of Episode 6?
+> 
+> What aspects of my commentary will have to suffer in order to achieve this internal deadline and pressure that I put on myself. 
+>
+> How will I balance the metaphorical points handed out by The Flock, and my own quality control?
+>
+> Who knows, but for those who want to perform analysis themselves, the raw data (each contestants task attempt) for Series 21 can be found in the following [Google Sheets File](https://docs.google.com/spreadsheets/d/1PBYAOnBFOPmpobg2tUg871z64UuQuMNRRcJtw_Y0hZE/edit?usp=sharing). 
+
+
+```{r, out.width = "40%", fig.cap = "I have arrived, and here to conquer my own personal tasks and deadlines."}
+img_dir <-here("img", "highlights", "series_21")
+file_name <- "joanna_power_stance.png"
+
+knitr::include_graphics(file.path(img_dir, file_name), error = FALSE)
+```
+
+# Episode Recap
+```{r ep-performance-grade, fig.cap = "Episode 5 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "ep_performance_table.R"), envir = multiverse_env)
+multiverse_env$ep_grade_perf_table
+```
+
+:::{.insights}
+From the Episode 4 Performance Report Card (Figure \@ref(fig:ep-performance-grade)):
+
+- **Armando becomes the second male contestant of the series to win an episode!** Who would have thought that Kumail would  be the last to win an episode.
+    - Armando has also rightfully **earned the title of achieving the most points per episode in the series so far**. He accumulated 24 points in Episode 4, which out of a potential 25 points, is a very impressive hit rate of `r scales::percent(24/25)`.
+- **The rare occurrence of a three way tie occurred in 2nd place between Joanna, Joel and Kumail. They were awarded 16 points each by the Taskmaster.**
+    - This was considered a _bad episode for Joanna_ (lower half of episode points distribution), a _very good episode for Joel_ (top quartile), and a _good episode for Kumail_ (top half of distribution). 
+- **Amy had her worst episode to date, only accumulating 11 points and finishing 5th in the episode.**
+    - Amy's performance in the last two episode has been less than stellar which, as a Gledhill stan, is disappointing to see. I hope she can turn it round, much like Maisie Adam's escape from the Series 20 Dip. It will be the ~~Gled~~hill that I will die on. 
+:::
+
+```{r ep-task-performance, fig.cap = "Episode 5 Task Distributions", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "task_performance_table.R"), envir = multiverse_env)
+multiverse_env$task_perf_table
+```
+
+:::{.insights}
+From the Points Distributions table (Figure \@ref(fig:ep-task-performance)):
+
+- **Greg has not handed out any negative points in this series.**
+- Amy did not score anything higher than 3 points in this episode, which likely contributed to worst episode to date.
+    - Amy's last two prize tasks have been disappointing in my opinion. She has definitely shown a lot more potential and creativity in the past.
+    - Her points distribution for this episode is quite the departure from her typical high points skewing distribution.
+- Armando scored the full 5 points in 4 out of the 5 broadcasted tasks (80%), and 4 points for the remaining task. It is thus no surprise that Armando won the episode. 
+    - We can clearly see that the point distribution in this episode, is substantially different to historic point distributions which is peaked and centered in the lower points range. 
+:::
+
+
+```{r, out.width = "40%", fig.cap = "A three-way episode tie??? What are we, Series 20 or something? Get out of here."}
+knitr::include_graphics("https://64.media.tumblr.com/afe03050c0395c77f97491014815961a/7e8131e67c750d8c-69/s1280x1920/65bcd07679664f9f690cb541768c02db330853e0.gifv")
+```
+
+
+# Series Scoreboard Tracker
+
+```{r series-tracker, fig.cap = "Series Scoreboard Tracker", out.width = "60%", fig.topcap = FALSE, cache = FALSE}
+
+graph_dir <- here("static", "code", "R", "graphs")
+graph_file  <- "series_score_tracker.R"
+
+
+sys.source(file.path(graph_dir, graph_file), envir = multiverse_env)
+multiverse_env$series_score_plot
+```
+
+:::{.insights}
+And following the outcome of Episode 5, the series scoreboard (Figure \@ref(fig:series-tracker)) has changed yet again:
+
+- **Joanna sneaks back into 1st place for the series, accumulating a total of 86 points to date.**
+- _Amy's disastrous Episode 5 meant that she has slipped back into 2nd position for the series with 85 points._
+    - However, the `r 86-85` point lead that Joanna has could easily be lost in the next episode if Amy regains her focus and starts performing well again. You can do it Amy!
+- **Kumail maintains his 3rd place series position with 75 points.** Hollywood stability and unionisation!
+- _Armando jumps into 4th place for the series after his stellar performance in Episode 5._
+- **Joel falls back into the familiar position of 5th place for the series.**
+-   However, there is only `r 75-72` separating the men, and thus we can fully expect these series positions to change by the next episode.
+- There is a `r 85-75` point gap between the women and men of this series at the moment, a potential indication of who is the stronger sex in the world. Girl power etc. 
+    - The men will have to have at least 2 good episodes (and the women would have to have 2 bad episodes), in order to have a chance of being contenders for series champions.
+:::
+
+```{r, out.width = "40%", fig.cap = "Greg has perked up that this series is getting more excited!"}
+knitr::include_graphics("https://64.media.tumblr.com/bbc8f8fa1e684cfe4fc79cfea62ad353/a4e75ee0b112fcd2-6d/s1280x1920/b384e0a9a2d994b406e6965be3ea6ba873ee2b70.gifv")
+```
+
+
+# Neighbourhood Watch
+
+```{r, cache = FALSE}
+library(slider)
+s21_ep_rolling_df <- multiverse_env$series_points_df %>% 
+    filter(Episode_ID <= multiverse_env$sim_max_episode_used) %>%
+    group_by(Series_ID, Contestant) %>%
+    arrange(Episode_ID) %>%
+    mutate(
+        Total_Episodes = multiverse_env$num_eps_series,
+        Series_Progress = Episode_ID/Total_Episodes,
+        Rolling_Sum_Ep_Score = cumsum(Ep_Points),
+        Rolling_Avg_Ep_Score = cummean(Ep_Points),
+        Rolling_StdDev_Ep_Score = slide_dbl(Ep_Points, .before = Inf, .f = sd)
+    ) %>% 
+    #left_join(contestants_df, by = join_by(Contestant == Contestant_Name)) %>%
+    ungroup() %>%
+    arrange(Series_ID, Contestant, Episode_ID) %>%
+    select(Series_ID, Contestant, Initials, Episode_ID, Ep_Points,
+           Series_Points, Series_Ranking,
+           Series_Progress, Rolling_Avg_Ep_Score, Rolling_StdDev_Ep_Score,
+           Image_URL)
+
+latest_s21_rolling_df <- filter(s21_ep_rolling_df, Episode_ID == multiverse_env$sim_max_episode_used)
+```
+
+```{r, cache = FALSE}
+all_contestants_df <- range_read(gs_data_link, sheet = "Performance_History_Contestants",
+                                 range = "B:AF")
+colnames(all_contestants_df) <- make.names(colnames(all_contestants_df))
+
+
+all_contestants_df$Position_in_Series <- as.factor(all_contestants_df$Position_in_Series)
+
+key_cols <- c("Series", "Contestant", "Initals", "Label", "Position_in_Series", "Total_Episodes")
+
+
+# All historical episode scores for regular series of Taskmaster UK
+full_hist_ep_score_df <- all_contestants_df %>% select(key_cols, starts_with("Ep")) %>%
+    pivot_longer(cols = starts_with("Ep"),
+                 names_to = "Variable",
+                 values_to = "Ep_Score"
+    ) %>% 
+    mutate(
+        Episode_ID = parse_number(Variable),
+        Series_Progress = Episode_ID/Total_Episodes
+        ) %>%
+    filter(!is.na(Ep_Score)) %>%
+    group_by(across(key_cols)) %>%
+    arrange(Episode_ID) %>%
+    mutate(
+        Rolling_Avg_Ep_Score = cummean(Ep_Score),
+        Rolling_StdDev_Ep_Score = slide_dbl(Ep_Score, .before = Inf, .f = sd)
+    ) %>%
+    ungroup() %>% 
+    arrange(Series, Contestant, Episode_ID) %>%
+    select(-Variable)
+
+is_outlier <- function(x) {
+  return(x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x))
+}
+
+
+closest_ep_score_df <- mutate(full_hist_ep_score_df,
+       Ref_Series_Progress = unique(latest_s21_rolling_df$Series_Progress),
+       Delta_Series_Progress = abs(Series_Progress - Ref_Series_Progress)
+) %>% group_by(Series, Contestant, Initals, Label) %>%
+    slice_min(order_by = Delta_Series_Progress) %>%
+    slice_max(order_by = Episode_ID) %>%
+    group_by(Position_in_Series) %>%
+    mutate(
+        boxplot_outlier_label = ifelse(is_outlier(Rolling_Avg_Ep_Score), Label, NA)
+    ) %>%
+    ungroup()
+```
+
+```{r avg-sd-scatter, fig.cap = "Scatter! A graphical visualisation of Contestants Episode Performance and their Volatility.", cache = FALSE}
+series_progess_pc <- percent(unique(closest_ep_score_df$Ref_Series_Progress))
+
+title_label <- "Scatterplot of Contestants, Their Performance and Volatility"
+subtitle_label <- glue("Performance measured in Average Episode Score, Volatility measured in Standard Deviation at {pc} of Series Progress", pc = series_progess_pc)
+
+ggplot(closest_ep_score_df, aes(x = Rolling_Avg_Ep_Score , y= Rolling_StdDev_Ep_Score )) +
+    geom_image(data = latest_s21_rolling_df, aes(x= Rolling_Avg_Ep_Score , y = Rolling_StdDev_Ep_Score, image =  Image_URL ), size = 0.05, alpha = 0.5, inherit.aes = FALSE) +
+    geom_point(aes(colour = Position_in_Series, shape = Position_in_Series), alpha = 0.5, size = 2) +
+    geom_text_repel(aes(label = Label), max.overlaps = 20, alpha = 0.75, size = 5) +
+    
+    quack_theme() +
+    labs(title = title_label, 
+         subtitle = subtitle_label, 
+         x = "Average Episode Score",
+         y = "Standard Deviation of Episode Scores",
+         shape = "Position in Series",
+         colour = "Position in Series"
+         ) +
+    scale_x_continuous(n.breaks = 10, minor_breaks = waiver()) +
+    scale_y_continuous(n.breaks = 10, minor_breaks = waiver())
+```
+
+:::{.insights}
+The cast of Series 21 still conform to the general cloud mass of prior Taskmaster contestants, as seen in Figure \@ref(fig:avg-sd-scatter).
+
+- **Following Episode 5, we now see that Armando is considered the most volatile contestant** of the cast in terms of episode scores. It is amazing what a single stellar episode performance can do to your scores.
+    - Amy is the second most volatile, but it is worth noting that the episode score standard deviation (volatility), is similar for Amy, Joanna, Kumail and Joanna. 
+- It's also worth remarking **how close Amy and Joanna are in terms of both average episode score and standard deviation** at this point. This is not a complete surprise (at least from an average episode score perspective), since there is only 1 point separating them in the series at the moment.
+- In terms of potential rebels from Taskmaster contestants of yore, we see rebels from Series 2 (Richard Osman, Katherine Ryan, Jon Richardson) on the far right[^political]. 
+    - The Series 2 appearances can be attributed to the controversial live task _"Throw rabbits into a hat"_ in which the actual physical number of rabbits in hat directly translated into episode and series points. This consequently inflated the episode scores for most of these contestants.
+- We also see Series 6's Liza Tarbuck as a potential rebel. This can be attributed to Episode 5 of Series 6 presenting 6 tasks in total, rather than the typical 5, and thus more points be available.
+- Many of the other rebels also come from the earlier, and shorter series of Taskmaster (Series 1 to 5).
+    - There deviousness is likely due to the shorter series making them more susceptible to extreme values, particularly when we are dealing with non-robust statistics such as the average and standard deviation (that is they are highly influenced by outliers and extreme values).
+
+[^political]: Which is in no way a representation of their political leanings.
+:::
+
+
+```{r sim-neighbourhood, fig.cap = "Won't you be my Neighbour? Who are the neighbours of the cast of Series 21? Neighbours are based on a similarity measure based on average episode score and volatility.", cache = FALSE}
+max_sim_match <- 5
+
+euclid_sim_df <-cross_join(latest_s21_rolling_df, closest_ep_score_df) %>%
+    mutate(Euclid_Distance = sqrt((Rolling_Avg_Ep_Score.x - Rolling_Avg_Ep_Score.y)^2 +  (Rolling_StdDev_Ep_Score.x - Rolling_StdDev_Ep_Score.y)^2)
+    ) %>% group_by(Series_ID, Contestant.x, Initials) %>%
+    mutate(Distance_Rank = rank(Euclid_Distance)) %>% 
+    arrange(Distance_Rank) %>%
+    filter(Distance_Rank <= max_sim_match)
+
+
+title_label <- glue("The Neighbourhood Watch for the Cast of Series 21 at {pc} of Series Progress", pc = series_progess_pc)
+subtitle_label <- "Neighbourhood is defined by similarity to previous contestants of UK Taskmaster"
+caption_label <- "Simiarlity defined on mean episode score and standard deviation"
+
+
+ggplot(euclid_sim_df, aes(x = Rolling_Avg_Ep_Score.y, y = Rolling_StdDev_Ep_Score.y)) +
+    geom_image(aes(x = Rolling_Avg_Ep_Score.x, y= Rolling_StdDev_Ep_Score.x, image = Image_URL), size = 0.1) +
+    geom_point(aes(colour = Position_in_Series, shape = Position_in_Series), size = 2, alpha = 0.75) +
+    facet_wrap(vars(Contestant.x), scales = "free") +
+    geom_text_repel(aes(label = Label), na.rm = TRUE, min.segment.length = 0, size = 5, alpha = 0.75) +
+    labs(x = "Average Episode Score",
+         y= "Stardard Deviation Episode Score",
+         title = title_label,
+         subtitle = subtitle_label,
+         caption = caption_label,
+         colour = "Position in Series",
+         shape = "Position in Series"
+    ) +
+    quack_theme() 
+```
+
+:::{.insights}
+From Figure \@ref(fig:sim-neighbourhood), the neighbourhoods surrounding each contestant of Series 21 is generally in line with their current series standings.
+
+- **The majority of Amy's neighbours eventually placed either 1st or 2nd in the series.**
+- Surprisingly for _Armando, the majority of his neighbours have placed 2nd in the series._
+    - Series 20's Maisie Adam is also considered a neighbour of Armando which may provide Armando some hope he can escape the Dip.
+- **Joanna's neighbourhood consists on 2nd placers in the majority.**
+- _Joel's neighbourhood consists of 5th placers in the majority._
+- **Kumail's has 4th placers as the majority in his neighbourhood.**
+:::
+
+```{r, out.width = "40%", fig.cap = "The welcome Kumail gets from each week's new neighbours."}
+knitr::include_graphics("https://64.media.tumblr.com/c94b9f0dbe76cdb2d9ab2bc8cd463df1/7e8131e67c750d8c-ca/s1280x1920/0ccfb4c253b7b2b424234ada1397b4524d7c8138.gifv")
+```
+
+
+# Gamble's Gamble
+
+## Within-Episode Ranking Distributions
+```{r ep-rankings, fig.cap = "Within Episode Ranking Distribution: Using Data up to Episode 4 (left) and up to Episode 5 (right).", out.width = "49%", fig.show="hold", cache = FALSE}
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/05/series-21-episode-4/index_files/figure-html/ep-rankings-2.png")
+
+multiverse_env$remain_num_eps <- multiverse_env$num_eps_series - multiverse_env$sim_max_episode_used
+
+
+sys.source(file.path(graph_dir, "ep_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$ep_ranking_dist_plot
+```
+
+:::{.insights}
+My those are some flat, uniform looking episode-ranking distributions in Figure \@ref(fig:ep-rankings)!
+
+- **The most probable outcome with regards to within episode placement:**
+    - _Amy: 1st with 33.83% chance_ (previously 1st with 47.40%).
+    - **Armando: 5th with 28.40% probability** (previously 5th with 45.17%).
+    - _Joel: 5th with 25.11% chance_ (previously 4th with 25.08%).
+    - **Joanna: 1st with 39.12% probability** (previously 1st with 40.42%).
+    - _Kumail: 3rd with 23.10% chance_ (previously 3rd with 28.36%).
+- Amy's and Joanna's distributions are slightly more skewed towards the higher rankings which makes intuitive sense since they are the high performing contestants who are most likely to win an episode based on historic performance.
+    - Amy's distribution has become flatter however, a natural consequence of her disastrous Episode 5 performance.
+- Armando's distribution is slightly more skewed towards the lower rankings, but less so than previous weeks. This is an obvious response to his stellar performance in Episode 5. 
+:::
+
+## End-of-Series Ranking Distributions
+```{r series-rankings, fig.cap = "Series Ranking Distribution: Using Data up to Episode 4 (left), and up to Episode 5 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/05/series-21-episode-4/index_files/figure-html/series-rankings-2.png")
+
+sys.source(file.path(graph_dir, "series_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$series_ranking_dist_plot
+```
+:::{.insights}
+
+And with a change in the series standings, comes a major change in the series ranking distribution for each contestant (Figure \@ref(fig:series-rankings)):
+
+- The **most probable series outcomes** are:
+    - _Amy: 2nd with 56.64%_; previously 1st with 70.65%.
+    - **Armando: 5th with 39.40%**; previously 5th with 91.30%.
+    - _Joel: 5th with 39.98%_; previously 4th with 59.38%.
+    - **Joanna: 1st with 64.83%**; previously 2nd with 67.06%.
+    - _Kumail: 3rd with 48.76%_; previously 3rd with 67.05%.
+- **Amy is no longer the favourite to win the series, handing over the reigns to Joanna.**
+    - This is not a surprise given Amy's Episode 5 performance. However, Amy can still regain championship title with 38.06%.
+- The men's distributions have all flattened in the lower ranking positions. This is flattening, which represents the increased uncertainty of how they will place, is natural given that following Episode 5, there are only `r 75-72` series points separating them.
+    - Armando's distribution has become noticeably less peaked and pronounced on placing 5th in the series, a well deserved reward for closing the `r 59-49` point gap after Episode 4.
+    - Each of the male contestants have less than 0.5% probability of being crowned series champion individually. They really need to pull something out of the bag to go home with the head of Greg.
+:::
+
+## Joint Cast Ranking Distributions
+```{r joint-cast-ranking, fig.cap = "Joint Distribution of Cast Series Ranking: Using Data up to Episode 4 (left), and up to Episode 5 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/05/series-21-episode-4/index_files/figure-html/joint-cast-ranking-2.png")
+
+assign("prev_ep_joint_pred", c(1, 5, 2, 4, 3), envir = multiverse_env) # To pass on a previous prediction
+sys.source(file.path(graph_dir, "joint_cast_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$joint_cast_ranking_dist_plot
+```
+
+:::{.insights}
+And with the change in the series standings, and the increased uncertainty as exhibited in the their individual marginal distributions (Figure \@ref(fig:series-rankings)), this increased uncertainty is also reflected in the joint cast distributions (Figure \@ref(fig:joint-cast-ranking)):
+
+- The joint distribution is noticeably flatter than the prior week, a reflection of how close the series has become, and the uncertainty of how the series will pan out by Episode 10.
+- The **most probable cast outcome is `[1st: Joanna, 2nd: Amy, 3rd: Kumail, 4th: Joel, 5th: Armando]` with 12.63%.**
+    - The prior week's most probable cast outcome `[1st: Amy, 2nd: Joanna, 3rd: Kumail, 4th: Joel, 5th: Armando]` has 8.20% probability of occurring.
+- **However, there is an equally probable cast outcome in which Armando sneaks into 4th place, and Joel drops to 5th place. **
+- There are 4 cast outcomes which have 5-10% probability occurring. These are outcomes which vary on:
+    - Whether Amy or Joanna will place 1st or 2nd respectively.
+    - How (Armando, Joel, Kumail) will place in (3rd, 4th, 5th) position.
+- Looking further down the joint cast distribution list, there are some outcomes in which Amy places 3rd in the series, although with less than 2.5% probability of occurring.
+    - As an Amy fan, I hope this realities don't come true...
+    
+:::
+
+```{r, out.width = "40%", fig.cap = "Nuh-uh! You did not just make Joanna the favourite to win the series again."}
+knitr::include_graphics("https://64.media.tumblr.com/2925bcf18ef6f9c79f4fe0a01bcd4464/a4e75ee0b112fcd2-e8/s1280x1920/a2948793f11e1145c180ec0ffd3ef6153fb52e87.gifv")
+```
+
+## It's the Journey, Not the Destination
+
+```{r dist-animate, fig.cap = "Animation and evolution of the series ranking distributions as the series progresses.", out.width = "60%", echo = FALSE}
+dist_vec <- c("https://bluevolvo87.github.io/themedianduck/2026/04/series-21-episode-1/index_files/figure-html/series-rankings-1.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/04/series-21-episode-2/index_files/figure-html/series-rankings-2.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/04/series-21-episode-3/index_files/figure-html/series-rankings-2.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/05/series-21-episode-4/index_files/figure-html/series-rankings-2.png")
+
+
+current_dist <- image_read(
+    file.path(here("content", "posts", "2026-05-13-series-21-episode-5", "index_files", "figure-html"),  "series-rankings-2.png")
+)
+
+current_dist_end <- image_morph(c(current_dist, image_annotate(current_dist, glue("END \n (after Ep {ep})", ep = multiverse_env$sim_max_episode_used), size = 200, color = "darkred", font = "Helvetica", weight = 700, gravity = "Center")), frames = 2)
+
+dist_full_seq <- image_read(dist_vec)
+
+dist_start <- image_morph(
+    c(
+image_annotate(dist_full_seq[1], glue("START \n (after Ep 1)"), size = 200, color = "darkgreen", font = "Helvetica", weight = 700, gravity = "Center"),
+dist_full_seq[1]),
+frames = 2)
+
+frames <- image_join(dist_start, dist_full_seq, current_dist_end)
+
+animation <- image_animate(frames, fps = 1)
+
+animation
+```
+
+
+```{r, out.width = "40%", fig.cap = "Greg's biggest fan!"}
+knitr::include_graphics("https://64.media.tumblr.com/1804a7f8e637aa369556651814dd9aee/a4e75ee0b112fcd2-01/s1280x1920/1e104ee7f4de283832dfdc7f43a2cf564c125529.gifv")
+```
+
+# What Have We Learnt Today?
+
+:::{.infobox .today} 
+
+```{r, out.width = "40%", fig.cap = "We did it!"}
+knitr::include_graphics("https://64.media.tumblr.com/fd8f5928fe1feb3ba9f11b112f8e1c30/cd8f87ebcebb96ba-5b/s1280x1920/30a85ef30bc0c31a4ad69a63c83973cc5d3e1d17.gifv")
+```
+
+
+We've learnt that:
+
+- **Armando wins his first episode of the series and also has earned the title of highest episode score of the series so far.**
+- _Amy is no longer the favourite to win the series; her probability of being crowned series champion as fallen from 70.65% to 38.06%._
+    - _Joanna is now the favourite to win the series; her probability has increased from 32.23% to 64.83% with regards to being crowned the series champion._
+- The most probable cast outcome is `[1st: Joanna, 2nd: Amy, 3rd: Kumail, 4th: Joel, 5th: Armando]` with 12.63% chance of occurring.
+    - However, there is an equally probable cast outcome of `[1st: Joanna, 2nd: Amy, 3rd: Kumail, 4th: Armando, 5th: Joel]`, in which Joel and Armando have switched places. 
+    - In general the joint cast distribution is flatter, a reflection of the additional uncertainty introduced by the how close the series is at the moment, and how it will pan out by Episode 10.
+        - There is only 1 point separating Joanna and Amy for series champion. 
+        - There are only 3 points separating Kumail, Armando and Joel for the lower half of the series.
+    - I am fully expecting the series positions to change by next episode.
+- Readers should  understand the compromises made in quality and unique takes in this commentary in order to get this post out in a timely fashion.
+    - Life is about swings and roundabouts, maintaining equilibrium in life, and that there are no such things as free lunches...
+:::
+
+
+```{r, out.width = "40%", fig.cap = "Time to celebrate until the next post needs to be delivered..."}
+knitr::include_graphics("https://64.media.tumblr.com/009f56f5382fb287ef737acaa5150f9e/cd8f87ebcebb96ba-e6/s1280x1920/ce7995bf9fc02c84b51ac39372babf3cf4428433.gifv")
+```
