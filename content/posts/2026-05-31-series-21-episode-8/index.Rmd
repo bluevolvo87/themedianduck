@@ -3,8 +3,8 @@ title: "Series 21, Episode 8: Redaction in Action"
 author: Christopher Nam
 date: '2026-05-31'
 slug: series-21-episode-8
-categories: []
-tags: []
+categories: [Series 21, Betting]
+tags: [Series 21, Betting]
 draft: false
 output:
   blogdown::html_page:
@@ -101,7 +101,13 @@ As shown in Figure \@ref(fig:ep-performance-grade), our episode performance repo
 - It's an absolute <code style="color : black; background-color: black">disgrace</code> that <code style="color : black; background-color: black">Amy</code> was only awarded 1 point more than <code style="color : black; background-color: black">the rest of the cast </code> in the <code style="color : black; background-color: black">redaction/censorship task</code>. 
     - <code style="color : black; background-color: black">Armando's</code> was clearly the worst out of all the attempts, something that I'm sure <code style="color : black; background-color: black">he</code> agrees with. 
     - <code style="color : black; background-color: black">Joel's</code> attempt was also far too obvious as to what it was (or was not) censoring, and there was no intrigue or mysterious.
-
+- Our previous favourite (in terms of odds, she'll always be my personal favourite), Amy, won her 3rd episode of the series. She accumulated 19 points, which is considered a very good episode performance.
+- However, Joanna and Armando were very closely behind Amy in joint 2nd place. They accumulated 18 points each, which was considered very good and good for Joanna and Armando respectively.
+    - Being awarded 5 points for the live studio team task definitely helped this team duo jump up from their joint 3rd position prior to the task.
+- Kumail scored 17 points and came in 4th for the episode.
+    - This is considered a bad episode for Kumail as it is in the lower half of his episode point distribution.
+- Joel ended up in 5th place for the episode, being awarded a 13 points by the Taskmaster.
+    - Despite this bottom position, this was a good episode for Joel. He also got to use the other side of the hammer, and grope Alex's bellend, which were likely life highlights for him. 
 :::
 
 # Series Scoreboard Tracker
@@ -126,6 +132,8 @@ As seen in our series tracker (Figure \@ref(fig:series-tracker)):
 - Despite <code style="color : black; background-color: black">Amy's</code> 3rd episode win for the series, she is still only <code style="color : black; background-color: black">3rd</code> place in the series. 
 - If <code style="color : black; background-color: black">Joanna </code> wins this series by the skin of <code style="color : black; background-color: black">her</code> teeth (less than 5 points), we can all glance <code style="color : black; background-color: black">with absolute disgust</code> at <code style="color : black; background-color: black">Little Alex Horne and the UK Taskmaster crew</code>.
     - An <code style="color : black; background-color: black">automatic</code> 5 point lead was pratically handed to <code style="color : black; background-color: black">Joanna</code> from <code style="color : black; background-color: black">Episode 1's live task</code> which was <code style="color : black; background-color: black">winner takes all</code>. It quite clearly, provided an <code style="color : black; background-color: black">unfair advantage</code>. 
+- There is no change in the series standings compared to those from Episode 7. Amy has closed the gap on Kumail and Joanna. 
+    - Joanna is only `r 135-130` points ahead of Amy, a lead that could be easily lost in a single episode.
 
 :::
 # Neighbourhood Watch
@@ -272,7 +280,13 @@ From Figure \@ref(fig:cloud-hood):
 - <code style="color : black; background-color: black">To keep you on your toes, I've reduced the real estate for these
 plots which may be a surprise for regular readers.</code>.
 - <code style="color : black; background-color: black">I've yet to figure out how to incorporate these plots into the commentary, and whether they provide any real value.</code>.
-
+- Amy and Kumail are practically neighbours now! 
+    - They share 4 out of 5 common neighbours: Series 13's Chris Ramsey (2nd), Series 11's Sarah Kendall (1st), Series 5's Aisling Bea (4th) and Series 8's Lou Sanders (1st).
+    - Amy is graced by the presence of Series 1's Romesh Ranganathan who placed 2nd his series.
+    - Kumail has the bundle of joy that is  Series 18's Jack Dee, who placed 2nd in his series as well.
+- Joanna now has a series champion in her neighbourhood! The original series champion, Series 1's Josh Widdicombe, moved into Joanna's neighbourhood, complete with his karate trophy (he famously didn't get a Greg head for as the first series champion), and Greg's headless body (from winning Champion of Champions I).
+- Joel still lives in a neighbourhood that is predominantly filled with series losers. 3 out of 5 neighbours placed 5th in their series, and the remaining 2 neighbours placed 4th.
+- Armando still has a mixed bag in his neighbourhood. Richard Herring still provdes
 :::
 # Gamble's Gamble
 
