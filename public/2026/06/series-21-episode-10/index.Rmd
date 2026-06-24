@@ -1,0 +1,655 @@
+---
+title: "Series 21, Episode 10: A Koala-T End to the Series"
+author: Christopher Nam
+date: '2026-06-23'
+slug: series-21-episode-10
+categories: [Series 21, Betting]
+tags: [Series 21, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/1PBYAOnBFOPmpobg2tUg871z64UuQuMNRRcJtw_Y0hZE/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, cache = TRUE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2026-04-09, 
+                 sim_max_episode_used = 10,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+)
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+# Performance scripts
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# To calculate the odds through simulation
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+#sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+```
+
+```{r, cache = FALSE}
+library(slider)
+s21_ep_rolling_df <- multiverse_env$series_points_df %>% 
+    filter(Episode_ID <= multiverse_env$sim_max_episode_used) %>%
+    group_by(Series_ID, Contestant) %>%
+    arrange(Episode_ID) %>%
+    mutate(
+        Total_Episodes = multiverse_env$num_eps_series,
+        Series_Progress = Episode_ID/Total_Episodes,
+        Rolling_Sum_Ep_Score = cumsum(Ep_Points),
+        Rolling_Avg_Ep_Score = cummean(Ep_Points),
+        Rolling_StdDev_Ep_Score = slide_dbl(Ep_Points, .before = Inf, .f = sd)
+    ) %>% 
+    #left_join(contestants_df, by = join_by(Contestant == Contestant_Name)) %>%
+    ungroup() %>%
+    arrange(Series_ID, Contestant, Episode_ID) %>%
+    select(Series_ID, Contestant, Initials, Episode_ID, Ep_Points,
+           Series_Points, Series_Ranking,
+           Series_Progress, Rolling_Avg_Ep_Score, Rolling_StdDev_Ep_Score,
+           Image_URL)
+
+latest_s21_rolling_df <- filter(s21_ep_rolling_df, Episode_ID == multiverse_env$sim_max_episode_used)
+```
+
+```{r, cache = FALSE}
+all_contestants_df <- range_read(gs_data_link, sheet = "Performance_History_Contestants",
+                                 range = "B:AF")
+colnames(all_contestants_df) <- make.names(colnames(all_contestants_df))
+
+
+all_contestants_df$Position_in_Series <- as.factor(all_contestants_df$Position_in_Series)
+
+key_cols <- c("Series", "Contestant", "Initals", "Label", "Position_in_Series", "Total_Episodes")
+
+
+# All historical episode scores for regular series of Taskmaster UK
+full_hist_ep_score_df <- all_contestants_df %>% select(key_cols, starts_with("Ep")) %>%
+    pivot_longer(cols = starts_with("Ep"),
+                 names_to = "Variable",
+                 values_to = "Ep_Score"
+    ) %>% 
+    mutate(
+        Episode_ID = parse_number(Variable),
+        Series_Progress = Episode_ID/Total_Episodes
+        ) %>%
+    filter(!is.na(Ep_Score)) %>%
+    group_by(across(key_cols)) %>%
+    arrange(Episode_ID) %>%
+    mutate(
+        Rolling_Series_Score = cumsum(Ep_Score),
+        Rolling_Avg_Ep_Score = cummean(Ep_Score),
+        Rolling_StdDev_Ep_Score = slide_dbl(Ep_Score, .before = Inf, .f = sd)
+    ) %>%
+    ungroup() %>% 
+    arrange(Series, Contestant, Episode_ID) %>%
+    select(-Variable)
+
+is_outlier <- function(x) {
+  return(x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x))
+}
+
+
+closest_ep_score_df <- mutate(full_hist_ep_score_df,
+       Ref_Series_Progress = unique(latest_s21_rolling_df$Series_Progress),
+       Delta_Series_Progress = abs(Series_Progress - Ref_Series_Progress)
+) %>% group_by(Series, Contestant, Initals, Label) %>%
+    slice_min(order_by = Delta_Series_Progress) %>%
+    slice_max(order_by = Episode_ID) %>%
+    group_by(Position_in_Series) %>%
+    mutate(
+        boxplot_outlier_label = ifelse(is_outlier(Rolling_Avg_Ep_Score), Label, NA)
+    ) %>%
+    ungroup()
+```
+
+
+# Your Task
+> Provide the most fantastistical commentary for Episode 10 of Series 21 of UK Taskmaster. 
+> 
+> No gimmicks for this week's post as it is the series finale and we must respect the Taskmaster gods. You will be disqualified if there are gimmicks which prevent your commentary from being read in a convenient manner.
+> 
+> The raw data associated with this commentary and series can be found in the following [Google Sheets File](https://docs.google.com/spreadsheets/d/1PBYAOnBFOPmpobg2tUg871z64UuQuMNRRcJtw_Y0hZE/edit?usp=sharing)
+
+:::{.callout}
+Apologies for the delay in this post. Writing and commentating with the dry topic of Statistics, is often more difficult than I would like it to be. Not even the moist nature of Taskmaster can help alleviate the writing.
+:::
+
+
+```{r, fig.cap="Draw me like one of your French girls.", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/b4d8e8d1520150d796120ef9fc96db95/f46e9f2c9ca15186-90/s1280x1920/f82b4d97a489bb817f8f3e69628c3f9b0a71d03f.png"
+  )
+)
+```
+
+
+# Episode Recap
+```{r ep-performance-grade, fig.cap = "Episode 9 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "ep_performance_table.R"), envir = multiverse_env)
+multiverse_env$ep_grade_perf_table
+```
+
+```{r series-episode-scores, cache = FALSE, fig.cap = "Episode Scores over the Series for each Contestant of Series 21.", out.width = "60%"}
+library(zoo)
+series_ep_scores_df <- multiverse_env$series_points_df
+
+series_ep_scores_df<- series_ep_scores_df %>% group_by(Series_ID, Contestant) %>%
+    arrange(Episode_ID) %>%
+    mutate(Rolling_Avg_Ep_Score = cummean(Ep_Points),
+           Window_Avg_Ep_Score = rollmean(x = Ep_Points, k = 3, fill = NA, align = "right")
+           ) %>%
+    ungroup()
+    
+ggplot(series_ep_scores_df, aes(x = Episode_ID, y = Ep_Points)) +
+    #stat_smooth(se = FALSE, alpha = 0.4, linetype = 2, colour = "darkblue") + 
+    geom_line(aes( y = Window_Avg_Ep_Score), colour = "darkgreen", alpha = 0.4, linewidth = 2, linetype = 3) + 
+    geom_line(colour = "darkred", alpha = 0.25, linewidth = 1.1) + 
+    geom_point(aes(colour = as.factor(Ep_Ranking), shape  = as.factor(Ep_Ranking)), size = 3) +
+    facet_grid(Initials~., switch = "y") + 
+    quack_theme() +
+    scale_x_continuous(breaks = c(1:10)) +
+    labs(title = "Episode Performance over the Series",
+         subtitle = "Episode Performance measured by Episode Points",
+         caption = "Dotted Green line is the Rolling Average of most recent 3 episodes",
+         x = "Episode",
+         y = "Episode Points",
+         shape = "Within Episode Placement",
+         colour = "Within Episode Placement",
+         linetype = "Rolling Average"
+         )
+```
+
+:::{.insights}
+
+As observed in:
+
+- Figure \@ref(fig:ep-performance-grade), our trusted episode performance report card
+- and Figure \@ref(fig:series-episode-scores), a plot of each contestants episode scores over the series, along with a rolling average of the most recent 3 episodes. 
+
+
+> Joel stole the limelight of this episode by placing 1st and earning an impressive 23 points. 
+
+This impressive score was Joel's best ever episode performance in the series, and is also the 2nd highest episode points accumulated by a contestant in this series.
+
+
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NoN98T6RMm0?si=mMV6CWIl52trRFyp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+
+> Armando also ended the episode (and series) in strong form, accumulating 20 points and ending up in 2nd place. 
+
+Armando could have won the episode as prior to the live studio task, he was on equal footing with Joel. The live studio task was unfortunately very physical (inching your way across the stage in your office chair without touching the floor), which for a 61 year old contestant, wasn't his particular forte.
+
+If Armando had won this episode, he would have 4 episodes in the series, the most for a contestant in this series' cast. For now, he will just have to settle for tying with Amy in winning the most episodes in the series (3 episodes each).
+
+> Joanna finished middle of the episode (3rd) with a total of 16 points.
+ 
+Joanna's middling episode performance is also reflection of her own average episode performance; she exactly scored her median episode point performance, and 0.6 below her mean episode performance.
+
+> Kumail's final episode was considered bad; he received 15 points and ended up 4th in the series.
+
+Kumail's own performance throughout the series is also symmetrical; he started off badly in Episode 1, gradually improved and peak in Episode 6 (he won the episode with 20 points), and then slowly declined. He did not decline back to the levels of the series premiere however where he accumulated 9 points and finished in 5th position; this was also the worst episode performance of the series.
+
+> Amy rounded out the series finale in last place (5th) and earning 12 points along the way.
+
+This was a very bad episode for Amy as this score lies in the bottom quartile of her prior episode performance distribution. It was not however, her worst episode to date; that achievement is reserved for Amy's performance in Episode 7 in the series  in which Amy accumulated 10 points.
+
+:::
+
+```{r , fig.cap="Joel making quite the spectacular performance splash in the Series 21 finale!", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/894a7727e71c8cb300095195ef939727/95b78bd57b33a9d6-af/s1280x1920/0b97db45f5799de0cdc8f07e29660e39b4c302e9.gifv
+"
+  )
+)
+```
+
+# Series Scoreboard Tracker
+```{r series-tracker, fig.cap = "Series Scoreboard Tracker", out.width = "60%", fig.topcap = FALSE, cache = FALSE}
+
+graph_dir <- here("static", "code", "R", "graphs")
+graph_file  <- "series_score_tracker.R"
+
+
+sys.source(file.path(graph_dir, graph_file), envir = multiverse_env)
+multiverse_env$series_score_plot
+```
+
+
+:::{.insights}
+Our trusted Series Tracker (see Figure \@ref(fig:series-tracker)) has reached its final form and indicates that:
+
+> Joanna Page is our Series 21 champion!
+
+Joanna ended the series on a respectable 165 episodes; it is very much in the middle of the pack compared to the series scores of series champions of yesteryear.
+
+As a man of logic and reasoning, I would have preferred another champion, but it will have to do. She did provide some entertaining stories to her prize task, but her approach to some tasks were just baffling. Plus she thinks there are either 24 or 25 letters in the alphabet, and doesn't understand how a clock timer should be read. 
+
+
+Howeverm, I'm sure the Taskmaster Crew must also be slightly relieved that there is at least one female contestant now in Champion of Champions V!
+
+
+> Rather surprisingly, the old fogey of the group, Armando Iannucci snuck into 2nd place for the series.
+
+Armando overtook the younguns Kumail and Amy, achieving 161 points. 
+
+> Kumail Nanjiani narrowly missed out being the series runner up, placing 3rd in the end.
+
+Kumail was only one point behind Armando and in an alternative timeline, could well have placed 2nd. Evidently, Hollywood brawn is no match for the the vibes and feelings of the Welsh, and the wise old wisdom of the Scottish.
+
+> My favourite in the series (both in terms of entertainment value and statistical odds of winning in the middle of the series), Amy Gledhill, finished in 4th place.
+
+Amy accumulated 155 series points in the end, a significant `r 165-155` points away from the Joanna's final tally. My weekly commentary did indicate that the writing was on the wall as Amy's chances of winning were slowly decreasing since Episode 5, but I was blinded by the Northern beauty and refused to believe that her series performance would continue to degrade.
+
+I even highlighted that there was a Top 5 most probable outcome in which Amy placed 4th ([Episode 9 post](/themedianduck/2026/06/series-21-episode-9/), [Episode 8 post](/themedianduck/2026/05/series-21-episode-8/)), which I hoped would not materialise; I evidently jinxed it into happening.
+
+
+> Our cool leather bad boy, Joel Dommett, rounded out the bottom of the pack in 5th place.
+
+Joel redemmed himself in Episode 10, and didn't finish the series as badly as we thought he would. He accumulated 150 points in the end, only 5 points behind Amy in 4th place. This small lead could have meant Joel would be in 4th place if the series had continued for longer.
+
+
+> This was an extremely close series! There were only `r 165-150` points separating 1st and 5th place. 
+
+This must be one of the closest series in recent history. If the series had a few more episodes, Armando and Kumail could have easily nabbed the championship from Ms Page. Amy and Joel could also have nabbed this title, but it would likely take a few more episodes to secure this title with a reasonable amount of certainty.
+
+> What gender point gap?! Oh there's no such thing in this series anymore!
+
+For the first 5 episodes of the series or so, there was a clear divide in series performance between the men and women of this cast; the women were outperforming the men and had a 10 point lead at one point.
+
+However, from Episode 6 onwards, the Kumail Ninja started closing this gap, and Armando soon followed suit from Episode 7 onwards. Joel appeared to also be closing in on this gap in Episode 10; who know if he would have closed it even more had the series continued.
+
+In conclusion, whilst there was gender inequality for the first half the series, this has no longer been the case since Episode 6.
+:::
+
+```{r , fig.cap="Amy graciously accepting her fall from grace in series standings and subsequently relishing hitting near rock bottom.", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/23d471117055754440ea52f5ad8e19c3/20832a2cd008e538-26/s1280x1920/57914d821a1dc67ac9524da9e523ee9965a8793e.gifv
+
+"
+  )
+)
+```
+
+
+
+# Comparisons to Prior Series
+> So how does the Series 21 final outcome compare to prior series? Was the cast of Series 21 high or low perfoming compared to prior casts?
+
+## Series End State Comparisons
+
+
+```{r, cache = FALSE }
+curr_end_game_df <- multiverse_env$latest_df %>%
+    mutate(Series_Ranking = as.factor(Series_Ranking)) %>%
+               ungroup()
+
+hist_end_game_df <- full_hist_ep_score_df %>% 
+    filter(Series_Progress == 1) %>%
+    mutate(
+        Perfect_10_Flag = Episode_ID == 10
+    )
+
+percentile_df <- hist_end_game_df %>% 
+    left_join(curr_end_game_df, by = join_by(Position_in_Series == Series_Ranking)) %>%
+    mutate(S21_Superior = ifelse(Rolling_Series_Score <= Series_Points, 1, 0)) %>%
+    group_by(Series_ID, Perfect_10_Flag, Position_in_Series, Contestant.y, Initials, Image_URL) %>%
+    summarise(
+        Num_Records = n_distinct(Label), 
+        S21_Superior_Count = sum(S21_Superior),
+        S21_Percentile = percent(S21_Superior_Count/Num_Records, prefix = "P", suffix="", accuracy = NULL)
+    ) %>%
+    ungroup() %>%
+    select(Series_ID, Position_in_Series, Perfect_10_Flag, Contestant.y, Initials, Num_Records, S21_Superior_Count, S21_Percentile) %>%
+    filter(Perfect_10_Flag)
+
+
+
+each_contestant_percentile <- hist_end_game_df %>% 
+    ggplot(aes(x= Rolling_Series_Score, y= Position_in_Series)) +
+    geom_image(data = curr_end_game_df, aes(x = Series_Points, y = Series_Ranking, image = Image_URL), size = 0.05, inherit.aes = FALSE) +
+    geom_point(size = 1, aes(colour = Perfect_10_Flag)) +
+    geom_text_repel(aes(label = Label), na.rm = TRUE, min.segment.length = 0, size = 5, alpha = 0.75, max.overlaps = 25) + 
+    geom_label(data = percentile_df, aes(x = 225, y= Position_in_Series,label = S21_Percentile), inherit.aes = FALSE, hjust = 0, size = 7) +
+    quack_theme() +
+    scale_x_continuous(n.breaks = 10, limits = c(60, 230)) + 
+    labs(
+        title = "Final Series State Comparison by Contestant",
+        x = "Series Score",
+         y = "Series Ranking Placement",
+        colour = "10 Episode Series Flag"
+    )
+
+```
+
+```{r, cache = FALSE}
+
+s21_total_tally <- curr_end_game_df %>% 
+    group_by(Series_ID) %>%
+    summarise(
+        Label = paste("S", max(Series_ID), sep = ""),
+        Num_Eps = max(Episode_ID),
+        Total_Series_Points = sum(Series_Points)
+    ) %>%
+    ungroup()
+
+
+
+hist_total_tally <- hist_end_game_df %>% 
+    group_by(Series) %>%
+    summarise(
+        Label = paste("S", max(Series), sep = ""),
+        Num_Eps = max(Total_Episodes),
+        Total_Series_Points = sum(Rolling_Series_Score)
+    ) %>%
+    ungroup() %>%
+    rename(Series_ID = Series) 
+
+
+all_tally_df <- rbind(hist_total_tally, s21_total_tally) %>%
+    arrange(Total_Series_Points) %>%
+    mutate(
+     S21_Flag = Series_ID == 21
+    )
+    
+
+label_df <- filter(hist_total_tally, Num_Eps == 10) %>%
+    summarise(
+        Label = "S21", 
+        S21_Total_Series_Points = s21_total_tally$Total_Series_Points, 
+        Num_Records = n_distinct(Series_ID),
+              S21_Superior = sum(Total_Series_Points<=s21_total_tally$Total_Series_Points),
+              S21_Percentile = percent(S21_Superior/Num_Records, prefix = "P", suffix = "", accuracy = NULL)
+    )
+
+
+series_cast_plot <- ggplot(all_tally_df, aes(x = Total_Series_Points, y= reorder(Label, Total_Series_Points))) +
+geom_col(aes(fill = S21_Flag, alpha = Num_Eps), colour = "darkred", show.legend = FALSE) +
+    geom_label(data = label_df, aes(x = S21_Total_Series_Points + 25, y = Label, label = S21_Percentile)) + 
+quack_theme() +
+scale_x_continuous(n.breaks = 10) +
+coord_cartesian(xlim = c(300, 900)) +
+scale_fill_manual(values = c("TRUE" = "#D6AF36", "FALSE" = "#A7A7AD")) +
+labs(x = "Total Series Points Awarded to Cast",
+     y = "Series",
+     title = "Total Series Points Comparison by Cast"
+     )
+
+    
+
+```
+
+```{r series-end-state-duo, cache = FALSE, fig.cap = "How does Series 21's final state compare to previous series end state?<br> Left: Total Points Awarded to a Series Cast. <br> Right: Total Points Awarded to each Contestant over the Series, grouped by their series placement.", out.width = "49%", fig.show = "hold"}
+series_cast_plot
+each_contestant_percentile
+
+```
+
+:::{.insights}
+The left plot of Figure \@ref(fig:series-end-state-duo) provides a comparison of the total number of points awarded to each series' cast. 
+
+
+> Series 21 is the 5th series to be awarded the most points across the entire cast for a series. It is the 73rd percentile of total series points for an entire cast; that is 73% of prior series of Taskmaster have series points lower than or equal to Series 21's end state.
+
+
+We can see that Series 21 has been one of the more recent series in which the Taskmaster was generous; only Series 6 & 7, and 13 & 14 had more points awarded to the cast.
+
+> Is it a coincidence that the consecutive series pairs of Series 6 & 7, and Series 13 & 14 are series in which the highest points were awarded?
+
+It is worth noting that Series 6 and 7 were the first two series featuring 10 episodes, and potentially when the Taskmaster recipe for success had been solidified. Prior to this, the behind the scenes crew were likely still figuring out what makes a successful Taskmaster series, and also did not have commission certainty; my understanding is that Taskmaster was initially reviewed for commission after every 2 series once Series 1 had proved some initial success on Dave, a smaller digital channel. 
+
+Since Series 6, Taskmaster has been reviewed for commission on a less frequent basis due to its success, and at time of writing (2026-06-23) guaranteed to run on Channel 4 (a mainstream and established TV channel) until at least Series 27 in 2029 ([source](https://www.radiotimes.com/tv/entertainment/taskmaster-renewed-future-confirmed-newsupdate/)).
+
+With a proven track record of success and more commission stability, Greg could have been particularly generous with his points as to not deter incoming contestants and new viewers.
+
+----------
+
+
+
+In terms of the least generous Taskmaster series, Series 1 to 5 understandably lie at the bottom of the graph due to the shorter series lengths and thus opportunities to award points; Series 1 had 6 episodes, Series 2 and 3 had 5 episodes, Series 4 and 5 had 8 episodes. 
+
+Of the 10 episode length series (Series 6 onwards), Series 16, 11 and 10 was when the Taskmaster was the least generous and potentially harsher with enforcing penalties and disqualifications (something that Series 21 was rather sparse on). 
+
+> Is it a conincidence that the consecutive series pairs of Series 10 and 11, the first two Channel 4 Series[^series] with studio records during lockdown without an audience, are series with the lowest total points were awarded?
+
+I specifically recall Greg ranting during the first few episodes of Series 10 that he was going to rule with an iron fist based on internet chatter that he was going "soft" in his marking. This data would support this remark. 
+
+[^series]: Interestingly, the plural of "series" is simply "series", and not "serieses"([source](https://www.merriam-webster.com/grammar/series-singular-plural-grammar-usage)). 
+
+---------
+The right plot of Figure \@ref(fig:series-end-state-duo) shows how each contestant of Series 21 compares to prior contestants of Taskmaster yore (with respect to series score), grouped by how they placed in the series.
+
+> The Series 21 cast were generally a high performing cast on a indvidual level.
+> 
+> The majority of the Series 21 cast (4 out of 5 to be exact) lie in the top half of series points distributions for contestants who shared the same series ranking.
+> 
+> Joanna is the only contestant who does not lie in the top half of the series, but does lie in the top 60%; very much a middling performance all things considered.
+
+We see that:
+    
+- Joel is the 93rd percentile; that is 93% of prior contestants who placed 5th had scores which were less than or equal to Joel's final score of 150 points.
+- Likewise, Amy is the 87th percentile with 155 points and finishing in 4th place.
+- Kumail and his 3rd place position of 160 points, is the 73rd percentile.
+- Series runner up Armando is the 62nd percentile of his respective distribution.
+- Joanna, series champion, is the 40th percentile of her respective distribution.
+
+Joanna's low percentile does suggest that in any other series featuring other contestants and conditions, Joanna may not have taken home the championship.
+
+N.B, These percentiles are based on only considering series which consisted of 10 episodes (Series 6 onwards). Calculating the percentile with **all** series data (regardless of series length), would have achieved similar, but slightly different, percentile values. 
+
+
+:::
+
+
+```{r , fig.cap="Series 21 competing with Taskmaster series of yore.", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/4ff4758ad2ae9e759ff433161720bad5/9a783648bea5d85a-6f/s1280x1920/055e7ed369839e66b0470680a4e0e8908bbbeb0a.gifv")
+)
+```
+
+
+# The Final Neighbourhoods
+
+
+```{r avg-sd-scatter, fig.cap = "Scatter! A graphical visualisation of Contestants Episode Performance and their Volatility.", cache = FALSE}
+series_progess_pc <- percent(unique(closest_ep_score_df$Ref_Series_Progress))
+
+title_label <- "Scatterplot of Contestants, Their Performance and Volatility"
+subtitle_label <- glue("Performance measured in Average Episode Score, Volatility measured in Standard Deviation at {pc} of Series Progress", pc = series_progess_pc)
+
+cloud_plot <- ggplot(closest_ep_score_df, aes(x = Rolling_Avg_Ep_Score , y= Rolling_StdDev_Ep_Score )) +
+    geom_image(data = latest_s21_rolling_df, aes(x= Rolling_Avg_Ep_Score , y = Rolling_StdDev_Ep_Score, image =  Image_URL ), size = 0.05, alpha = 0.5, inherit.aes = FALSE) +
+    geom_point(aes(colour = Position_in_Series, shape = Position_in_Series), alpha = 0.5, size = 2) +
+    geom_text_repel(aes(label = Label), max.overlaps = 25, alpha = 0.75, size = 5) +
+    
+    quack_theme() +
+    labs(title = title_label, 
+         subtitle = subtitle_label, 
+         x = "Average Episode Score",
+         y = "Standard Deviation of Episode Scores",
+         shape = "Position in Series",
+         colour = "Position in Series"
+         ) +
+    scale_x_continuous(n.breaks = 10, minor_breaks = waiver()) +
+    scale_y_continuous(n.breaks = 10, minor_breaks = waiver())
+```
+
+```{r sim-neighbourhood, fig.cap = "Won't you be my Neighbour? Who are the neighbours of the cast of Series 21? Neighbours are based on a similarity measure based on average episode score and volatility.", cache = FALSE}
+max_sim_match <- 5
+
+euclid_sim_df <-cross_join(latest_s21_rolling_df, closest_ep_score_df) %>%
+    mutate(Euclid_Distance = sqrt((Rolling_Avg_Ep_Score.x - Rolling_Avg_Ep_Score.y)^2 +  (Rolling_StdDev_Ep_Score.x - Rolling_StdDev_Ep_Score.y)^2)
+    ) %>% group_by(Series_ID, Contestant.x, Initials) %>%
+    mutate(Distance_Rank = rank(Euclid_Distance)) %>% 
+    arrange(Distance_Rank) %>%
+    filter(Distance_Rank <= max_sim_match)
+
+
+title_label <- glue("The Neighbourhood Watch for the Cast of Series 21 at {pc} of Series Progress", pc = series_progess_pc)
+subtitle_label <- "Neighbourhood is defined by similarity to previous contestants of UK Taskmaster"
+caption_label <- "Simiarlity defined on mean episode score and standard deviation"
+
+
+hood_plot <- ggplot(euclid_sim_df, aes(x = Rolling_Avg_Ep_Score.y, y = Rolling_StdDev_Ep_Score.y)) +
+    geom_image(aes(x = Rolling_Avg_Ep_Score.x, y= Rolling_StdDev_Ep_Score.x, image = Image_URL), size = 0.1) +
+    geom_point(aes(colour = Position_in_Series, shape = Position_in_Series), size = 2, alpha = 0.75) +
+    facet_wrap(vars(Contestant.x), scales = "free") +
+    geom_text_repel(aes(label = Label), na.rm = TRUE, min.segment.length = 0, size = 5, alpha = 0.75) +
+    labs(x = "Average Episode Score",
+         y= "Stardard Deviation Episode Score",
+         title = title_label,
+         subtitle = subtitle_label,
+         caption = caption_label,
+         colour = "Position in Series",
+         shape = "Position in Series"
+    ) +
+    quack_theme() 
+```
+
+```{r cloud-hood-1, cache = FALSE, out.width="49%", fig.show = "hold", fig.cap = "Won't you be my Neighbour? <br> Left: Scatter! A graphical visualisation of Contestants Episode Performance and their Volatility. <br> Right: The similar neighbours of the cast of Series 21."}
+cloud_plot
+hood_plot
+```
+
+:::{.insights}
+From Figure \@ref(fig:cloud-hood-1) left hand plot, we see that the Series 21 cast largely do not deviate from the main cloud of prior contestants based on average and standard deviation of episode scores.
+
+> Armando was the most volatile in episode scores, followed by Joel and Amy (are they still looking for a place to have sex in the Taskmaster house from the Sardines task?), Kumail and Joanna (least volatile). 
+
+We also see that the cast of Series 21 lie in the "gray areas" of the cloud; they do not lie in unanimous segment areas in which the series ranking is a clear majority. For example, any contestant achieving an average episode score below 13.5 is going to place 5th in the series with near certainty. This supports our previous conclusion from the right hand plot of Figure \@ref(fig:series-end-state-duo) in which we deduced that the Series 21 cast were high performers for the most part.
+
+
+> None of the Series 21 cast have previous contestants who placed 5th in their series as their nearest neighbours. Not even Joel, our 5th place contestant.
+
+From the left hand plot of Figure \@ref(fig:cloud-hood-1), we can define final neighbourhoods defined around each Series 21 contestant (neighbours stated in rough descending order of similarity):
+
+- Amy's neighbourhood consists of Series 1's Frank Skinner (2nd), Series 11's Mike Wozniack (2nd), Series 10's Mawaan Rizwan (3rd) and Series 5's Aisling Bea (4th).
+- Armando's neighbours include Series 10's Richard Herring (1st), Series 12's Desiree Burch (3rd), Series 10's Daisy May Cooper (2nd), Series 9's Katy Wix (3rd), and Series 2's Doc Brown (4th).
+- Joanna's neighbourhood consists of Series 7's James Acaster (4th), Series 9's Ed Gamble (1st), Series 4's Joe Lycett (2nd), Series 9's Rose Matafeo (2nd) and Series 4's Hugh Dennis.
+    - James must be delighted that he could have won Series 21 if he participated in this Series (and performed exactly like Joanna). His eyes must be circles...
+- Joel has no prior 5th place contestants in his neighbourhood. His neighbours consist of Series 10's Mawaan Rizwan (3rd), Series 19's Rosie Ramsey (4th), Series 1's Tim Key (4th), Series 11's Mike Wozniack (2nd), and Series 20's Reece Shearsmith (4th).
+- Kumail's neighbourhood features the past contestants of Series 12's Alan Davies (3rd), Series 4's Hugh Dennis (4th), Series 3's Dave Gorman (2nd), Series 9's Rose Matafeo (2nd), and Series 18's Jack Dee (2nd).
+- These mixed bag of neighbours (their series placements not unanimously informing the placement of the Series 21 contestants series placement), again highlights that this was a close series race in the end, and that using prior series data may not be suitable in making accurate predictions for the current series.
+:::
+
+```{r , fig.cap="A worthy successo to the laminator, the King of Stationery.", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/c986fa4e5204bf19f6394f22ea3ca952/71b71dcfd12e9426-32/s1280x1920/6dd6e2b5abc37b2f8820390ce189972d661e4bc3.gifv")
+)
+```
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+
+```{r , fig.cap="A good old ceilidh to close out Series 21 (and this post to be honest).", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/9b38b832cdc7bf01bd1b357ab718bb38/48a9bc5e8efaa43f-87/s1280x1920/d7a4c96db8c019ffd5662b0ed63f7498a9882e2d.gifv"
+  )
+)
+```
+
+
+
+We've learnt that:
+
+- **Joanna Page is our Series 21 champion!**
+    - She finished on a respectable but beatable 165 points, which is the **40th percentile of the series point distributions of prior champions**; that is 40% of prior champions achieved scores lower or equal to Joanna's final series points tally. Conversely, about 60% of prior contestants performed better than her.
+    - Such a percentile may be an indication of how she will perform in Champion of Champions V. 
+- **The Series 21 cast was generally high performing compared to prior series:**
+    - This series has the 5th highest number of points awarded by the Taskmaster across the entire cast and the series, and is the 73rd percentile.
+    - 4 out of 5 contestants have scores which are in the top half of points distribution compared to prior contestants sharing the same ranking (they have a percentile which is greater than 50th). 
+        - In particular, Joel Dommett who placed 5th in the series is the 93rd percentile with 150 points; only 7% of prior 5th place contestants scored better than him. He also doesn't have any 5th place neighbours when defining neighbours based on how similar they match in episode score statistics (average and standard deviation).
+- Based on the total number of points awarded across a series, there is potential correlation between:
+    - series with highest points distributed by the Taskmaster, and when series started being 10 episodes long and had a more secure broadcast future.
+    - series with lowest points awarded by the Taskmaster, and when series broadcasted on Channel 4 (a more established and mainstream TV channel), and those not recorded in front of a live studio audience due to lockdown restrictions.
+
+> And with Series 21 coming to a close, Series 22 is on the horizon. We are in for a treat as the cast features Chloe Petts, Isy Suttie, Matt Lucas, Nina Conti and Richard Ayode.
+
+```{r s22-cast, fig.cap="Farewell to the cast of Series 21; Welcome to the cast of Series 22!", out.width="40%"}
+knitr::include_graphics("https://cultbox.co.uk/wp-content/uploads/2026/06/Taskmaster-series-22.jpg")
+```
+
+:::
+
+
+```{r , fig.cap="Joanna Page is your Series 21 champion!", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/2d66b26c4c19ba605e4888991d145b60/48a9bc5e8efaa43f-b9/s1280x1920/8ae2f5573316eba13cda0bf1ce11a591e6ef54ec.gifv",
+  "https://64.media.tumblr.com/2f7dcc97c551e3741ea07f3250128fc4/48a9bc5e8efaa43f-2f/s1280x1920/4d1bbeadd7e373bcff765c1e3346df6168827b3c.gifv"
+  )
+)
+```
+
+```{r , fig.cap="The day after....", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/e64fc70e001c0d38d49a0d59949ee7b2/6ebe526e15c4122e-05/s1280x1920/b57a090d587d97be2cef9fefddf1ade48950d119.jpg"
+  )
+)
+```
+
+# Henry's Bumhole
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gpL3qQbt0hU?si=6GOw0QyJPd903Xh6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+
+```{r , fig.cap="Henry's Asshole", out.width = "40%", fig.show = "hold"}
+knitr::include_graphics(
+c("https://64.media.tumblr.com/e1da7281827c58dc17f344f8d9230037/1d5a0e092ca25dea-b7/s1280x1920/c56079719909d68d0b75345841a9f1db176a9021.gifv
+"
+  )
+)
+```
+
+
+
