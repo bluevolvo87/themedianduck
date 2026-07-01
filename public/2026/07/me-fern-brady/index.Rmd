@@ -1,0 +1,122 @@
+---
+title: "Alas, I am not Fern Brady"
+author: Christopher Nam
+date: '2026-07-01'
+slug: me-fern-brady
+categories: [extra, misc, fun]
+tags: [extra, misc, fun]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+# Your Task
+
+> Perform the best instrumental cover version of _"It’s me, Fern Brady, me Fern Brady!"_ from the _"Write a classic song"_ task. 
+>
+> This task appeared in Episode 4 of Series 14 of UK Taskmaster. 
+>
+> Bonus points are also available for providing a convincing extension to the original.
+> 
+> Best instrumental cover version wins the task!
+
+
+# The Original
+
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/r9g6vZy8jAQ?si=lAGafvI6JvW86C4v" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+# The Instrumental Cover Version
+
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/E3F3Q9hSmEs?si=JTqWyVeB_myfVjC8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+:::{.insights}
+
+The full lyrics for those who wanted to sing along to the instrumental, although there are currently no new lyrics for the new additions.
+
+
+> _Here we are again, series fourteen_
+> 
+> _Who will become the house's queen?_
+> 
+> _It is me Fern Brady, me Fern Brady_
+> 
+> _I'm the rightful queen_
+> 
+> _Dilapidated house filled with mystery_
+> 
+> _Whoever bloody knows what we will see_
+> 
+> _Only one contestant will achieve_
+> 
+> _The height of victory_
+> 
+> _And the tasks were serendipitous_
+> 
+> _They were gift to the Taskmistress_
+> 
+> _All the other contestants_
+> 
+> _They were boot-licking sycophants_
+> 
+> _Dara's a big bald imbecile_
+> 
+> _Mr. Kearns is an obsequious child_
+> 
+> _And Sarah & Munya are losers_
+> 
+> _And I'll stamp on their toe_
+:::
+
+
+# The Full Version of the Task
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JfNFcoKjbLs?si=V1iIN97e5fWIkcQT" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that, all things considered, alas, I am **not** Fern Brady.
+
+I also recently finished Fern Brady's memoir _"Strong Female Character"_, which I was thoroughly entertained and educated by. She details her late in life diagnosis as an autistic women and not fitting the typical stereotypes associated with people with autism (there are different indicators for men and women). 
+
+Here are some useful links if you want more information on the book: 
+
+- [Autistic Review](https://autismbooksbyautisticauthors.com/2023/03/12/book-review-strong-female-character/), 
+- [Goodreads review](https://www.goodreads.com/en/book/show/59903149-strong-female-character), 
+- [Amazon Product Detail Page](https://a.co/d/0cKyPmXc) (please support local independent bookstores though). 
+
+She does briefly mention how her obsession with learning to place Mozart Piano Sonatas (of which _Rondo Alla Turca_ does belong to as it is the _3rd movement of Piano Sonata No. 11 in A major, K. 331 / 300i_) was a potential indicator to autism, and her time on Taskmaster (her meltdowns can be triggered by odd lighting setups, why she frequently proclaimed that she was tired).
+:::
