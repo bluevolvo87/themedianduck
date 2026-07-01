@@ -7,27 +7,41 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Sat, 06 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Extra</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/extra/</link>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/extra/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Fun</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/fun/</link>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/fun/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Misc</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/misc/</link>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/misc/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Betting</title>
       <link>https://bluevolvo87.github.io/themedianduck/categories/betting/</link>
-      <pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 23 Jun 2026 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/categories/betting/</guid>
       <description></description>
     </item>
     <item>
       <title>Series 21</title>
       <link>https://bluevolvo87.github.io/themedianduck/categories/series-21/</link>
-      <pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 23 Jun 2026 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/categories/series-21/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Extra</title>
-      <link>https://bluevolvo87.github.io/themedianduck/categories/extra/</link>
-      <pubDate>Thu, 12 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/categories/extra/</guid>
       <description></description>
     </item>
     <item>
@@ -56,13 +70,6 @@
       <link>https://bluevolvo87.github.io/themedianduck/categories/champion-of-champions/</link>
       <pubDate>Wed, 07 Jan 2026 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/categories/champion-of-champions/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Misc</title>
-      <link>https://bluevolvo87.github.io/themedianduck/categories/misc/</link>
-      <pubDate>Wed, 07 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/categories/misc/</guid>
       <description></description>
     </item>
     <item>
