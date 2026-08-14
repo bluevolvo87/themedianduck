@@ -1,0 +1,460 @@
+---
+title: 'Series 22: A Prophecy from the Gods'
+author: Christopher Nam
+date: '2026-08-10'
+slug: series-22-introduction
+categories: []
+tags: []
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+#source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+
+knitr::opts_chunk$set(
+  dpi = 300,
+  fig.retina = 2,
+  dev = "png"
+)
+
+
+```
+
+
+# Your Task
+> Behold! The Comedy Gods have an announcement to make!
+>
+> The Series 22 Taskmaster ship is on the horizon and thus an introduction to the valiant Series 22 crew members is in need! 
+> 
+> Your task is thus to provide an entertaining introduction to this crew, before we set on this 10 week odysessy!
+
+
+```{r, out.width = "60%"}
+knitr::include_graphics("https://cultbox.co.uk/wp-content/uploads/2026/06/Taskmaster-series-22-600x337.jpg")
+```
+
+# Save the Date...Or Maybe not 
+
+At time of writing, the exact broadcast date for the Series 22 has yet to be announced. However based on prior series air dates, September would be my best estimate as to when the series is set to premiere; since Series 10 and the move to Channel 4 in the UK, 5 series have debuted in September, mainly in the 2nd half.
+
+:::{.insights}
+Whilst no premiere date has been announced, we anticipate that Series 22 will premiere in the 2nd half of September 2026.
+:::
+
+
+From promotional material released thus far, **Series 22 appears to have Grecian theme**, with the **Taskmaster being depicted as Zeus**[^zeus]. Zeus was of course the king of the Gods on Mount Olympus. 
+
+If Greg is Zeus, our logic would naturally dictate that the Taskmaster's Assistance is one of Zeus' [retinue](https://www.theoi.com/Olympios/Zeus.html#Retinue), a large ensemble of helpers and advisers. 
+
+[^zeus]: The Taskmaster could also be depicted as Poseidon, or any other older, bearded Greek god in all fairness. Stacked physique ala Kumail Nanjiani not required.
+
+```{r, fig.cap = "An Ancient Mosiac of the Taskmaster", out.width = "30%"}
+knitr::include_graphics("https://www.agoragallery.gr/media/com_eshop/products/resized/SZ%20Photography-186-1000x1000.jpg")
+```
+From Zeus' many helpers and advisors, **Hermes** seems to be the most appropriate candidate, he was Zeus' personal messenger (herald) and representative (diplomat). Iris could also be another candidate as she was also Zeus' personal messenger, but she appears to only deliver and relay messages; I'd like to give Little Alex Horne slightly more credit as the Taskmaster's assistant. Also, **Little Alex Hermes** has a better ring to it that Little Alex Iris...
+
+
+```{r, fig.cap = "A Byzantine mosaic panel of the Taskmaster's Assistant; also known as Little Alex Hermes.", out.width = "30%"}
+knitr::include_graphics("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfQDpKmgVZkFYdGKjSgbPyLmch20_iClIriRyVwIFsE2PiYvv4Eam0oIc&s=10")
+```
+:::{.insights}
+(Ancient) Greece is the word for Series 22.
+
+**Zeus Davies** will preside as the ultimate god who will judge our valiant Series 22 cast.
+
+**Little Alex Hermes** will act as representative and coordinator of these tasks.
+:::
+# Who's Who from the Valiant Cast of Series 22 
+
+<!-- C1 Start -->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 40%"}
+
+```{r chloe, fig.cap = "Petts Win Prizes!", cache = FALSE}
+img_dir <- here("img", "highlights", "series_22")
+
+#img_dir
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/e/e3/Chloe_Petts.png")
+knitr::include_graphics(file.path(img_dir, "Chloe_Petts.png"), error = FALSE)
+```
+
+```{r, fig.cap = "Gambling on an unusual double act."}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/5/52/Nina_Conti.png")
+knitr::include_graphics("https://m.media-amazon.com/images/M/MV5BMjc0Yzc0YzUtYWY4Yi00MDEyLTlmMGUtOTkwNDZmMjAxMmVjXkEyXkFqcGc@._V1_.jpg", error = FALSE)
+```
+
+
+:::
+
+::: {style="flex-basis: 60%"}
+
+## Chloe Petts
+**[Age (at time of first studio recording):]{.ul}**  31 or 32. The exact birthdate of Chloe is not known; within sources indicating that she was born in either 1993 or 1994.
+
+**[Occupation:]{.ul}** Comedian
+
+**[Richard Osman's House of Games History (ROHOGH):]{.ul}** 
+Chloe won 2 days of her week, had an average daily score of 9.2, and placed 2nd in the overall weekly scoreboard (20 points). She might do quite well in Taskmaster because of this.
+
+**[My personal commentary:]{.ul}**  
+Chloe will be considered the fresh faced, "up-and-comer" contestant of this cast; she has only started appearing on the panel show circuit in recent years (Hypothetical, Have I Got News for You).
+
+However, her freshness for primetime comedy should not be mistaken as being a novice Taskmaster contestant. Chloe has acted as Ed Gamble's support act on the his comedy tours, and shares his competitive nature from interactions I have observed.
+
+She also appeared on an Escape Room gameshow, "[The Way Out](https://www.imdb.com/title/tt42832367/)", featuring Taskmaster alumni such as Ed Gamble (Series 9), Nish Kumar (Series 5), Lou Sanders (Series 8) and Mel Giedroyc (Series 4). Chloe was one of the third (possibly even second) most serious and competitive contestant on the show, the first being Ed (obviously) and the second being Nish. Tangent time: I was disappointed with this show mainly because David O'Doherty (and to an extent Lou Sanders) were not treating this as a serious escape room in which time is of the essence.  
+
+**[Overall personal opinion:]{.ul}**
+I expect Chloe will be an extremely competitive contestant who will be well versed in Taskmaster and the various tricks/hacks that may be employed by contestants. Whilst this is an advantage, it can also be a hindrance as she may overlook simple solutions and over complicate tasks. 
+
+I expect her to place in the top half of the leaderboard. 
+
+**[Most Similar Contestant (in my opinion):]{.ul}** 
+Ed Gamble (Series 9, 1st), Ania Magliano (Series 20, Joint 2nd, was also Ed Gamble's other support act), Kerry Godliman (Series 7, 1st). 
+:::
+
+
+::::
+<!-- C1 End -->
+
+<!-- C2 Start-->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 60%; justify-content: flex-end;"}
+
+
+## Isy Suttie
+**[Age (at time of first studio recording):]{.ul}** 47
+
+**[Occupation:]{.ul}** Comedic Actress, musical comedian and writer.
+
+**[ROHOG History (ROHOGH):]{.ul}** 
+Isy has appeared twice on House of Games, one as a regular week contestant, and the other as a Champion of Champions.
+
+In her regular week stint, she won 2 days, with an average daily score of 6.8 points. By the end week, she placed first on the weekly scoreboard with 19 points. 
+
+As part of the elite Champion of Champions week, she only won one day, and had an average score of 6.0. She placed 4th overall in this champions week with a total of 13 points. 
+
+Based on this HOG performance, I expect Isy to be fairly competent as Taskmaster contestant in a regular series, and if she is lucky to participate in CoC-V, I don't expect her to do as well.
+
+**[My personal commentary:]{.ul}**
+Isy is best known as playing Dobby in Peep Show from Series 5 onwards. She was Mark (David Mitchell's character), new love interest after a regrettable marriage to Sophie (Olivia Coleman's character). Olivia was featured less in later series of Peep Show, no doubt due to her blossoming film career at the time. 
+
+She's appeared in other shows (both minor and major roles), including Greg Davies' _Man Down_. She also has a handful of film credits, most notable the Fruit and Veg Vendor in Wonka.[^wonka]
+
+[^wonka]: Is Wonka the most common feature film that has starred Taskmaster contestants (both current and prior)? One to confirm if possible.
+
+My trustworthy sources ([wikipedia](https://en.wikipedia.org/wiki/Isy_Suttie)) tells me that she she wrote comedic songs in her teenage years which hopefully will be exhibited in the creative tasks, and that she has done some standup.
+
+
+**[Overall personal opinion:]{.ul}**
+
+I don't get strong feelings as to how Isy will perform, but I have some slight suspicions that she could be a middling to good Taskmaster contestant. 
+
+I do not get a strong sense that Isy is overly competitive, and have no real sense of whether she will perform well or not. I don't remember her House of Games performances (she neither did well or badly, or did something memorable).
+
+**[Most Similar Contestant (in my opinion):]{.ul}** 
+
+Jessica Knappet (Series 7, 2nd), Lucy Beaumount (Series 16, 5th), Maisie Adams (Series 20, 1st), Sophie Wilan (Series 17, 4th). [^northern]
+
+[^northern]: Am I choosing these "similar" contestants purely based on their Northern nature?
+:::
+
+::: {style="flex-basis: 40%"}
+
+```{r, fig.cap = "Will it by Isy (pronounced Easy) Peasy for Isy?"}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/3/3e/Isy_Suttie.png")
+knitr::include_graphics(file.path(img_dir, "Isy_Suttie.png"), error = FALSE)
+```
+
+```{r, fig.cap = "Will it be a [Knightmare](https://youtu.be/74r-EbIqt9s?si=7Mm2-jVOf62PKdcy) for our contestant?"}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/3/3e/Isy_Suttie.png")
+knitr::include_graphics("https://www.knightmare.com/images/characters/powers-that-be/geekweek-spell.jpg", error = FALSE)
+```
+
+
+
+
+:::
+
+
+
+::::
+<!-- C2 End -->
+
+<!-- C3 Start -->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 40%"}
+
+```{r, fig.cap = "Will Matt light up the scores on the doors like he's George Dawes?"}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/d/d0/Matt_Lucas.png")
+knitr::include_graphics(file.path(img_dir, "Matt_Lucas.png"), error = FALSE)
+
+```
+
+```{r, fig.cap = "A Baby Photo of Matt Lucas."}
+knitr::include_graphics("https://newsimg.bbc.co.uk/media/images/47453000/jpg/_47453453_dawes_bbc226i.jpg", error = FALSE)
+
+```
+
+
+
+:::
+
+::: {style="flex-basis: 60%"}
+
+## Matt Lucas
+**[Age (at time of first studio recording):]{.ul}**  52
+
+**[Occupation:]{.ul}** Actor, comedian, writer and television host. 
+
+**[ROHOG History (ROHOGH):]{.ul}** Has not appeared on House of Games.
+
+
+**[My personal commentary:]{.ul}** 
+Matt fits the criteria of the oldest and likely the most well established contestant from the cast of Series 22 (the legacy contestant if you will).
+
+Matt has quite the impressive CV ranging from hosting the Great British Bake Off (I had completely forgotten about this), to starring in Hollywood movies such as as Bridesmaids, Wonka and Gladiator II (I have not seen this but really?). Yes, yet another Wonka alumni; Timothée Chalamet appearing as a contestant in a future series would not be entirely ridiculous. 
+
+My first memories of Matt was as the man baby, drummer [George Dawes on Shooting Stars](https://youtu.be/r1jOzYfieMs?si=dA4XbvIuUjj7QSbz); Shooting Stars was of course former Taskmaster champion Bob Mortimer and his comedy partner Vic Reeves mainstream comedy vehicle.
+
+Matt is likely best known to UK viewers for the the sketch shows Little Britain and Come Fly with Me, both of which have aged terribly in the last 10 years due to the less than stellar depictions of racial and ethnic minorities. I was never a fan of these shows myself; I find the reliance on catchphrases being the joke punchline rather low brow, and the humour was generally lowest common denominator. I'd like to think that this humour was less Matt's responsibility, and more David Walliams who has had quite the fall from grace in recent years.   
+
+
+**[Overall personal opinion:]{.ul}** I have no strong opinions on how Matt will perform on Taskmaster, but I have slight suspicion that he is not overly competitive and does not really care how he will perform. Because of this, I suspect that he may place in the bottom half of the series leaderboard, but his lackadaisical approach may also be to his benefit. Armando and Bob both had this mentality which worked in their favour in the end.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** Armando Iannucci (Series 21, 2nd), Sanjeev Bhaskar (Series 20, 5th), Bob Mortimer (Series 5, 1st), Jo Brand (Series 9, 4th).
+:::
+
+
+::::
+<!-- C3 End -->
+
+<!-- C4 Start-->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 60%; justify-content: flex-end;"}
+
+
+## Nina Conti
+**[Age (at time of first studio recording):]{.ul}**  51
+
+**[Occupation:]{.ul}**  Actress, comedian, and ventriloquist.
+
+**[ROHOG History (ROHOGH):]{.ul}** Nina appeared on a week of HoG; she never won a specific day, earned a daily average of 4 points, and finished in 4th place on the weekly scoreboard. 
+
+
+
+**[My personal commentary:]{.ul}** Nina is the contestant I know the least about despite her being a veteran on the comedy scene. This is also likely the case for most of the UK Taskmaster audience (the younger ones at least), and it would not surprise me if Nina resonates more with the Gen X and older generations. I do recognise Nina from various bits and pieces (Off Menu for one), but Nina does not frequent the usual comedy panel show circuit. 
+
+She is potentially the first contestant who is a known professional puppeteer and ventriloquist prior to the show. Series 8's Iain Stirling and Series 10's Richard Herring have had experience with puppets but not to the same high quality level of Ms Conti.
+
+Perhaps her puppeteering to a high level has meant that she does not have time to appear on the comedy panel show circuit, particularly as these require her to appear as herself and not through a puppet vessel.
+
+One potentially interesting fact which may or may not come up, is that Nina is the daughter of actor Tom Conti. Tom has appeared in films such as Shirley Valentine and  Oppenheimer (he was Albert Einstein!). Comedy sitcom fans will also know that he had a guest part as Emily Waltham's father Stephen in Friends (when they go to London baby!), and as Miranda Hart's father Charles in Miranda (he was equally clumsy as Miranda, and was obssessed with announcing the dangers of black ice).  
+
+
+**[Overall personal opinion:]{.ul}** Again, I have no strong opinions on how Nina will perform. However, her lacklustre performance on House of Games suggests that she might not perform the best and in place in the lower half of the series scoreboard.
+
+I do however expect Nina to be a highly creative person, so expect her to excel at these tasks. 
+
+
+**[Most Similar Contestant (in my opinion):]{.ul}** 
+Joanna Page (Series 21, 1st), Stevie Martin (Series 19, 2nd), Emma Sidi (Series 18, 3rd), Jenny Eclair (Series 15, 3rd), Sarah Millican (Series 14, 2nd).  
+
+
+:::
+
+::: {style="flex-basis: 40%"}
+
+```{r, fig.cap = "Will Nina be providing a Conti-nental service whilst on Taskmaster?"}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/5/52/Nina_Conti.png")
+knitr::include_graphics(file.path(img_dir, "Nina_Conti.png"), error = FALSE)
+```
+
+```{r, fig.cap = "The inside of Nina's head."}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/5/52/Nina_Conti.png")
+knitr::include_graphics("https://i.guim.co.uk/img/static/sys-images/Guardian/About/General/2012/3/15/1331824528213/Nina-Campbell-with-her-du-007.jpg?width=620&dpr=1&s=none&crop=none", error = FALSE)
+```
+
+
+:::
+
+::::
+<!-- C4 End -->
+
+<!-- C5 Start -->
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 40%"}
+
+```{r, fig.cap = "Caution: Ayoade in Action!"}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/b/ba/Richard_Ayoade.png")
+knitr::include_graphics(file.path(img_dir, "Richard_Ayoade.png"), error = FALSE)
+```
+
+```{r, fig.cap = "The obligatory photo of a young Richard Ayoade, John Oliver and David Mitchell whilst in Cambridge Footlights 1996 (or 1997). A few years later, Alex Horne, Mark Watson and Tim Key would be taking their places."}
+#knitr::include_graphics("https://static.wikia.nocookie.net/task/images/b/ba/Richard_Ayoade.png")
+knitr::include_graphics("https://64.media.tumblr.com/b538877e89a9ac86c79d00dc60ed5927/tumblr_mns67ehc3Y1ss448uo1_1280.jpg", error = FALSE)
+```
+
+
+:::
+
+::: {style="flex-basis: 60%"}
+
+## Richard Ayoade
+**[Age (at time of first studio recording):]{.ul}**  49
+
+**[Occupation:]{.ul}** Comedian, actor, writer, director, and presenter.
+
+**[ROHOG History (ROHOGH):]{.ul}** Richard (Ayoade) has not appeared on House of Games. 
+
+
+**[My personal commentary:]{.ul}**
+
+Richard is the contestant I was most surprised by when the Series 22 cast was announced. I think he is also one of the most eagerly demanded and  anticipated contestants from the Taskmaster fandom. 
+
+It is my understanding that Richard has been high on Alex's wishlist of Taskmaster contestants since the early days[^mitchell] but Richard has either politely declined, or had scheduling conflicts that prevented him from appearing. Richard's reluctance in appearing is rooted in not wanting to disappoint the Taskmaster fandom as the audience will likely expect him to be extremely competent, but he himself thinks he will be incompetent. It won't be long for us to see whether Richard's trepidations were justified or not!
+
+[^mitchell]: David Mitchell is the other contestant that has also topped this wishlist, and like Richard, David also has the same fears. Perhaps his wife (Victoria Coren Mitchell) can put in a good Taskmaster word, or his recent championship stint on Last One Laughing UK will convince him that appearing as fool is not a bad thing at all.
+
+Despite Richard's on-screen persona as a socially awkward, uncool, nerdy and pedantic individual, I like to think that Richard is actually an incredibly cool and personable person. One often neglected fact about Richard is that he is an accomplished director; he has directed many feature length films (Submarine), and music videos for hip Indie bands (Kasabian, Artic Monkeys, Vampire Weekend). He's also married into the [Fox acting dynasty](https://en.wikipedia.org/wiki/Robin_Fox_family), through his wife Lydia Fox. 
+
+Based on Richard's appearance on the comedy panel show circuit, he is not overly competitive and willing to throw the round and competition for comic effect (see his numerous perfromances on Big Fat Quiz of the Year) which I suspect may occur in Taskmaster. 
+
+**[Overall personal opinion:]{.ul}**
+
+I suspect that Richard will be polarising in his Taskmaster performance; he will either do extremely well, or extremely badly. 
+
+It would not surprise me if he spends a large amount of his time arguing with Little Alex Horne and the Taskmaster (a reminder that a [Bad Dong connection exists](https://youtu.be/ARiqCJnL9-g?si=NLdZ_ewGull32CLW) and will hopefully make an appearance), and overly questions himself and the situation as to how ludricious it is.
+
+**[Most Similar Contestant (in my opinion):]{.ul}** 
+Because of his anticipated polarising performance: Victoria Coren Mitchell (Series 12, 5th), David Baddiel (Series 9, 5th), Dara Ó Briain (Series 14, 1st), Richard Herring (Series 10, 1st).
+:::
+
+
+::::
+<!-- C5 End -->
+
+
+## The Taskmaster x Off Menu Universe
+
+One observation that has come to light is that that all 5 contestants have appeared on the Off Menu Podcast hosted by Ed Gamble and James Acaster (former Taskmaster alumni).
+
+:::{.insights}
+Could this be the first series prior to broadcast that all contestants have appeared on the Off Menu podcast?
+:::
+
+```{=html}
+<div class="flex-container">
+
+<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1iliSjuZB4RohZFbR8sSG3?utm_source=generator&si=db3e5fde40f24866" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+</div>
+```
+
+Despite this observation, I would be very surprised if their their Off Menu appearances and menu choices have strong predictive power on their Taskmaster performance.
+
+I don't remember that much from their food choices on their respective episodes, but I do know that Isy Suttie's appearance was the first live recording of the podcast. You can have these Off Menu x Taskmaster facts for free.
+
+# A Steam Train of a Trailer
+
+```{=html}
+<div class = "flex-container">
+<iframe width="50%" height = "500px" src="https://www.youtube.com/embed/snCV4vC8wNc?si=ay627Ngmy74RdY3i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+Other than introducing the cast of Series 22 , and the visual theme of the series 22, some other observations from the trailer include:
+
+- **Steam trains are heavily involved.** I would estimate that about at least 75% of the trailer featured steam trains and the special location. 
+    - Further investigation reveals that the special location for this series was the [London Museum of Water and Steam](https://waterandsteam.org.uk/). 
+        - This is not a museum that I am familiar with. It is located in Brentford; a 1.5 mile walk away from the Taskmaster house (2.3 mile driving distance). 
+        - Its great that the Taskmaster team are using lesser known museums and locations to give them some promotion. [The Museum Musical](https://www.musicalmuseum.co.uk/) is just down the road, a museum that I have visited and thoroughly enjoyed (a large collection of automated instruments such as player pianos). Here's hoping that this museum may feature as the special location for future series.
+- The trailer **heavily used a black and white (or grayscale) filter**, with **masking on selective objects to make them pop out** (for example the contestants, or a shoe on fire) 
+- One task potentially involves **hiding from Alex** as Isy Suttie is evading Alex at the 0:07 mark.
+    - I initially thought that this task was at the Water and Steam Museum between rail tracks, but upon closer observation, this task appears to be at the Taskmaster house, and she is likely hiding under the hutch 
+    - There is also an arrow point at Isy, although it is camouflaged somewhat by the use of grayscale in the video. Such clear signposting may not lead to the most interesting game of hide and seek.
+- One task potentially involves **observing Greg cut outs whilst riding the steam train**; we see and hear Isy exclaim "Oh my God!" at the 0:10 mark.
+    - Of course, this inference may be due to me falling for the "enemy" that is video editing (fake news). Isy could have been reacting to something completely different, and not a Greg cutout.
+- One task involves **"Crossrailword"** (0:02, after LAH announces "Tickets please!").
+    - Some typical Horne wordplay is in effect here, as the **Crossrailword** is a portmanteau[^port] of the words _"Crossrail"_ and _"Crossword"_. 
+    - At least two clues have been filled out in this frame. _"Ayoade"_ being the clearest complete clue (was this personalised for each contestant?), and _"Ste..."_ being a partially observed clue (_Steam_, _Stephensons Rocket_, _Steel_ ?).
+- One task involves **"The Gregulator"**, as seen at 0:17 in which Nina Conti stands behind a stand bearing the "Gregulator" name.
+    - She also stands next **three papier-mache heads of Greg**, who are modelled after the 
+[Frank Sidebottom](https://en.wikipedia.org/wiki/Chris_Sievey).
+    - On the bottom half of the Gregulator stand are posters with the headings _"Questions"_, _"Prices"_ or _"Prizes"_, and _"Scores"_.
+- Taskmaster may have channeled **Richard Ayoade's inner arsonist**; he appears to have set a shoe on fire (maybe his shoes), at 0:20. 
+
+```{r, out.width = "30%", fig.cap = "A Side Helping of Frank Sidebottom; the original Count Binface."}
+knitr::include_graphics("https://static.wixstatic.com/media/6d14e3_995be5ae312746a6a66db923822f3e6b~mv2.jpg/v1/fill/w_858,h_998,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/6d14e3_995be5ae312746a6a66db923822f3e6b~mv2.jpg")
+```
+    
+
+[^port]: Part of me doesn't think this is a strict portmanteau as the full words have been combined, rather than just partial parts of the word. 
+
+
+# There's no Ay-oade in Team
+The series trailer provides no indication of what the teams may be; they rarely do in all honesty. From my write up, there is a clear age difference between Chloe and the rest of the cast; Chloe is a good 15 years younger than them.
+
+Chloe's team could thus be at a disadvantage if they fail to click based on their.
+
+I could see Matt and Richard working well as a team, and Isy and Chloe also. I guess Nina is a free spirit who could throw a spanner into the works, or maybe a puppet monkey wrench> 
+
+
+> Who knows what the teams will be and how they have been defined?
+>
+> Will Chloe Petts team be at a natural disadvantage due to the 15+ yearage gap that will exist?
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+
+```{r, out.width = "40%", fig.cap = "Little Alex Hermes has an announcement to make..."}
+knitr::include_graphics("https://64.media.tumblr.com/c023f70d7d54bd894dc2c57bfae6cf18/ca214a696328f2f2-4c/s1280x1920/de2de600a8fec3839fc0efa6751a186abf97b99d.gifv")
+```
+We've learnt that:
+
+- If **Greg is the Zeus of Taskmaster Series 22, then Alex is the Hermes of Series 22.**
+    - **Little Alex Hermes** will be a commonly used nickname in our commentary.
+- This is potentially the **first Taskmaster series in which all contestants have appeared on the Off Menu podcast** prior to the series being broadcasted. 
+- For 3 out of 5 of the cast members, I do not have strong opinions on how each will perform based on appearances on other shows and outlets.
+    - I do predict that **Chloe Petts will likely be a high performer based on her competitive nature** and close association with previous champion Ed Gamble.
+    - **Richard Ayoade will be polarising performance contestant; he will either do extremely well, or extremely poorly.**
+- Steam Trains and the Museum of Water and Steam feature heavily in the trailer and presumably throughout series 22.
+- **Chloe Petts is a good 15+ years younger than her cast mates.**
+    - Will her team be at a disadvantage because of this?
+    - Will she be at an advantage during solo tasks due to her inherent agility and flexibility?
+- Whilst no exact premiere date has been announced, **we expect Series 22 will start in 2nd half of September**. 
+    - Not long to wait now!
+:::
+
+```{r, out.width = "30%", fig.cap = "Zeus Davies always has the final word.", fig.show = "hold"}
+zd_vec <- c("https://64.media.tumblr.com/af7ab09d675c74f42a01426cfce343ea/6c6e74d573459789-09/s1280x1920/0d14fbe880d7ca2fd040b4a8a8c4e1c94b7c3030.gifv",
+            "https://64.media.tumblr.com/aa2e106d838225136924ff78ac3d1016/6c6e74d573459789-22/s1280x1920/7d77d61c4032f45786e78b18651f9f53eca1280d.gifv", 
+            "https://64.media.tumblr.com/0cb42cc19d18537b71b321e409bc04a7/6c6e74d573459789-6f/s1280x1920/97e9d8d536f2ffe0a7fe52b0aba245adea03d7ff.gifv")
+
+knitr::include_graphics(zd_vec)
+```
