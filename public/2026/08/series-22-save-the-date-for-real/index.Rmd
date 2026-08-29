@@ -1,0 +1,203 @@
+---
+title: 'Series 22: Save the Date For Real'
+author: Christopher Nam
+date: '2026-08-27'
+slug: series-22-save-the-date-for-real
+categories: [Series 22]
+tags: [Series 22]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+#source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+
+img_dir <- here("img", "highlights", "series_22")
+```
+
+
+# Your Task
+
+> New information has been announced and your speculations from your [previous post](/themedianduck/2026/08/series-22-introduction/) are no longer relevant.
+> 
+> Provide these updates and a new commentary on Series 22!
+
+# Save the Date!
+
+> UK Taskmaster Series 22 is set to premiere on Thursday 3rd September at 9pm on Channel 4 UK, and around the world soon after on YouTube!
+
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KOWRRB9-1IQ?si=jMI7gPId6WEkXfc0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+
+Evidently the biggest correction is that I predicted that Taskmaster Series 22 to start in the second half of September. We now have concrete information that Taskamster Series 22 will start on 3rd September which is very much in first half of September, and also very much near the beginning of the month.
+
+Despite my prediction error, I feel that my prediction method was justified. As indicated from the Taskmaster wikipedia page under the [Episodes section](https://en.wikipedia.org/wiki/Taskmaster_(TV_series)#Episodes), the majority of the autumn series have debuted in the latter half of September (particularly those after Series 10 and the move to Channel 4). 
+
+
+```{r, fig.cap = "The Source of My Forecast Inaccuracy...", echo=FALSE, out.extra='style="display: block; margin: auto;"', out.width="80%"}
+knitr::include_url("https://en.wikipedia.org/wiki/Taskmaster_(TV_series)#Episodes", height = "1500px")
+```
+
+# Other New Revelations!
+A closer deep dive of the new trailer indicates that:
+
+:::: {style="display: flex;"}
+
+::: {style="flex-basis: 40%"}
+- This will be a **steamy series** as indicated in the video description. 
+    - This is of course in reference to the special location for this series being the [London Museum of Water and Steam](https://waterandsteam.org.uk/)
+- The cat is out of the bag now; **Patatas is estimated to be 3000 years old**, and to be of the **same ilk as famous Greek philosophers** such as Plato and Socrates.
+- Richard Ayoade magically conjures up Little Alex Hermes at around 0:28 in a pose that is not too dissimilar to Auguste Rodin's [_The Thinker_](https://en.wikipedia.org/wiki/The_Thinker).
+:::
+
+::: {style="flex-basis: 60%"}
+```{r, out.width = "auto", out.height = "350px", fig.cap = "Our Hairy Trio of Great Greek Philosopher; Plato (left), Patatas (center) and Socrates (right).", fig.show="hold"}
+knitr::include_graphics(c(
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Plato_Silanion_Musei_Capitolini_MC1377.png/250px-Plato_Silanion_Musei_Capitolini_MC1377.png?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail",
+    file.path(img_dir, "Patatas_Philosopher.png"),
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Socrates_Louvre.jpg/960px-Socrates_Louvre.jpg?utm_source=en.wikipedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+    ),
+    error = FALSE)
+```
+:::
+
+::::
+
+
+:::: {style="display: flex;"}
+::: {style="flex-basis: 60%"}
+```{r, out.width = "auto", out.height = "350px", fig.cap = "The Great Thinker and The Great Tinker.", fig.show="hold"}
+
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Le_Penseur_by_Rodin_%28Kunsthalle_Bielefeld%29_2014-04-10.JPG/960px-Le_Penseur_by_Rodin_%28Kunsthalle_Bielefeld%29_2014-04-10.JPG?utm_source=en.wikipedia.org&utm_campaign=imageinfo&utm_content=thumbnail")
+
+knitr::include_graphics(file.path(img_dir, "The_Thinker_LAH.png"), error = FALSE)
+```
+:::
+
+::: {style="flex-basis: 40%"}
+- **Matt Lucas is stumped for ideas and words** at around 0:31, exclaiming only a _"Gosh!"_ and performing a rather weak hand clap. 
+- **Chloe Petts** needs to ensure that she is **clear of the sausage machine** at around 0:35. 
+    - The _"Step on every correct step"_ and Chloe's crawling makes me think that she may be applying a loop hole of not stepping in general. 
+- At around 0:41, **Nina Conti states that she does not like overthinking things**.
+    - She also makes this statement in a posh but shaky voice, adding to her general eccentric character.
+- **Isy Suttie** poses the **important question of whether the pig flies** at 0:42. 
+    - Is this the new _"We were the monsters weren't we?"_ or _"Am I the spider?"_?
+- **Richard Ayoade makes a bold statement that he doesn't straightforwardly know anything** (around 0:37).
+    - I believe he does know some things straightforwardly, but not necessarily all things. 
+- At around 0:46, we see Chloe Petts donning head wear with a massive red arrow on top whilst stealthily creeping out of the loo.
+    - Is this the same task as in the the prior trailer scene in which Isy Suttie was evading Little Alex Hermes under the hutch with the same red arrow?
+
+:::
+::::
+
+```{r, out.width = "auto", out.height = "400px", fig.cap = "Chloe and Isy trying to evade Little Alex Horne's deadly horns.", fig.show = "hold"}
+knitr::include_graphics(c( file.path(img_dir, "Chloe_Petts_Hiding.png"),
+                           file.path(img_dir, "Isy_Suttie_Hiding.png")
+), error = FALSE)
+```
+
+
+# The Gregulator
+
+```{r, fig.cap = "Regulating the Greg Eggs."}
+knitr::include_graphics(file.path(img_dir, "The_Gregulator.png"), error = FALSE)
+```
+
+The trailer also provides a clearer indication of what _The Gregulator_ entails. 
+
+Under the Questions heading, we see that:
+
+> You may ask FIVE questions but please note - 
+>
+> One Greg will always lie
+>
+> &
+>
+> One Greg really likes eggs
+
+The Scores section details how contestants are potentially going to be rewarding from this their questions. Ducks are worth a positive number of points (100 for a single duck, 500? for three ducks in a row), and eggs have negative points associated with them (-100). Pineapples may be highly desirable as they are worth 200 points a piece. 
+
+:::{.insights}
+The Gregulator potentially involves uncovering the truth from three Greg heads, but only one Greg is telling the truth.
+
+Contestants should aim to obtain ducks and pineapples, but avoid eggs.
+:::
+
+# Off Menu 
+
+```{=html}
+<div class="flex-container">
+
+<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1iliSjuZB4RohZFbR8sSG3?utm_source=generator&si=db3e5fde40f24866" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+</div>
+```
+
+In preparation for the new series, I recently re-listened to the Off Menu podcast episodes in which the cast of Series 22 appeared. They are certainly an entertaining bunch and provides a good indication of how Series 22 will pan out.
+
+Particular episode highlights for each contestant include:
+
+- **Chloe Petts had two menus and two lives**; one to please her vegetarian (vegan?) girlfriend, and one in which she reveals her (true) carnivorous form.     - The episode also starts with the aftermath of Chloe entering the room and tipping over a glass that was filled with water. She thought it was empty and turned it over to prepare herself a drink. This is perhaps the best indication of how impulsive she may be.
+- **Isy Suttie likes to be cryptic**. Without prompting, she frequently involved guessing games when revealing her menu choice to Ed and James.
+- **Matt Lucas spent much of lockdown roasting potatoes in different shapes and sizes.**
+    - He also puts on characters and voices easily, something that will no doubt crop up in the pre-recorded and the studio.
+- **Nina Conti is delightful, slightly zany but thoroughly entertaining woman.**
+    - I get strong eccentric, upper class woman vibes from her. Her dad (famous actor Tom Conti), scared her about the effects of taking acid; he knew someone who took acid and consequently curled up into a ball and screamed for year.
+- **Richard Ayoade is Richard Ayoade.**
+    - His mum owned a high quality Belgium chocolate shop (which must have been quite unusual in the 1980s), and he loves ice cream nearly as much as James Acaster.
+    
+
+```{r, fig.cap = "Chloe Petts channelling her inner Adrian Chiles while evading the Sausage Machine.", out.width = "40%"}
+knitr::include_graphics(file.path(img_dir, "Sausage_Machine_CP.png"), error = FALSE)
+```
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Taskmaster Series 22 is set to premiere on Thursday 3rd September 2026**, first on Channel 4 in the UK at 9pm, and soon after on youtube for the rest of the world.
+
+```{=html}
+<div class="flex-container">
+
+<div style="width:500px;max-width:100%;"><div style="height:0;padding-bottom:56.11%;position:relative;"><iframe width="360" height="202" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameBorder="0" src="https://imgflip.com/embed/azwhkr"></iframe></div><p><a href="https://imgflip.com/gif/azwhkr">via Imgflip</a></p></div>
+
+</div>
+```
+
+- Of course, this gif made from the end of the trailer could confusion for American viewers. The **new series** starts on the aforementioned date, but the **new season** starts on 9th March 2026, in which case you have already missed it. No spoilers please!
+- **Patatas is around 3000 years old and is one of our great philosophers.**
+- We've been given further insight into the potential tasks involved for this series, and the characters of each of the cast members.
+
+```{r, fig.cap = "The Final Look at Heruclean Gang of Taskmaster Series 22.", out.width = "60%"}
+knitr::include_graphics(file.path(img_dir, "Series_22_full_cast_small.png"), error = FALSE)
+```
+
+:::
+
+

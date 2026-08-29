@@ -3,8 +3,8 @@ title: 'Series 22: A Prophecy from the Gods'
 author: Christopher Nam
 date: '2026-08-10'
 slug: series-22-introduction
-categories: []
-tags: []
+categories: [Series 22]
+tags: [Series 22]
 draft: false
 output:
   blogdown::html_page:
