@@ -1,0 +1,236 @@
+---
+title: "Series 22, Episode 1: Daddy's Droopy Back"
+author: Christopher Nam
+date: '2026-09-04'
+slug: series-22-episode-1
+categories: []
+tags: []
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+library(tidyverse)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+#source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing"
+
+task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2026-09-03, 
+                 sim_max_episode_used = 1,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+)
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+# Performance scripts
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# To calculate the odds through simulation
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+```
+
+
+# Your Task
+
+> Daddy's back! There's a new series of Taskmaster on our TV and electronic devices!
+>
+> Your task is to provide weekly statistical commentary and analysis regarding Episode 1 of UK Taskmaster. 
+>
+> Series 22 Data is linked [here](https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing)!
+
+```{r, out.width = "40%", fig.cap = "Daddy's Back!"}
+knitr::include_graphics("https://64.media.tumblr.com/584adf4e4fb11ac64b34e2e987693f02/3847d94110e1cc4c-9a/s1280x1920/2cee8f854de9b124a7db6326efe347235beb2e0e.gifv")
+```
+
+
+:::{.callout}
+For Series 22, I (your faithful Pacific Northwest Representative for Taskmaster UK), will be in the midst of preparing to permanently relocate back to the UK mothership by the end of 2026. Sadly, my return is not relocated for Taskmaster purposes (at the moment), but if anyone in the Taskmaster community would like to collaborate once I am physically back in my homeland, please **do** reach out!
+
+<br>
+
+As relocation is my main priority, your weekly commentary is liking going to be more less in depth (and humourous) than prior series. There will also be fewer instances of new innovative analysis and modelling approaches. 
+:::
+
+
+# Episode Recap
+
+The episode 1 featured:
+
+- The **shed now having a tunnel** built in which led not quite to Narnia, but **to a Greek themed gazebo.**
+    - Whether this is a permanent area, or a temporary area that only featured in the golden apple task is unknown. Time will tell!
+- For the second series in a row, the **teams were introduced in this premiere episode for the series.** The teams are:
+    - Isy Suttie and Nina Conti.
+    - CHloe Petts, Matt Lucas and Richard Ayoade.
+- The introduction of the teams in Episode 1 is always a surprise since we typically have yet to fully digest each contestant as an individual. It worked a treat in Series 21 though; _He's so famous!_
+- The **teams themselves are quite the surprise**, and no doubt due to availability and scheduling. 
+    - The **main surprise comes from assigning Chloe and Richard to the same team**. Prior to the episode, I suspected with relatively low probability, that they would be on the same team.
+    - Ultimately, it shows how little I know in how the Taskmaster universe works.
+    - I am **excited by the team of Isy and Nina**; it is almost like a mumsy night out. I did feel that they were at a significant disadvantage during the team task; disassembling and reassembling a bed is easier with more people!
+- This episode featured the musical talents of our contestants through the _"Sing a passionate duet to yourself."_, and showcased that this a **very** musical cast.
+    - All contestants attempts featured them playing their instruments to a reasonably competent degree. Only Nina was the one who showed some real hesistation and stage fright; she was making up the lyrics to her song as she went along though.
+- **Richard Ayoade has already delievered his awkward, disruptive humour.** 
+    - I suspect that this will continue throughout the series, and what fans are expecting from him and the show.
+    - It was slightly disappointing that his we was _extremely_ low effort and energy in the live studio task. I know that this is his style of comedy, but he could try at least bit harder and show some respect for the Taskmaster!
+
+
+
+```{r ep-performance-grade, fig.cap = "Episode 1 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "ep_performance_table.R"), envir = multiverse_env)
+multiverse_env$ep_grade_perf_table
+```
+
+:::{.insights}
+- We saw **Chloe Petts be crowned the winner of Episode 1! She accumulated 19 points.**
+- However, Chloe cannot be too comfortable with her episode win, **Nina Conti and Matt Lucas were hot on here heels with 18 and 17 points respectively.** 
+- **Isy and Richard rounded out the episodes placements, both achieving 13 points and being tied in 4th place.**
+    - These are certainly not the lowest scores for placing last in an episode. However, the disqualification in the first pre-recorded task (_"Find the golden apple and place it on the golden plate"_) certainly did not help with their episode performance.
+    - Richard was also lucky that his win in the live studio task made him joint 4th, rather than placing 5th. I was quite surprised that he won this task despite the low effort and energy he was exuding. But I guess he really liked those belts...
+    
+:::
+
+```{r, out.width = "40%", fig.cap = "I'm forever blowing bubbles..."}
+knitr::include_graphics("https://64.media.tumblr.com/0115e3f48e1686421e2e5eb9602199e3/a02db4d4a1b50394-b9/s1280x1920/1cfbd57c4e303e3cc1eacc3bf1db380e57c47bf6.gifv")
+```
+
+
+# Gamble's Gamble
+
+## Within-Episode Ranking Distributions
+
+```{r ep-rankings, fig.cap = "Within Episode Ranking Distribution: Using Data up to Episode 1 ", out.width = "49%", fig.show="hold", cache = FALSE}
+graph_dir <- here("static", "code", "R", "graphs")
+multiverse_env$remain_num_eps <- multiverse_env$num_eps_series - multiverse_env$sim_max_episode_used
+
+
+sys.source(file.path(graph_dir, "ep_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$ep_ranking_dist_plot
+```
+
+:::{.insights}
+Based on the the task attempts of Episode 1 only, Figure \@ref(fig:ep-rankings) has the estimated distributions for each contestants placement in an episode:
+
+- These distributions are unsurprisingly peaked on each contestants placement in episode 1 (roughly).
+- The most probable ranking in an episode for each contestant are:
+    - Chloe: 1st with 63.37% probability.
+    - Isy: 5th with 49.84% chance.
+    - Matt: 2nd with 35.55%.
+    - Nina: 2nd with 31.65%.
+    - Richard: 5th with 37.48%.
+- We also see that each contestant does have a non-zero chance of winning an episode.
+    - After Chloe, Nina is the next most likely to win an episode (31.59%), then Matt (19.09%), then Richard (6.05%), and then Isy (0.84%).
+- **However, ** we do expect these distributions to change as we see more task attempts from each episode. 
+:::
+
+## End-of-Series Ranking Distributions
+```{r series-rankings, fig.cap = "Series Ranking Distribution: Using Data up to Episode 1.", out.width = "49%", fig.show='hold', cache = FALSE}
+
+sys.source(file.path(graph_dir, "series_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$series_ranking_dist_plot
+```
+
+:::{.insights}
+We also have our first estimates for end of series ranking distributions (see Figure \@ref(fig:series-rankings)):
+
+- These **end of series ranking distributions are very much aligned with the outcome of Episode 1**; they are peaked and centered on their ranking at the end of Episode 1:
+- The most probable series outcome for each contestant are:
+    - Chloe: 1st with 92.18% probability.
+    - Isy: 5th with 71.85% chance.
+    - Matt: 3rd with 75.01%.
+    - Nina: 2nd with 70.16%.
+    - Richard: 4th with 73.97%.
+- From these distributions, the main uncertainty seems to arise as to who will place 2nd and 3rd (Nina or Matt), and 4th and 5th (Richard or Isy). 
+- **Again, ** we do expect these distributions to change as we see more task attempts from each episode. 
+:::
+
+## Joint Cast Ranking Distributions
+```{r joint-cast-ranking, fig.cap = "Joint Distribution of Cast Series Ranking: Using Data up to Episode 1.", out.width = "49%", fig.show='hold', cache = FALSE}
+assign("prev_ep_joint_pred", c(0, 0, 0, 0, 0), envir = multiverse_env) # To pass on a previous prediction
+sys.source(file.path(graph_dir, "joint_cast_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$joint_cast_ranking_dist_plot
+```
+
+:::{.insights}
+The most probable outcome for the entire cast at the end of the series is:
+
+- 1st: Chloe Petts
+- 2nd: Nina Conti
+- 3rd: Matt Lucas
+- 4th: Richard Ayoade
+- 5th: Isy Suttie
+
+This is **estimated to occur with 47.24% probability**. This prediction is aligned with the outcome of Episode 1 minus the tie in 4th place.
+
+There only 2 other outcomes which have more than 10% chance of occurring. These vary on who will end up in 4th and 5th place (Isy or Richard), and 2nd and 3rd place (Matt or Nina).
+:::
+
+
+```{r, out.width = "40%", fig.cap = "The latest craze and fad in the country."}
+knitr::include_graphics("https://64.media.tumblr.com/0a4963e040c0d2b706ddb90115f6c330/817fc8e5e19ee6f5-e7/s1280x1920/bdca60fcfaf922a847237d9cde1d2e8b237f50df.gifv")
+```
+
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- Daddy's Back! Series 22 of UK Taskmaster has got off to a fine start.
+- **Chloe Petts won the first episode of the series with 19 points.** However, Nina and Matt could have easily claimed this title if the live studio task panned out slightly differently.
+- We also saw the **teams for this series being established in this debut episode**. The **teams are `[Nina, Isy]` and `[Chloe, Matt, Richard]`**.
+- This is **an extremely musically capable cast!** They all appear to play musical instruments to a reasonable standard. 
+- Richard Ayoade is already satisfying his awkward, disruptive quota. 
+- Currently, **our prediction of how the series will pan out after 10 episode is `[1st: Chloe, 2nd: Nina, 3rd: Matt, 4th: Richard, 5th: Isy]` with 47.24% probability**. 
+- We expect our distributions, predictions and inferences to change as the series progresses, even substantially at times!
+    - In fact, we even expect the distributions to be quite volatile (changing a lot) in the first half of the series, from episode to episode, due to limited data (task attempts available). 
+    - They may even be inaccurate in the first half of the series!
+    
+```{r, out.width = "40%", fig.cap = "What a load of rubbish..."}
+knitr::include_graphics("https://64.media.tumblr.com/9722dc7efaacc3b06aa40fde7b8b6942/cda1407904c08457-fe/s1280x1920/d9017af4c0bf64584beea0c2911aaa672fe58485.jpg")
+```
+
+:::
