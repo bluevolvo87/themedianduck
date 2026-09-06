@@ -47,7 +47,7 @@ colnames(contestants_df) <- make.names(colnames(contestants_df))
 ```{r, echo=FALSE, warning = FALSE, message = FALSE, cache = TRUE}
 # Establish the variables and environment for our analysis
 mv_var_list <- list(seed_id = 2026-04-09, 
-                 sim_max_episode_used = 10,
+                 sim_max_episode_used = 1,
                  num_sims = 100000,
                  num_eps_series = 10,
                  pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
