@@ -7,16 +7,15 @@
 series_id <- unique(task_attempt_df$Series_ID)
 
 # Series Tracker data frame. Episode x Contestant granularity
-series_points_df <- task_attempt_df %>% group_by(Series_ID, Contestant, Episode_ID) %>%
+# Tiebreakers are not included.
+series_points_df <- task_attempt_df %>% 
+	filter(Task_Type != "Tiebreaker") %>%
+	group_by(Series_ID, Contestant, Episode_ID) %>%
     arrange(Episode_ID) %>%
     reframe(
         Num_Tasks = n_distinct(Task_ID),
         Ep_Points = sum(Points)
     ) %>% 
-    group_by(Series_ID, Episode_ID) %>%
-    mutate(
-        Ep_Ranking = rank(-Ep_Points, ties.method = "min")
-    ) %>%
     group_by(Series_ID, Contestant) %>%
     arrange(Episode_ID) %>%
     mutate(
@@ -28,6 +27,23 @@ series_points_df <- task_attempt_df %>% group_by(Series_ID, Contestant, Episode_
     ) %>%
     left_join(contestants_df, by = join_by(Contestant == Contestant_Name))
 
+# Episode Rankings consider tiebreakers tasks.
+ep_ranking_df <- task_attempt_df %>% 
+	group_by(Series_ID, Contestant, Episode_ID) %>%
+    arrange(Episode_ID) %>%
+    reframe(
+        Num_Tasks = n_distinct(Task_ID),
+        Ep_Points = sum(Points)
+    ) %>% 
+    group_by(Series_ID, Episode_ID) %>%
+    mutate(
+        Ep_Ranking = rank(-Ep_Points, ties.method = "min")
+    )
+
+series_points_df <- left_join(series_points_df,
+		select(ep_ranking_df, Series_ID, Contestant, Episode_ID, Ep_Ranking),
+		by = join_by(Series_ID == Series_ID, Contestant == Contestant, Episode_ID == Episode_ID)
+		)
 
 latest_df <- series_points_df %>% 
     filter(Episode_ID == sim_max_episode_used)
@@ -91,7 +107,9 @@ compare_curr_ep_df <- past_summary_df[c("Series_ID", "Contestant", "Initials", "
 bin_levels <- c('<0', as.character(0:5), '6+')
 
 # Bin the Task points to 
-adj_task_attempt_df <- task_attempt_df %>% mutate(
+adj_task_attempt_df <- task_attempt_df %>%
+	filter(Task_Type != "Tiebreaker") %>%
+ mutate(
     Binned_Points = case_when(Points < 0 ~ '<0',
                               Points > 5 ~ '6+',
                               .default =  as.character(Points)

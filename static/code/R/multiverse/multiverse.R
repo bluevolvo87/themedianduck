@@ -25,7 +25,9 @@ remain_num_eps <- num_eps_series - sim_max_episode_used
 # For each episode sample, rank contestants within that episode.
 # Within each series sample, calculate series cumulative scores and rank contestants. 
 
-train_df <- task_attempt_df %>% filter(Episode_ID <= sim_max_episode_used)
+train_df <- task_attempt_df %>% filter(Episode_ID <= sim_max_episode_used, 
+							Task_Type != "Tiebreaker"
+)
 
 
 group_train_data_df <- train_df %>% group_by(Contestant, Task_Type) 
