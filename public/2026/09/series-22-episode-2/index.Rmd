@@ -1,0 +1,324 @@
+---
+title: "Series 22, Episode 2: Be My Silver Daddy"
+author: Christopher Nam
+date: '2026-09-12'
+slug: series-22-episode-2
+categories: [Series 22, Betting]
+tags: [Series 22, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing"
+
+full_task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+
+task_attempt_df <- full_task_attempt_df #filter(full_task_attempt_df, Task_Type != "Tiebreaker")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2026-09-03, 
+                 sim_max_episode_used = 2,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+)
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+# Performance scripts
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# To calculate the odds through simulation
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+```
+
+```{r, out.width = "40%", fig.cap = "This Silver Daddy feeds off muffins. English or American muffins? Who cares!", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/3387a1a03ced63a0a32dd9a1be64f85b/a3ace7b20867aa03-4c/s1280x1920/40cb7d144d580e1915af06c8ebe42862ae6c0732.png")
+```
+
+
+
+# Your Task
+> Your task as always, is to provide weekly statistical commentary and analysis regarding Episode 2, Series 22 of UK Taskmaster. 
+>
+> Series 22 Data is linked [here](https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing)!
+
+:::{.callout}
+For Series 22, I (your faithful Pacific Northwest Representative for Taskmaster UK), will be in the midst of preparing to permanently relocate back to the UK mothership by the end of 2026. 
+
+<br>
+
+Sadly, my return is not related to Taskmaster purposes (at the moment), but if anyone in the Taskmaster community would like to collaborate with me once I am physically back in my homeland, please **do** reach out!
+
+<br>
+
+As relocation is my main priority, your weekly commentary is liking going to be more less in depth (and humourous) than prior series. There will also be fewer instances of new innovative analysis and modelling approaches. 
+:::
+
+```{r, out.width = "40%", fig.cap = "Little Alex Horne's nickname for your faithful Pacific Northwest Representative for Taskmaster UK.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/affb1eb33e96c698b2b6743e821d7084/6e4687c171d3ff68-eb/s1280x1920/8b51f65cfd8b6dc1ee7c0eb4ba9b5e232365b3d8.gifv")
+```
+
+
+# Episode Recap
+
+**Episode 2 was a low scoring episode, with the winner only obtaining 14 points.**
+
+- The **first tiebreaker of the series took place in this episode**; the tiebreaker was between between Matt, Nina and Richard, who were required to estimate the temperature of water in a Thermos flask.
+    - It's not entirely clear why the Thermos flask was greased; was for it maintaing a stable temperature and/or to make sure the task was fair for all contestants?
+- If I remember correctly, recent series were relatively sparse on episode tiebreakers, so its appearance in this episode was a welcome return. 
+    - We don't however talk about the championship tiebreaker of Series 20 however as it is still painful that Ania was done dirty.[^ania] 
+- This was a disqualification heavy episode; all contestants were awarded 0 points in at least one task attempt.
+    - There have not been any point deductions however (yet).
+- We had our **first task outing at this series' special location, the [London Museum of Water and Steam](https://waterandsteam.org.uk/).**
+    - The task _"Measure the tower in terms of baked beans."_, required contestants to measure, be  comfortable with manipulating ratios, and being observant. Piece of cake, or should that be beans!
+    - Measuring in the unit of baked beans is by no means a first in the Taskmaster UK universe. 
+        - In Series 7, we saw the contestants measure the perimeter of the caravan in terms of beans. From this attempt, there was a slightly arrogant Rhod Gilbert who uttered the term _"mean bean"_. He also got his imperial and metric measurements mixed up which must have been humbling.
+        - Series 1's Josh Widdicombe also provided an estimate of the number of beans in a can. This research finding is even brought up in the task _"Set a number, and do the thing that number of times exactly."_ which features later in the episode; Little Alex Hermes states there are about 400 to 500 baked beans in a can according to Dr. Widdicombe's research. Well done to our trusted assistant for providing a range, rather than a single number, since there is likely going to be variability between cans.
+
+
+```{r, out.width = "40%", fig.cap = "Chloe Petts surveying the population for the elusive mean bean.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/61b672d2e0d684d8fdb36f3473376f67/d5523c184d8f2d6a-8b/s1280x1920/737afc35c111bcda04237d52c8fffd095a250ce9.png")
+```
+
+## The Mean Bean 
+
+Some specific remarks regarding the _"Measure the tower in terms of beans."_ terms.
+
+- A phrase that was often stated to us when preparing for exams at school and university was **"Read the F\*cking Question"** . In a similar vein for the Taskmaster universe, **"Read the F\*cking Task"** is appropriate with **"Re-read it again. And again."** also being a suitable appendage for the phrase.
+    - This advice would have served Nina extremely well who gave her measurement in terms of **cans**, _instead of_  **beans**.  This is despite being prompted by Little Alex Hermes **multiple times**, and a remark made during her entrance to this task that she was _"going to try and be more observant"_. Oh the irony! 
+- It is somewhat **surprising that none of these fully grown adults seemed capable of working and manipulating ratios to estimate the tower's height in beans.** 
+    - Maybe it's because I am a (relatively) logical and numerical person, but this task doesn't seem too convoluted. I would hope Dara Ó Briain (Series 14, physicist by training) , Phil Wang (Series 7, engineer by training) or Victoria Core Mitchell (Series 12, two time poker champion) would fare better, but pressure can do all sorts of things to even the most competent individual.
+- _"When you assume, you make an ass out of you and me."_ I'm glad Chloe clarified whether the bean measurements assumed whether the beans were standing vertically or horizontally. It can certainly help to clarify these assumptions to have a decent chance at providing an accurate estimate and potentially winning the task. 
+    - It also helps in this task to measure the correct tower that is being referred to, measuring in the correct units (beans rather than cans), and competently manipulating ratios. 
+
+    
+<!-- 1. Work out the height of the miniature tower in centimeters. Let us denote this by $m$. -->
+<!-- 2. Work out the scaling ratio of the miniature tower to the larger tower, denote this by $\rho$. -->
+<!--     - Nina appeared to be on the right track here by measuring the width of the large tower. -->
+
+<!-- $$ -->
+<!-- \rho = \text{Scaling ratio between Small and Large Tower} =  \frac{\text{Large Tower Width in cm}}{\text{Small Tower Base Width in cm}}  -->
+<!-- $$ -->
+<!-- 3. Establish the average vertical height of a baked bean in centimetres. Let this baked bean height be noted by $b$. -->
+<!-- 4. Calculate the beans to miniature tower ratio: -->
+
+<!-- $$ -->
+<!-- \beta = \frac{\text{Vertical height of the minitature tower}}{\text{Vertical height of a baked bean}} = \frac{m}{b} -->
+<!-- $$ -->
+<!-- 5. Height of the large tower in terms of baked beans. -->
+
+<!-- $$ -->
+<!-- m \times \beta \times \rho \\ -->
+<!-- \text{Vertical height of minitature tower} \times \text{How tall the is miniature tower in terms of baked baked beeans} \times -->
+<!-- \text{How tall is the large tower in terms of the smaller tower} -->
+<!-- $$ -->
+
+[^ania]: Ania appears to have gotten over it with her fabulous stint as one of the Weekend Update anchors on SNL UK.
+
+
+
+
+```{r, out.width = "40%", fig.cap = "Chloe Petts is not happy with the nickname that I have been granted by Little Alex Hermes.", fig.show = "hold"}
+knitr::include_graphics(
+    c("https://64.media.tumblr.com/cf61c57191350cbdd61e65322c90ed7a/bcb8c97262fc0ef1-b1/s1280x1920/98ac27fbb7c7f2eff6e1038b40fce6d34efcbde4.gifv")
+)
+```
+
+## Episode Performance
+```{r ep-performance-grade, fig.cap = "Episode 2 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "ep_performance_table.R"), envir = multiverse_env)
+multiverse_env$ep_grade_perf_table
+```
+
+:::{.insights}
+From our episode performance report card in Figure \@ref(fig:ep-performance-grade), we see that:
+
+- **Richard was the only contestant see an increase in episode points**; he increased his episode score by 1 point between episode 1 and 2.
+    - **This single incremental was sufficient for Richard to secure his best episode to date, and his first episode win **, combined with the tiebreaker result.
+- **Matt, Nina and Chloe, all saw a decrease in their episode points, and consequently had their worst episode to date.**
+- **Isy managed to maintain the same episode score, and thus has been graded a B+**; she has not show an improvement or degradation in her episode performance so far.
+:::
+
+## Task Performance
+```{r ep-task-performance, fig.cap = "Episode 2 Task Points Distributions", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "task_performance_table.R"), envir = multiverse_env)
+multiverse_env$task_perf_table
+```
+
+:::{.insights}
+Our task performance distribution table, see Figure \@ref(fig:ep-task-performance), provides the following insights:
+
+- As mentioned previously, **all contestants had at least one task attempt in which they were awarded 0 points in this episode.**
+    - Isy and Richard have the most 0 points instances so far in the series with 2 each.
+- Between the two episodes, Chloe, Nina and Richard have now obtained the full range of points (a series points flush?).
+    - They have been awarded points ranging from 0 to 5 at least once for a task from the series thus far.
+- Isy has yet to be awarded 3 points for a task attempt.
+- Matt has yet to be awarded 2 or 4 points for a task attempt.
+:::
+
+```{r, out.width = "40%", fig.cap = "The Taskmaster himself also doesn't agree with my assigned nickname.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/bbaf1b53f13138b083553f3943a90c42/6e4687c171d3ff68-01/s1280x1920/a9a45f5fdc17bbc80af0c70607b0a3a79abf95be.gifv")
+```
+
+
+# Series Scoreboard Tracker
+```{r series-tracker, fig.cap = "Series Scoreboard Tracker", out.width = "60%", fig.topcap = FALSE, cache = FALSE}
+
+graph_dir <- here("static", "code", "R", "graphs")
+graph_file  <- "series_score_tracker.R"
+
+
+sys.source(file.path(graph_dir, graph_file), envir = multiverse_env)
+multiverse_env$series_score_plot
+```
+
+:::{.insights}
+And after 2 episodes, our series tracker (Figure \@ref(fig:series-tracker)) indicates that:
+
+
+- **Nina currently leads the series with 32 points.**
+- However, _Matt is hot on her (boot) heels with 31 points._
+    - She shouldn't take off those boots that were alluded to in Episode 1.
+- **Chloe and Richard are in joint 3rd place for the series currently with 27 points.**
+- _Isy rounds out the cast in 5th place with 26 points._
+- **There is only `r 32-26` separating first and last place in the series.**
+    - **Such a small difference suggests that it is still anyone's game for the series.** It is entirely possible for Isy to take the series lead, and similarly, for Nina to fall into the last place for the series, even by the end of Episode 3. 
+
+
+:::
+
+```{r, out.width = "40%", fig.cap = "Little Alex Horne praying to the Taskmaster gods that he hasn't started World War III with the Captain Cuddles scandal.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/db2e6388838d9beeaddf06b9fcbf4fc9/8296d2cf2ebfb49f-79/s1280x1920/aa202221a971395cdd4fb33e7b73b13defe66e0d.png")
+```
+
+
+# Gamble's Gamble
+
+## End-of-Series Ranking Distributions
+```{r series-rankings, fig.cap = "Series Ranking Distribution: Using Data up to Episode 1 (left), and up to Episode 2 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/09/series-22-episode-1/index_files/figure-html/series-rankings-1.png")
+
+sys.source(file.path(graph_dir, "series_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$series_ranking_dist_plot
+```
+
+:::{.insights}
+The Marginal distributions for each contestant (see Figure \@ref(fig:series-rankings)) have noticeably flatted; this is a reflection of the uncertainty of how this series will pan out. As indicated in the series tracker (Figure \@ref(fig:series-tracker)) , there is only 6 points separating the cast, and thus still anyone's game.
+
+In addition to the flattened distributions for series ranking, the many distributions have changed the location of their peak and center; the peaks are aligned with the current series standings as seen in Figure \@ref(fig:series-tracker).
+
+The **most probable** series ranking placement for each contestant are:
+
+- **Chloe: 3rd with 45.79% probability; previously 1st with 92.18%.**
+- _Isy: 5th with 50.38% chance; previously 5th with 71.85%._
+- _Matt: 1st with 46.38% probability; previously 3rd with 75.01%._
+- **Nina: 1st with 50.38% chance; previously 2nd with 70.17%.**
+- _Richard: 4th with 35.30% probability; previously 4th with 73.97%._
+
+Only Isy and Richard have retained the same most probable series ranking as inferred after Episode 1, but now with less probability and certainty assigned to these positions.
+:::
+
+## Joint Cast Ranking Distributions
+
+
+```{r joint-cast-ranking, fig.cap = "Joint Distribution of Cast Series Ranking: Using Data up to Episode 1 (left), and up to Episode 2 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/09/series-22-episode-1/index_files/figure-html/joint-cast-ranking-1.png")
+
+assign("prev_ep_joint_pred", c(1, 5, 3, 2, 4), envir = multiverse_env) # To pass on a previous prediction
+sys.source(file.path(graph_dir, "joint_cast_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$joint_cast_ranking_dist_plot
+```
+
+:::{.insights}
+The joint distribution for how the entire cast will place (see Figure \@ref(fig:joint-cast-ranking)) has also flattened significantly compared to Episode 1; again this is a reflection of the uncertainty surrounding the current series standings and how it will pan out in subsequent episodes..
+
+The **most probable cast ranking is `[1st: Matt, 2nd: Nina, 3rd: Chloe, 4th: Richard, 5th: Isy]` with 10.24% chance of occurring.**
+
+However, there are **3 other cast ranking combinations which are near equally likely**. These vary on the following axis of:
+
+- **Whether Matt or Nina will be crowned series champion or runner up.**
+- _Whether Isy or Richard will be the series loser or not. _
+
+The former most probable cast ranking after Series 1, `[1st: Chloe, 2nd: Nina, 3rd: Matt, 4th: Richard, 5th: Isy]`, only has an estimated 0.93% probability of occurring. 
+
+The 5th and 6th most probable outcomes with approximately 5% chance occurring has Chloe ending in 4th place. She likely won't be happy with this outcome if it becomes a reality.
+:::
+
+```{r, out.width = "40%", fig.cap = "Arise Taskmaster Zeus and your faithful assistant Little Alex Hermes!", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/3254388bdee353fe988c0d883c46317d/1a121d5e183b4e28-fe/s1280x1920/b19e070dd1da2a582177dd09439e3d9acb870cf0.gifv")
+```
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+```{r, out.width = "40%", fig.cap = "What really is the point of talking, or anything else for that matter?", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/9c745cc0509883b19fe2d80e821d8359/8296d2cf2ebfb49f-e5/s1280x1920/ae6e2462cf8bc877aa999d87aebde64f49fe1562.png")
+```
+
+
+We've learnt that:
+
+- Despite his relatively _"laissez-faire"_ attitude (maybe this should be low effort and energy) in many tasks thus far, **Richard secured his first episode win of the series.** 
+- **This episode was a low scoring episode for all with all cast members** receiving at least one instance of 0 points for a task attempt.
+    - **Richard managed to win the episode with just 14 points**, and this was also the **first appearance of a tiebreaker in the series**. The tiebreaker was between Richard, Matt and Nina.
+- Despite Richard's episode win, it is **Nina and Matt who are currently leading the series**, but this is **a close series at the moment with 6 points separating the entire cast.** 
+    - It would not surprise me if the series standings change again after Episode 3.
+- This uncertainty of how the series will pan out is reflected in the generated distributions for how contestants will place (each individually and collectively), as they are incredibly flat.
+    - The **most probable cast ranking is `[1st: Matt, 2nd: Nina, 3rd: Chloe, 4th: Richard, 5th: Isy]` with 10.24% chance of occurring.**
+    - This flatness and uncertainty should not be seen as a flaw, more that the current series standings are incredibly tight, and not indicative for the rest of the series.
+- Captain Cuddles is surprised that many of the grown adults of this cast are unable to manipulate ratios to measure a tower in beans accurately.
+- **Captain Cuddles still hasn't gotten over the Series 20's championship tiebreaker controversy and that Ania lost.** Ania won in other ways however, namely securing a place as a cast member of SNL UK.
+
+
+```{r, out.width = "40%", fig.cap = "Ania is flattered by my comments.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/d04d2fa8ece26a945398190dce1d6961/face47974b6cccdc-65/s400x600/800ede09f44b97a56d11b3ff2905e0d5aa38168e.gifv")
+```
+:::
+
+
+

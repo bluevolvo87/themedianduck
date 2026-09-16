@@ -7,12 +7,19 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Christopher Nam</copyright>
-    <lastBuildDate>Thu, 27 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 12 Sep 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://bluevolvo87.github.io/themedianduck/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Betting</title>
+      <link>https://bluevolvo87.github.io/themedianduck/categories/betting/</link>
+      <pubDate>Sat, 12 Sep 2026 00:00:00 +0000</pubDate>
+      <guid>https://bluevolvo87.github.io/themedianduck/categories/betting/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Series 22</title>
       <link>https://bluevolvo87.github.io/themedianduck/categories/series-22/</link>
-      <pubDate>Thu, 27 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 12 Sep 2026 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/categories/series-22/</guid>
       <description></description>
     </item>
@@ -35,13 +42,6 @@
       <link>https://bluevolvo87.github.io/themedianduck/categories/misc/</link>
       <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
       <guid>https://bluevolvo87.github.io/themedianduck/categories/misc/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Betting</title>
-      <link>https://bluevolvo87.github.io/themedianduck/categories/betting/</link>
-      <pubDate>Tue, 23 Jun 2026 00:00:00 +0000</pubDate>
-      <guid>https://bluevolvo87.github.io/themedianduck/categories/betting/</guid>
       <description></description>
     </item>
     <item>
