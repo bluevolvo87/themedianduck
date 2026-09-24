@@ -3,8 +3,8 @@ title: "Series 22, Episode 1: Daddy's Droopy Back"
 author: Christopher Nam
 date: '2026-09-04'
 slug: series-22-episode-1
-categories: []
-tags: []
+categories: [Series 22, Betting]
+tags: [Series 22, Betting]
 draft: false
 output:
   blogdown::html_page:
