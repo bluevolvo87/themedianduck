@@ -87,16 +87,20 @@ Sadly, my return is not related to Taskmaster purposes (at the moment), but if a
 As relocation is my main priority, your weekly commentary is liking going to be more less in depth (and humourous) than prior series. There will also be fewer instances of new innovative analysis and modelling approaches. 
 :::
 
-
+```{r, out.width = "40%", fig.cap = "What is this relocation nonsense?", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/8afad377513c773197dc56ca73676e8e/38a1b082f9859f3c-75/s1280x1920/e6de33dd99cd6e892b7c07a5df5774473c1b4347.gifv")
+```
 # Episode Recap
+In Episode 3, we saw:
 
-- **BOSNAC** Big or Small Noughts and Crosses . In the US, this would be called **BOSTTT** for Big or Small Tic-Tac-Toe, or if we are taking into account McDonald portion sizing **LORTTT** for Large or Regular Tic-Tac-Toe.
-- The toilet rolls of Hanoi, although it wasn't clear if toilet rolls could only be moved onto poles in which the highest toilet roll was on the same colour.
-- Sheep need to be sheared frequently so that they don't die from their own weight.
-- **Gleek** was introduced to the nation! I remember Edward Turk in my form group being able to do this with ease.
-    - Front Ham, 
-- There is a curse on the Taskmaster house! The gargoyle is actually Little Alex Horne.
-    - Pedants will also remarks that it is a grotesque rather than a gargoyle; a gargoyle has an actual architecteral purpose in that it is a waterspout which drains water away from a building, whilst a grotesque is purely decorative. 
+- The introduction of the **BOSNAC** form, Big or Small Noughts and Crosses. In the US, this would be called **BOSTTT** for Big or Small Tic-Tac-Toe, or if we are taking into account McDonald portion sizing **LORTTT** for Large or Regular Tic-Tac-Toe.
+    - We can add this to the growling list of Taskmaster games including [Front-ham](https://taskmaster.info/task.php?id=4185), [Human war boats](https://taskmaster.info/task.php?id=2739) and [Snakes & Steps](https://taskmaster.info/task.php?id=4420).
+- The toilet rolls of Hanoi were unveiled as the 8th Wonder of the World. However, it wasn't clear if toilet rolls could only be moved onto poles in which the highest toilet roll was of the same colour.
+- Sheep need to be sheared frequently so that they don't fall over from their own weight (and presumably die from falling over).
+- **Gleeking** was introduced to the nation, much to annoyance of parents and teachers.
+    - I remember Edward Turk in my form group being able to do this with ease, and being equally revolted and amazed by it.
+- There is a curse on the Taskmaster house! The gargoyle is actually Little Alex Horne who presumably sets silly meaningless tasks for a group of comedians who visit the house (and are chosen by them)
+    - Pedants will also remark that it is a [grotesque rather than a gargoyle](https://www.canterbury-cathedral.org/news/posts/do-you-know-the-difference-between-a-gargoyle-and-a-grotesque/); a gargoyle has an actual architecteral purpose in that it is a waterspout which drains water away from a building, whilst a grotesque is purely decorative. 
     
 ## Episode Performance
 ```{r ep-performance-grade, fig.cap = "Episode 3 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
@@ -119,33 +123,40 @@ ep_rank_dist_df <- rbind(multiverse_env$past_df, multiverse_env$latest_df) %>%
            )
 ```
 
-```{r ep-rank-count, fig.cap = "Episode Ranking Distribution for each Contestant", cache = FALSE}
+```{r ep-rank-count, fig.cap = "Episode Placement Distribution for each Contestant", out.width = "50%", cache = FALSE}
 
 ggplot(ep_rank_dist_df, aes(x = Ep_Ranking, y = Contestant, fill = Num_Eps)) +
     geom_tile(stat = "identity", show.legend = FALSE, colour = "black", alpha = 0.6) +
     geom_text(aes(label = Full_Text, size = Mode_Flag), show.legend = FALSE) +
     scale_fill_gradient(low = "lightgray", high = "darkred") +
     xlab("Placement in Episode") + 
-    ggtitle("Series 22: Episode Placement Heatmap") +
+    ggtitle("Series 22: Distribution of Episode PLacement") +
     quack_theme()
 ```
 
 :::{.insights}
-- Chloe wins her second episode of the series! She achieved 21 points in this episode to secure her win.
+
+From our Episode Performance Report Card (Figure \@ref(fig:ep-performance-grade) and Distribution of Episode Placements (Figure \@ref(fig:ep-rank-count)):
+
+- **Chloe wins her second episode of the series! She achieved 21 points in this episode to secure her win.**
     - This also the highest episode points in the series so far, and coincidentally, Chloe has also achieved the lowest episode points in the series.
-    - Chloe's 21 points is also the first in this series that we have exceed the 20 point threshold for an episode.
-    - Chloe high episode score and episode win no doubt benefitted from the disqualification of Richard, Isy and Nina in the live studio task. Chloe would have ended up in 3rd place had the disqualification of Richard and Isy had not occurred. However, Richard and Isy were clearly breaking the rule with at least 2 toilet rolls off the poles.
-- Nina ends up in 2nd place for the third time for a row. She is very much always the bridesmaid and never the bride.
-    - Nina's episode score of 17 points is graded B+; it is not quite her best in Episode 1, but not as disastrous her performance in Episode 2
-    - Nina could have won this episode (or at least got to the second tiebreaker of the series), if she didn't get disqualified in the live task. She would have finished in 2nd place, presumably earning 4 points [^matt] which would have given her 21 points and matching Chloe's 21 points.
-    - Nina's disqualification was a bitter pill to swallow; she wasn't blatantly cheating like Richard and Isy and only had a max of 2 toilet rolls max off the polls. It's also because I have a soft spot for Nina, particularly as I've delved into her body of work.
-- Matt ended the episode in 3rd place with 13 points. This is his worse episode to date and thus graded D.
-- Richard also fared similarly in his episode grade. He was graded a D, achieving his worst episode score to date with 11 points and finishing in 4th place for Episode 3.
-- Isy continues her current track record of being the weakest contestant amongst the series 22 cast. She ended up in 5th place, only earning 9 points in this episode and having her worst episode to date. 
+    - Chloe's 21 points is also the first time in this series that we have exceed the 20 point threshold for an episode.
+    - Chloe's high episode score and episode win no doubt benefited from the disqualification of Richard, Isy and Nina in the live studio task. Chloe would have ended up in 3rd place in the task had the disqualification of Richard and Isy had not occurred (and secured 19 points for the episode). However, Richard and Isy were clearly breaking the rule with at least 2 toilet rolls off the poles so their disqualification is justified.
+- **Nina ends up in 2nd place for the third time for a row. She is very much always the bridesmaid and never the bride.**
+    - Nina's episode score of 17 points is graded B+; it is not quite as good as Episode 1, but not as disastrous as her performance in Episode 2.
+    - Nina could have won this episode, or at least got to the second tiebreaker of the series, if she didn't get disqualified in the live task. She would have finished in 2nd place in the task, presumably earning 4 points[^matt] which would have given her 21 points and matching Chloe's 21 points.
+    - Nina's disqualification was a bitter pill to swallow; she wasn't blatantly cheating like Richard and Isy and only had a maximum of 2 toilet rolls off the poles. It's also because I have a soft spot for Nina, particularly as I've delved into her body of work.
+- **Matt ended the episode in 3rd place with 13 points. This is his worse episode to date and thus graded D.**
+    - His flight attempt task certainly did not help his score.
+- **Richard also fared similarly in his episode grade. He was graded a D, achieving his worst episode score to date with 11 points and finishing in 4th place for Episode 3.**
+- **Isy continues her current track record of being the weakest contestant amongst the series 22 cast.** She ended up in 5th place, only earning 9 points in this episode and having her worst episode to date. 
+    - Her poor performance in the prize task and disqualification in the live task certainly do not help. 
     
-[^matt]: Oddly. Matt was awarded only 3 points (rather than 4) despite finishing in 2nd after disqualifications are taken into consideration
-- 
 :::
+
+[^matt]: Oddly, Matt was awarded only 3 points (rather than 4) despite finishing in 2nd after disqualifications are taken into consideration.
+
+
 ## Task Performance
 ```{r ep-task-performance, fig.cap = "Episode 3 Task Points Distributions", fig.topcap = FALSE, cache = FALSE}
 sys.source(file.path(perform_dir, "task_performance_table.R"), envir = multiverse_env)
@@ -153,17 +164,25 @@ multiverse_env$task_perf_table
 ```
 
 :::{.insights}
-- Isy has now been awarded the full range of points by the Taskmaster (0 to 5).
-    - Prior to Episode 3, Isy was excelling at the prize tasks awarding the maximum 5 points for both episodes 1 and 2. Her track record has been been tainted in Episode 3 however, and was awarded just 0 points. 
-- Matt is the only contestant of the Series 22 cast who has yet accomplish the flush. He has yet to be awarded 4 points for  a task. 
-- Chloe Petts is the first contestant of this series to be awarded 6 or more points for a task attempt.
-    - This came from the "Take two photos; one before and one after" task where she was awarded 4 points for the base task, and 2 additional points for providing the most surprising transition between the two.
-- Following Episode 3, Nina has now been awarded the most 5 points for her task attempts. She has had 5 tasks in which she was awarded the full 5 points.
-- In a similar vein, Isy and Richard are tied in being the contestant with the most disqualifications (0 points). They have both been disqualified 3 times. 
-    - This series has seen 10 instances of disqualifications so far, and does seem to be on tract to be one of the disqualification heavy series in recent times.
-    - 
 
+From Figure \@ref(fig:ep-task-performance), the distribution of task points:
+
+- **Isy has now been awarded the full range of points by the Taskmaster (0 to 5).**
+    - Prior to Episode 3, Isy was excelling at the prize tasks awarding the maximum 5 points for both episodes 1 and 2. However, her track record has been  tarnished in Episode 3, and she was awarded just 0 points. 
+- **Matt is the only contestant of the Series 22 cast who has yet accomplish the full points flush; he has yet to be awarded 4 points for a task.**
+- **Chloe Petts is the first contestant of this series to be awarded 6 or more points for a task attempt.**
+    - This came from the _"Take two photos; one before and one after"_ task where she was awarded 4 points for the base task, and 2 additional points for providing the most surprising transition between the two photos.
+- **Following Episode 3, Nina has now been awarded the most 5 points for her task attempts. She has had 5 tasks in which she was awarded the full 5 points.**
+- **In the polar opposite direction, Isy and Richard are tied in being the contestant with the most disqualifications (0 points). They have both been disqualified 3 times. **
+    - This series has seen 10 instances of disqualifications so far, and does seem to be on tract to be one of the disqualification heavy series in recent times.
+    
 :::
+
+```{r, out.width = "40%", fig.cap = "These stats and insights always bring a tear to my eye...Mainly because of how misleading they can be!", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/d5928a7eab6a44421ea86fd62c4023ba/38a1b082f9859f3c-6b/s1280x1920/807027e3a6a4c4b5a64bbbadfd6fc77751262873.gifv")
+```
+
+
 # Series Scoreboard Tracker
 
 ```{r series-tracker, fig.cap = "Series Scoreboard Tracker", out.width = "60%", fig.topcap = FALSE, cache = FALSE}
@@ -178,17 +197,24 @@ multiverse_env$series_score_plot
 
 :::{.insights}
 
-- Nina retains her series leader position with 49 points. However, it is worth remarking that she has yet to win an actual episode yet.
-- After a shaky Episode 2 and stellar performance in Episode 3, Chloe has jumped from 3rd place to 2nd place. She is hot on the boot heels of Nina with 48 points.
-    - She can very easily surpass Nina as the series leader by the next episode.
-- Matt has dropped down to 3rd place with 44 points.
-- Richard has 38 points and is 4th place for the series.
-- Isy rounds out this pack with 35 points.
-- Based on the current standings, it seems like two distinct groups are forming and how the series will pan out.
-    - Group 1 consists of Nina, Chloe and Matt who will be battling out for the championship.
-    - Group 2 consists of Richard and Nina and will be fighting to evade being crowned the series leader.
-- However, I have been burned before with my predictions (Series 21 and Amy Gledhill's fall from grace) and we are only 30% into the series; it could all change in the remaining 70%!.
+From our trust series track (Figure \@ref(fig:series-tracker)): 
+
+- **Nina retains her series leader position with 49 points. **
+    - However, it is worth remarking that she has yet to win an actual episode yet.
+- After a shaky Episode 2 and stellar performance in Episode 3, **Chloe has jumped from 3rd place to 2nd place**.
+    - She is hot on the boot heels of Nina with 48 points; she can very easily surpass Nina as the series leader by the next episode.
+- **Matt has dropped down to 3rd place with 44 points.**
+- **Richard has 38 points and is 4th place for the series.**
+- **Isy rounds out this pack with 35 points.**
+- Based on the current standings, it seems like **two distinct groups** are forming and how the series will pan out.
+    - **Group 1 consists of Nina, Chloe and Matt who will be battling out for the championship.**
+    - _Group 2 consists of Richard and Nina and will be fighting to evade being crowned the series leader._
+- **HOWEVER, I have been burned before with my predictions** (Series 21 and Amy Gledhill's fall from championship grace) and we are only 30% into the series; it could all change in the remaining 70%!
 :::
+
+```{r, out.width = "40%", fig.cap = "Pump out those stats for me Little Alex Horne!", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/83a193a7ce9a3968123b42ef8b1a65d5/9be8e9f38ae38773-33/s1280x1920/6862e6677e577983cbd056b80dac2d227ab4a958.gifv")
+```
 
 
 # Gamble's Gamble
@@ -206,10 +232,9 @@ multiverse_env$series_ranking_dist_plot
 
 
 :::{.insights}
-The marginal distributions in  Figure \@ref(fig:series-rankings) have regained some of their peakedness compared to the prior episode's distribution, and are largerly centered and peaked on their current standings in the series.
+The marginal distributions in Figure \@ref(fig:series-rankings) have regained some of their peakedness compared to the prior episode's distribution, and are largely centered and peaked on their current standings in the series.
 
-This increased in peakedness is associated with the increased certainty of the series standings, particularly for 4th and 5th position. The distributions associated with Chloe, Matt and Nina are less peaked as reflection that there is more uncertainty as to how these contestants will place.
-
+This increased in peakedness is associated with the increased certainty of the series standings, particularly for 4th and 5th position. The distributions associated with Chloe, Matt and Nina are less peaked as a reflection that there is more uncertainty as to how these contestants will place.
 
 The **most probable** series ranking placement for each contestant are:
 
@@ -218,6 +243,7 @@ The **most probable** series ranking placement for each contestant are:
 - _Matt: 3rd with 59.04% probability; previously 1st with 46.38%._
 - **Nina: 1st with 47.55% chance; previously 1st with 50.38%.**
 - _Richard: 4th with 71.72% probability; previously 4th with 35.30%._
+
 :::
 
 ## Joint Cast Ranking Distributions
@@ -234,13 +260,38 @@ multiverse_env$joint_cast_ranking_dist_plot
 ```
 
 :::{.insights}
-The **most probable cast ranking is `[1st: Chloe, 2nd: Nina, 3rd: Matt, 4th: Richard, 5th: Isy]` with 20.82% chance of occurring.**
+From Figure \@ref(fig:joint-cast-ranking), the joint cast ranking distribution, the **most probable cast ranking is `[1st: Chloe, 2nd: Nina, 3rd: Matt, 4th: Richard, 5th: Isy]` with 20.82% chance of occurring.**
+
+However, there is an near equally probable cast ranking in which Nina is crowned the series champion rather than Chloe.
+
+The previous week's most probable cast ranking of `[1st: Matt, 2nd: Nina, 3rd: Chloe, 4th: Richard, 5th: Isy]` now has an estimated probability of 4.57% occuring. 
 :::
+
+
+```{r, out.width = "40%", fig.cap = "A GIF representation of Isy's chances of winning the series.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/9cf055d43aadee7d8b7130df939db534/589a20b1eeae20e1-dc/s1280x1920/f341fe7c718e6a2977910ee538fd098576de4f51.gifv")
+```
+
 
 # What Have We Learnt Today?
 
 :::{.infobox .today}
 We've learnt that:
 
-- That this is work in progress.
+- **Sheeps do need to be sheared on a frequent basis, otherwise they will fall over (and presumably die) from the excess wool they are carrying around.**
+- **Chloe wins her second episode of the series, and the highest episode score of the series so far.**
+    - We have officially crossed into 20+ episode points territory for this series; Chloe is the first to achieve this feat.
+- **Nina has always been the bridesmaid but never the bride; she has placed 2nd place in all 3 episodes.**
+- But **despite Nina's 2nd place dominance, she is leading the series with 49 points!**
+    - However, she cannot be too comfortable as _Chloe is hot on her boot heels with 48 points!_
+- This 1 point series lead also doesn't translate immediately into the most probable joint cast ranking.
+    - The **most probable cast combination is `[1st: Chloe, 2nd: Nina, 3rd: Matt, 4th: Richard, 5th: Isy]` with 20.82% chance.**
+    - However, there is an **near equally probable combination in which Nina does succeed in being crowned the series champion.**
+- The **game of BOSNAC was introduced to the nation** and will no doubt be sweeping that nation.
+    - This game will have to be called **LORTTT** when it makes its way to the American audience, for reasons involving sizing conversions and naming conventions associated with a popular game.
 :::
+
+
+```{r, out.width = "40%", fig.cap = "The end of a post always brings tears to Alex's eyes. Whether this is a good or bad thing is unknown.", fig.show = "hold"}
+knitr::include_graphics("https://64.media.tumblr.com/063c31e70e3c87eff99e4fbebbe47e44/38a1b082f9859f3c-5f/s1280x1920/11c93ecf6af195b2a2c0a300f81718e4171815ff.gifv")
+```
