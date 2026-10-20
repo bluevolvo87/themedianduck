@@ -1,0 +1,346 @@
+---
+title: "Series 22, Episode 7: The Screet Legend"
+author: Christopher Nam
+date: '2026-10-19'
+slug: series-22-episode-7
+categories: [Series 22, Betting]
+tags: [Series 22, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing"
+
+full_task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+
+task_attempt_df <- full_task_attempt_df #filter(full_task_attempt_df, Task_Type != "Tiebreaker")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2026-09-03, 
+                 sim_max_episode_used = 7,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+)
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+# Performance scripts
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# To calculate the odds through simulation
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+```
+> Tickets please!
+> 
+> Your task as always, is to provide weekly statistical commentary and analysis regarding Episode 7, Series 22 of UK Taskmaster.
+>
+> Series 22 Data is linked [here](https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing), should we want to peruse the data yourselves!
+>
+> This train will not be stopping at Buckinghamshire Railway Center 
+
+::: callout
+For Series 22, I (your faithful Pacific Northwest Representative for Taskmaster UK), will be in the midst of preparing to permanently relocate back to the UK mothership by the end of 2026.
+
+<br>
+
+Sadly, my return is not related to Taskmaster purposes (at the moment), but if anyone in the Taskmaster community would like to collaborate with me once I am physically back in my homeland, please **do** reach out!
+
+<br>
+
+As relocation is my main priority, your weekly commentary is liking going to be more less in depth (and humourous) than prior series. There will also be fewer instances of new innovative analysis and modelling approaches.
+:::
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Me strutting back to the UK from Seattle..."}
+knitr::include_graphics("https://media1.tenor.com/m/fhQ0roNETn8AAAAC/funny-walk-james-acaster.gif")
+```
+
+
+
+# Relocation Progress
+It was a relatively quiet week from the selling (and packing) perspective. As of Monday 19th October, I have sold \$560 worth of my possessions, an increase of only \$50 from the prior week. My luxury digital piano still remains unsold; it's listed on Nextdoor, [Facebook Marketplace](https://www.facebook.com/marketplace/item/2211307983062419/?mibextid=dXMIcH) and [Reverb](https://reverb.com/item/102668719-roland-lx-17-digital-piano-polished-ebony-stool). 
+
+**However,** based on the lack of interest for my prized possession and conversations with relocation vendors, it might make sense to ship my piano over to the UK. 
+
+In addition to the slow selling and packing week, I did get recordings for my farewell recital and have uploaded them to YouTube. Enjoy the suboptimal renditions of your favourite pieces and apologies for me saying _"Err"_ and _"Uhm"_ far too much!
+
+```{=html}
+<div class="flex-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=M26jmXQTqUbJRJoY&amp;list=PLTxdgZ0HE99A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+```
+
+
+# Episode Recap
+
+## Episode Performance
+
+```{r ep-performance-grade, fig.cap = "Episode 7 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "ep_performance_table.R"), envir = multiverse_env)
+multiverse_env$ep_grade_perf_table
+```
+
+```{r, cache = FALSE}
+ep_rank_dist_df <- rbind(multiverse_env$past_df, multiverse_env$latest_df) %>%
+    group_by(Series_ID, Contestant, Ep_Ranking) %>%
+    reframe(Num_Eps =n_distinct(Episode_ID) ) %>%
+    group_by(Series_ID, Contestant) %>%
+    mutate(Sum_Num_Eps = sum(Num_Eps),
+           Mode_Flag = Num_Eps == max(Num_Eps)
+           ) %>%
+    ungroup() %>%
+    mutate(Percent = percent(Num_Eps/Sum_Num_Eps, accuracy = 1),
+           Full_Text  = paste (Num_Eps, " (", Percent, ")", sep = "")
+           )
+```
+
+```{r ep-rank-count, fig.cap = "Episode Placement Distribution for each Contestant", out.width = "60%", cache = FALSE}
+
+ggplot(ep_rank_dist_df, aes(x = Ep_Ranking, y = Contestant, fill = Num_Eps)) +
+    geom_tile(stat = "identity", show.legend = FALSE, colour = "black", alpha = 0.6) +
+    geom_text(aes(label = Full_Text, size = Mode_Flag), show.legend = FALSE) +
+    scale_fill_gradient(low = "lightgray", high = "darkred") +
+    xlab("Placement in Episode") + 
+    ggtitle("Series 22: Distribution of Episode Placement") +
+    quack_theme()
+```
+
+:::{.insights}
+From the episode performance report card (Figure \@ref(fig:ep-performance-grade)), and the episode placement distribution (Figure \@ref(fig:ep-rank-count)):
+
+- **Chloe won her 5th episode of the series; that's 5 episodes out of 7 (71%).**
+    - Chloe also had her best episode to date, accumulating 22 episode points.
+- **Nina returns to her old behaviour of always being the bridesmaid, but never the bride; she placed 2nd in an episode for the 5th time this series.**
+    - Nina was awarded a total of 17 points during the episode, which is graded _"good"_ for Nina.
+- **Richard placed 3rd in the episode and managed yet another personal best.**
+    - Richard achieved 16 points this episode; hardly an amazing score for someone like Chloe, but definitely a big improvement for Richard! Plus, this was whilst Richard was suffering from some motion sickness.
+- **Matt did not have the best episode; he received 13 points and placed 4th.** This was graded a _very bad_ episode for Matt compared to prior episode performance.
+- Like Matt, **Isy also did not have the best episode; she finished the episode in last place with only 12 points to her name.**
+- **Isy is still the only cast member of series 22 who has achieved a straight flush with regards to episode placement. **
+    - She does tend to place in the lower half of the episode rankings however (4th and 5th position). 
+:::
+
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "My reaction to Chloe winning yet another episode of this series...Not."}
+knitr::include_graphics("https://media1.tenor.com/m/ZzBjD7DJOWkAAAAC/no-way-taskmaster.gif")
+```
+
+## Task Performance
+
+
+```{r ep-task-performance, fig.cap = "Episode 7 Task Points Distributions", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "task_performance_table.R"), envir = multiverse_env)
+multiverse_env$task_perf_table
+```
+
+```{r, cache = FALSE}
+series_count_df <- filter(multiverse_env$all_tasks_df) %>%
+    group_by(Series_ID, Binned_Points) %>%
+    summarise(Total_Cast_Count = sum(Count)) %>%
+    ungroup() %>%
+    mutate(Total_Points_Instance = sum(Total_Cast_Count),
+           Cast_Pct = percent(Total_Cast_Count/Total_Points_Instance, accuracy = 0.1)
+    )
+
+```
+
+:::{.insights}
+From the task attempts distribution table (Figure \@ref(fig:ep-task-performance)):
+
+- This continues to be a **disqualification heavy series**. 
+    - The live studio task saw 4 more instance of 0 points being awarded, bring the series total to 19 instances.
+- Unsurprisingly, **Richard has been awarded the most 0 point instances (6)***, but rather surprisingly, **Chloe has only been awarded 0 points for 1 task attempt instance (the least amongst the cast)**. 
+    - However, given that Chloe is leading the series by quite the large margin, it shouldn't be all that surprising.
+- I do think that **Nina should have been awarded more points for completing the Crosswordrail to the full extent** (getting all the clues, identifying the correct secret word, romantically enjoying the train ride), and **wrapping her presents in the most deceitful manner**.
+    - This is partly due to me being a Conti stan, and adding some much needed jeopardy to the series so that Chloe has some competition.
+:::
+
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "My awkward stanning for Ms. Conti..."}
+knitr::include_graphics("https://media1.tenor.com/m/Pk1KFeyEJzkAAAAC/high-five-awkward.gif")
+```
+
+
+
+# Series Scoreboard Tracker
+```{r series-tracker, fig.cap = "Series Scoreboard Tracker", out.width = "60%", fig.topcap = FALSE, cache = FALSE}
+
+graph_dir <- here("static", "code", "R", "graphs")
+graph_file  <- "series_score_tracker.R"
+
+
+sys.source(file.path(graph_dir, graph_file), envir = multiverse_env)
+multiverse_env$series_score_plot
+```
+
+:::{.insights}
+As indicated in our trusted series tracker (Figure \@ref(fig:series-tracker)):
+
+-   **Chloe retains her status as current series leader with 129 points, and has also extended her lead to 19 points (previously 14 points).**
+    -   At this rate, it is near certain that Chloe will be our eventual series champion. She doesn't show any signs of slowing down, or for Nina to suddenly ramp up her performance. 
+-   Much like her episode performances, **Nina retains her 2nd place in the series, with 110 points.** 
+    - Whilst Nina has not managed to close the gap with Chloe, she has widened the gap between herself, Isy and Matt. She currently has a 9 point lead over 3rd placer...
+-   **Isy has retained her 3rd place series position with 101 points**, but she cannot rest on her laurels too much as...
+-  **Matt is hot on Isy's heels with 99 points.** Whilst Matt is currently in 4th place, he could easily overtake Isy in the series leaderboard by the end of the next episode. 
+-   **Richard rounds out the series leaderboard with 87 points.** He's certainly closing the gap to 4th place, but is it too late for Richard?
+- **Girl power is in force! All three female contestants have passed the 100 series point threshold.**
+:::
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Chloe's wave when she participates on her victory tour after the series."}
+knitr::include_graphics("https://media1.tenor.com/m/taTvp6S1NO8AAAAC/waving-greg-davies.gif")
+```
+
+
+
+# Gamble's Gamble
+
+## End-of-Series Ranking Distributions
+
+```{r series-rankings, fig.cap = "Series Ranking Distribution: Using Data up to Episode 6 (left), and up to Episode 7 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/10/series-22-episode-6/index_files/figure-html/series-rankings-2.png")
+
+sys.source(file.path(graph_dir, "series_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$series_ranking_dist_plot
+```
+
+::: insights
+The marginal distributions of each contestants series placement is presented in Figure \@ref(fig:series-rankings). The **most probable** series ranking placement for each contestant are:
+
+-   **Chloe: 1st with 99.96% probability; previously 1st with 99.03%.**
+-   *Isy: 3rd with 49.76% chance; previously 3rd with 42.76%.*
+-   *Matt: 4th with 49.66% probability; previously 4th with 54.00%.*
+-   **Nina: 2nd with 90.89% chance; previously 2nd with 71.42%.**
+-   *Richard: 5th with 93.37% probability; previously 5th with 98.08%.*
+
+All marginal distributions have retained the same basic shape compared to the previous week's distributions; they have retained the same peaks and center locations. The biggest uncertain lies in whether Isy or Matt will place 3rd and 4th respectively, which is almost like a 50% chance and this point in the series. 
+
+
+:::
+
+```{r dist-animate, fig.cap = "My how our marginal distributions have changed?!", out.width = "60%", echo = FALSE}
+
+rep_factor <- 2
+morph_factor <- 4
+animation_fps <- 4
+
+
+dist_vec <- c("https://bluevolvo87.github.io/themedianduck/2026/09/series-22-episode-1/index_files/figure-html/series-rankings-1.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/09/series-22-episode-2/index_files/figure-html/series-rankings-2.png", 
+              "https://bluevolvo87.github.io/themedianduck/2026/09/series-22-episode-3/index_files/figure-html/series-rankings-2.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/09/series-22-episode-4/index_files/figure-html/series-rankings-2.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/10/series-22-episode-5/index_files/figure-html/series-rankings-2.png",
+              "https://bluevolvo87.github.io/themedianduck/2026/10/series-22-episode-6/index_files/figure-html/series-rankings-2.png"
+              
+)
+
+dist_vec <- rep(dist_vec, each = rep_factor)
+
+
+current_dist <- image_read(
+    rep(file.path(here("content", "posts", "2026-10-19-series-22-episode-7", "index_files", "figure-html"),  "series-rankings-2.png"),
+        each = rep_factor)
+)
+
+current_dist_end <- image_annotate(current_dist[1], glue("END \n (after Ep {ep})", ep = multiverse_env$sim_max_episode_used), size = 200, color = "darkred", font = "Helvetica", weight = 700, gravity = "Center")
+
+dist_full_seq <- image_read(dist_vec)
+
+dist_start <- image_annotate(dist_full_seq[1], glue("START \n (after Ep 1)"), size = 200, color = "darkgreen", font = "Helvetica", weight = 700, gravity = "Center")
+
+frames <- image_join(dist_start, 
+                     dist_full_seq,
+                     current_dist,
+                     current_dist_end)
+
+animation <- image_animate(image_morph(frames, frames = morph_factor), fps = animation_fps, optimize = TRUE)
+
+animation
+```
+
+## Joint Cast Ranking Distributions
+
+```{r joint-cast-ranking, fig.cap = "Joint Distribution of Cast Series Ranking: Using Data up to Episode 6 (left), and up to Episode 7 (right).", out.width = "49%", fig.show='hold', cache = FALSE}
+
+knitr::include_graphics("https://bluevolvo87.github.io/themedianduck/2026/10/series-22-episode-6/index_files/figure-html/joint-cast-ranking-2.png")
+
+assign("prev_ep_joint_pred", c(1, 3, 4, 2, 5), envir = multiverse_env) # To pass on a previous prediction
+sys.source(file.path(graph_dir, "joint_cast_ranking_distribution.R"), envir = multiverse_env)
+
+multiverse_env$joint_cast_ranking_dist_plot
+```
+
+::: insights
+From Figure \@ref(fig:joint-cast-ranking), the joint cast ranking distribution, the **most probable cast ranking is `[1st: Chloe, 2nd: Nina, 3rd: Isy, 4th: Matt, 5th: Richard]` with 42.86% chance of occurring.** This is the same most probable combination following the previous episode. 
+
+The second most probable cast ranking combination with just over 36% chance of occurring has Isy and Matt's position reversed (Isy in 4th, Matt in 3rd).
+:::
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "This is all a bit nerdy isn't it?"}
+knitr::include_graphics("https://media1.tenor.com/m/UZLGbOClKEEAAAAC/phil-wang-grin.gif")
+```
+
+
+
+# What Have We Learnt Today?
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Chloe wins her 5th episode of the series and is on track to win the series with 99.96% probability.**
+    - She's also the current favourite to win the episode, which is quite understandable given her 19 point series lead.
+- The **most probable cast series ranking is `[1st: Chloe, 2nd: Nina, 3rd: Isy, 4th: Matt, 5th: Richard]` with 42.86% chance of occurring.**
+    - This is the same most probable cast series ranking after Episode 6. 
+- **Nina returns to being the bridesmaid, but never the bride. **
+    - She has placed 2nd in an episode for the 5th time this series, but has yet to win an episode herself.
+- **All three female cast members have broke through the 100 series points ceiling, whilst the two male have yet to achieve this feat. Girl power!**
+- Nina Conti loves crosswords and train rides, whilst Richard suffers quite badly from motion sickness.
+- It's best not to get into a fight with Richard as he will take your ass to praline town. 
+- Paul Chowdry is quite the fan of boobs and pussy; bastard's crying without them innit. 
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Got to find homes for those three pussys."}
+knitr::include_graphics("https://media1.tenor.com/m/Md_aHuyJOV8AAAAC/al-murray-taskmaster.gif")
+```
+
+:::

@@ -18,9 +18,23 @@ subtitle_label <- glue("Using Data up to Episode {max_ep}, {num_sims} Simulated 
 caption_label <- glue("Top {n_cast} of the Most Probable Cast Rankings are displayed only. Seed: {seed_id}", n_cast = top_casts, seed_id = seed_id)
 
 
+full_curr_ep_pred <- counts_sim_cast_df[counts_sim_cast_df$MAP_Flag,]$Full_Cast_Rank
+curr_equal_prev <- all.equal(full_curr_ep_pred, full_prev_ep_pred)
+
+
+if(curr_equal_prev){
+    #If Current and Prev are the same
+    counts_sim_cast_df[counts_sim_cast_df$MAP_Flag,"text"] <- sub(pattern = "Current",
+                                                                   replacement = "Current & Previous",
+                                                                   x = counts_sim_cast_df[counts_sim_cast_df$MAP_Flag,"text"]
+    )
+} else{
+    # If Prev is different to Current prediction
+    counts_sim_cast_df <- mutate(counts_sim_cast_df, text = ifelse(Full_Cast_Rank %in% full_prev_ep_pred, paste("Previous Prediction ", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) 
+}
+
 joint_cast_ranking_dist_plot <- counts_sim_cast_df %>% 
     filter((Prob_Rank <= top_casts) | MAP_Flag | (Full_Cast_Rank %in% full_prev_ep_pred)) %>%
-    mutate(text = ifelse(Full_Cast_Rank %in% full_prev_ep_pred, paste("Previous Prediction ", percent(Prop_Count, accuracy = 0.01, prefix = "(", suffix = "%)")), text)) %>%
     ggplot(aes(x = forcats::fct_reorder(Full_Cast_Rank, Prop_Count), y= Prop_Count)) +
     geom_bar(stat = "identity", fill = "#FFFFC2" , colour = "darkred", linewidth = 0.25) +
     #scale_fill_manual(values = c("Prediction" = "#D6AF36", " " = "#e0e5e5", "Actual" = "#A77044")) +
