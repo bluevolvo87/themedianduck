@@ -1,0 +1,380 @@
+---
+title: 'Series 22, Episode 10: The Petting Zoo'
+author: Christopher Nam
+date: '2026-11-12'
+slug: series-22-episode-10
+categories: [Series 22, Betting]
+tags: [Series 22, Betting]
+draft: false
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 1
+description: ''
+---
+
+
+```{r, echo = FALSE, include = FALSE}
+library(here)
+here("static")
+
+preamble_dir <- here("static", "code", "R", "preamble")
+preamble_file  <- "post_preamble.R"
+
+source(file.path(preamble_dir, preamble_file))
+source(file.path(preamble_dir, "database_preamble.R"))
+source(file.path(preamble_dir, "graphics_preamble.R"))
+source(file.path(preamble_dir, "google_sheets.R"))
+
+style_dir <- here("static", "code", "R", "style")
+source(file.path(style_dir, "ggplot_theme.R"))
+source(file.path(style_dir, "reactable_theme.R"))
+```
+
+
+```{r, cache = FALSE}
+gs_data_link <- "https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing"
+
+full_task_attempt_df <- range_read(gs_data_link, sheet = "Attempts-Tasks") %>%
+    filter(!is.na(Series_ID) & Series_ID != "")
+
+task_attempt_df <- full_task_attempt_df #filter(full_task_attempt_df, Task_Type != "Tiebreaker")
+        
+colnames(task_attempt_df)<-make.names(colnames(task_attempt_df))
+
+contestants_df <- range_read(gs_data_link, sheet = "Contestants")
+colnames(contestants_df) <- make.names(colnames(contestants_df))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+# Establish the variables and environment for our analysis
+mv_var_list <- list(seed_id = 2026-09-03, 
+                 sim_max_episode_used = 10,
+                 num_sims = 100000,
+                 num_eps_series = 10,
+                 pr_task_inflate = 3 #Number of pre-recorded tasks in an episode. We need to inflate the sampling by this amount for each episode
+)
+
+multiverse_env <- new.env()
+invisible(list2env(x = mv_var_list, envir = multiverse_env))
+
+# Performance scripts
+perform_dir <- here("static", "code", "R", "historic_performance")
+perform_file  <- "historic_performance.R"
+
+sys.source(file.path(perform_dir, perform_file), envir = multiverse_env)
+
+# To calculate the odds through simulation
+multi_dir <- here("static", "code", "R", "multiverse")
+multi_file  <- "multiverse.R"
+
+#sys.source(file.path(multi_dir, multi_file), envir = multiverse_env)
+```
+
+
+```{r, out.width = "60%", fig.show = "hold", fig.cap = "Nuff respect!"}
+knitr::include_graphics("https://64.media.tumblr.com/914a48936833673537734cc563294b8c/db514a21065cfa80-25/s1280x1920/217fc4ed3c89d2c02ffb6d5f56b7e37bfcddebda.gifv")
+```
+
+
+# Your Task
+> For the last time this series....
+>
+> Your task as always, is to provide weekly statistical commentary and analysis regarding Episode 10, Series 22 of UK Taskmaster.
+>
+> Series 22 Data is linked [here](https://docs.google.com/spreadsheets/d/11wxdq7_hqUGlVKWNjlzjg2i-m_OtAJrq1qyDw_piPyk/edit?usp=sharing), should you want to peruse the data yourselves!
+
+::: callout
+For Series 22, I (your faithful Pacific Northwest Representative for Taskmaster UK), will be in the midst of preparing to permanently relocate back to the UK mothership by the end of 2026.
+
+<br>
+
+Sadly, my return is not related to Taskmaster purposes (at the moment), but if anyone in the Taskmaster community would like to collaborate with me once I am physically back in my homeland, please **do** reach out!
+
+<br>
+
+As relocation is my main priority, your weekly commentary is liking going to be more less in depth (and humourous) than prior series. There will also be fewer instances of new innovative analysis and modelling approaches.
+:::
+
+
+# Relocation Progress
+As potentially indicated by how late this post is being published, it was a busier week for me from a relocation perspective.
+
+- As of Thursday  12th November, I have sold \$1335 worth of my possessions, an increase of \$215 from the prior week. 
+- With my shipping pick up date of Tuesday 17th November, I am frantically trying to get my posessions ready for this. Clothing is the main outstanding item that I need to sort through.
+    - As I have terrible spatial awareness, I do fear that I am going over my 200 cubic feet limit, particularly when a luxury piano is involved, and when larger pieces of furniture which doubles up as storage boxes are involved.
+- My one-way ticket from Seattle to London has been booked for Tuesday 29th December.
+    - Booking my tickets was not on my immediate to-do list for the week; I was waiting to get the condo ready for sale first. Also, I wasn't expecting to stick around for Christmas. My departure is still within the self inflicted "end of 2026" target though.
+    - However, spurred by a friend asking if I was able to participate in a musical performance at his company offices, and looking at how expensive ticket prices were geting around the holiday period, I thought it would be best to book tickets sooner rather than later.
+    - With non-refundable tickets booked (predominantly through credit card reward points), hopefully this will force me to get my condo ready for sale, and for me to make the most out of my remaining time here in the Pacific Northwest with my friends and adoptive family.
+
+# Episode Recap
+## Episode Performance
+
+```{r ep-performance-grade, fig.cap = "Episode 10 Performance Report Cards", fig.topcap = FALSE, cache = FALSE}
+sys.source(file.path(perform_dir, "ep_performance_table.R"), envir = multiverse_env)
+multiverse_env$ep_grade_perf_table
+```
+
+```{r, cache = FALSE}
+ep_rank_dist_df <- rbind(multiverse_env$past_df, multiverse_env$latest_df) %>%
+    group_by(Series_ID, Contestant, Ep_Ranking) %>%
+    reframe(Num_Eps =n_distinct(Episode_ID) ) %>%
+    group_by(Series_ID, Contestant) %>%
+    mutate(Sum_Num_Eps = sum(Num_Eps),
+           Mode_Flag = Num_Eps == max(Num_Eps)
+           ) %>%
+    ungroup() %>%
+    mutate(Percent = percent(Num_Eps/Sum_Num_Eps, accuracy = 1),
+           Full_Text  = paste (Num_Eps, " (", Percent, ")", sep = "")
+           )
+```
+
+```{r ep-rank-count, fig.cap = "Episode Placement Distribution for each Contestant", out.width = "60%", cache = FALSE}
+
+ggplot(ep_rank_dist_df, aes(x = Ep_Ranking, y = Contestant, fill = Num_Eps)) +
+    geom_tile(stat = "identity", show.legend = FALSE, colour = "black", alpha = 0.6) +
+    geom_text(aes(label = Full_Text, size = Mode_Flag), show.legend = FALSE) +
+    scale_fill_gradient(low = "lightgray", high = "darkred") +
+    xlab("Placement in Episode") + 
+    ggtitle("Series 22: Distribution of Episode Placement") +
+    quack_theme()
+```
+
+:::{.insights}
+From the episode performance report card (Figure \@ref(fig:ep-performance-grade)), and the episode placement distribution (Figure \@ref(fig:ep-rank-count)):
+
+
+- **Matt won his first episode of the series!**. He finished on a very impressive episode score of 24 points, which was his best to date. 
+    - I did not expliclty manifest this event to occur, but I think deep down, Matt knew what was required for him to satisfy a straight episode ranking flush for both himself, and the rest of the cast. 
+    - One future set of analysis could be to see how common (or uncommon) it is for for all cast members in a series to achieve a straight episode ranking fush.
+- **Matt's episode score of 24 points ties with Isy's episode score as being the highest episode points accumulated this series.**
+- Conversely, _both Chloe and Nina share the "accolade" of have the lowest episode scores in this series._ Both achieved a score of _8 points_ in separate episodes.
+- Elsewhere in this episode, **all contestants except for Nina had good and very good graded episodes for the series finale.**
+    - Nina achieved 15 points which is graded bad as it below her historic median episode score.
+- Previously, we explicitly requested that Isy place 2nd in the series finale such that she would have a perfect uniform distribution with regards to her episode placement. However, **my manifestation was not successful in this case with Isy placing 3rd in the series finale.** We do not get a perfectly uniform distribution from Isy therefore.
+:::
+
+```{r, out.width = "60%", fig.show = "hold", fig.cap = "A little prayer for the final series scores."}
+knitr::include_graphics("https://64.media.tumblr.com/88d87a0fc7b6a423a518ef366f86c390/db514a21065cfa80-e1/s1280x1920/44767d783a9ef01d34ba6d5075a1e55c7bfaf7e6.gifv")
+```
+
+
+
+# Series Scoreboard Tracker
+
+```{r series-tracker, fig.cap = "Series Scoreboard Tracker", out.width = "60%", fig.topcap = FALSE, cache = FALSE}
+
+graph_dir <- here("static", "code", "R", "graphs")
+graph_file  <- "series_score_tracker.R"
+
+
+sys.source(file.path(graph_dir, graph_file), envir = multiverse_env)
+multiverse_env$series_score_plot
+```
+
+:::{.insights}
+As indicated in our trusted series tracker (Figure \@ref(fig:series-tracker)), and after 10 episodes:
+
+- **Chloe Petts is the series 22 champion! She scored 173 points.**
+- _Our frequent bridesmaid, Nina Conti, finished in 2nd place with 158 points._
+- **Daughter of the esteemed inventor of the Cutlery Plait and Lentil Piano, Isy Suttie, ended the series in 3rd place with 152 points.**
+- _Moviestar Matt Lucas's spur in the series finale resulted in him placing 4th in the series, just 5 points behind Isy on 147 points._
+- **The bottom of the series leaderboard was rounded out by the series grump, Richard Ayoade. He finished with 131 points in 5th place.**
+
+Our series tracker indicates that:
+
+ - **Chloe could have been called the series champion as ealier as Episode 5 of the series.**
+ - The _eventual observed cast ranking combination of `[1st: Chloe, 2nd: Nina, 3rd: Isy, 4th: Matt, 5th: Richard]` was determined as early as Episode 6, although with varying levels of uncertainty._
+    - Immediately after Episode 6, it was unclear as to how the middle of the series leaderboard would pan out; that is in what order 2nd to 4th place would be filled by Nina, Isy and Matt.
+    - After Episode 4 to Episode 7, the main uncertainty lied in how 3rd and 4th place would be filled by Isy and Matt.
+    - After Episode 8 and 9, there was a strong possibility that Richard could have surpassed Matt into 4th place.
+:::
+
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Who would have thunk the Chloe Petts would be the Series 22 champion? <br> Analysis shows that this was going to occur from Episode 5 onwards."}
+knitr::include_graphics(c("https://64.media.tumblr.com/04e744aaabbe2fcbf314635d28ee827e/f0d98c3a71394de6-43/s1280x1920/3554e6a347245ac0e0ec51b9c2679ecf2dde7ebc.gifv",
+                          "https://64.media.tumblr.com/41504a5a75772a18378a90132f6b0052/f0d98c3a71394de6-46/s540x810/f383e6f6a2e6c726c40f08a8240e2e9dba90825b.gifv"
+                          ))
+```
+
+
+
+# Series Retrospective
+
+
+## Episode Performance
+From Figure \@ref(fig:ep-rank-count), the distribution on each contestants placement within in an episode, we can see that:
+
+- **Chloe won the most the episodes during the series amongst the the cast. They placed 1st in an episode, 50% of the time (5 episodes out of 10).**
+- _Nina placed 2nd in an episode 50% of the time (5 episodes out of 10)_
+- **3rd place for episodes was occupied by Matt and Isy the most; they both placed 3rd for 3 episodes each.**
+- _4th place was occupied by Matt and Richard the most; this occurred in 3 episodes for each contestant._
+- **5th place was most commonly occupied by Richard, our resident series grump, for 3 episodes in the series.**
+- These **insights are not entirely a surprise given how the series panned eventually; they are exactly in line with the eventual series rankings.**
+
+
+## Task Performance
+```{r task-dist, fig.cap = "Distribution of Points Awarded for each Contestant and their Individual Task Attempts. <br> Gold labels denote the contestant(s) who had the most occurrences of being awarded those number of points (the mode contestant for the point bucket).", cache = FALSE}
+binned_points_count_df <- multiverse_env$adj_task_attempt_df %>%
+    group_by(Series_ID, Contestant, Binned_Points) %>%
+    summarise(
+        Num_Tasks = n_distinct(Task)
+        ) %>%
+    group_by(Series_ID, Contestant) %>%
+    mutate(Contestant_Mode_Flag = Num_Tasks == max(Num_Tasks)) %>%
+    group_by(Series_ID, Binned_Points) %>%
+    mutate(Points_Mode_Flag = Num_Tasks == max(Num_Tasks)) %>%
+    ungroup()
+
+library(ggnewscale)
+
+ggplot(data = binned_points_count_df, aes(x = Binned_Points, y = Contestant)) +
+        geom_tile(aes(fill = Num_Tasks),
+                  stat = "identity", show.legend = FALSE, colour = "black", alpha = 0.6) +
+        scale_fill_gradient(low = "lightgray", high = "darkred") +
+        new_scale("fill") +   
+        geom_label(aes(label = Num_Tasks, colour = Points_Mode_Flag), fill = "black", fontface = "bold", size = 5, alpha = 0.75, show.legend = FALSE) +
+        scale_colour_manual(values = c("TRUE" = "#D6AF36", "FALSE" = "#e0e5e5")) + 
+        xlab("Points Awarded for Single Task Attempt") + 
+        ggtitle("Series 22: Points Awarded for Individual Task Attempts") +
+        quack_theme()
+```
+
+Figure \@ref(fig:task-dist) shows the distribution of points for each contestant and their individual task attempts. Golden labels indicate the contestant(s) who had the most occurrences of being awarded those number of points (the mode contestant). From this figure we can see that:
+
+- **Isy was awarded the most number of 5 points by the Taskmaster**; she was awarded 5 points on 16 occasions out of a possible 50.
+    - It is somewhat surprising that Chloe was not the mode contestant for this bucket given her ascension to series champion. They were closely behind Isy with 15 instances of 5 points being awarded.
+    - It is actually quite surprising that Richard was awarded 5 points on 12 difference occasions (higher than expected), and this is tied with Nina as the least number of instances in this points bucket.
+- **Our perpetual bridesmaid and series runner up Nina was awarded the most number of 4 points in the series (16 out of 50).**
+- _Both Matt and Chloe share the title of being awarded the most 3 points by the Taskmaster, a total of 14 task attempts._
+    - Is this a coincidence that they share this title and also gay???!!!
+- **Richard is the mode contestant for being awarded the most number of 2, 1 and 0 points (9, 10 and 7 instances respectively).**
+    - There's a reason why he was the loser of the series...
+- There were only two instances where oints beyond the standard six buckets were awarded by the Taskmaster, that is points outside of the 0 to 5 range.
+    - **Nina was awarded the only negative points in this series.**
+    - _Chloe was awarded 6 or more points for a single task attempt._ This was the only time in series in which more than 5 points were awarded for a task.
+
+In general, these mode contestants are aligned with how the series standings evolved into.
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Nerd alert!"}
+knitr::include_graphics("https://64.media.tumblr.com/df29db437d4e0e6399cffc7cc9953d20/db514a21065cfa80-39/s1280x1920/8b83ddc61269200cb17e1c2917452188c71b14ca.gifv")
+```
+
+
+## My Subjective Review
+It is my strong belief that there are no inherently bad series of Taskmaster UK (so far), but some definitely don't hit the mark as much as others.
+
+**Unfortunately, Series 22 didn't quite hit the mark for me compared to my favourite series (4, 5 and 19 are my favourite ones).**
+
+In general, I felt that the chemistry and banter between the cast was lacking compared to prior series. There were certainly some moments of brilliance (Isy's prize task and reasoning for example), but nothing as memorable as J.V. Martzoukas, _"Friendship is Truth"_, _"We share the same juice..."_, _"He's so famous!"_  or  _"Rosalind’s a f*cking nightmare"_.
+
+I do think that at least two contestants of the Series 22 cast were not as familiar with the show and were less committed with some of their task attempts. I'm mainly looking at Matt and Richard. Whilst previous series have had at least one contestant who was less familiar with the show and not trying their hardest, they were usually able to revert this in the studio and argue their way through to much entertainment (see Judi Love in Series 13), and the remaining contestants were able to rectify this. 
+
+On a slight sidenote, I rewatched the whole Junior Taskmaster series last weekend and even that series was more entertaining that Series 22; I would happily watch a full series of some of those minor contestants!
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "What do you mean this isn't your favourite series?!"}
+knitr::include_graphics("https://64.media.tumblr.com/08462bca2fc9fde626372e55dbd63a27/db514a21065cfa80-53/s1280x1920/9a42028906a0a3dc04d5e99b3eb6647b89a73c71.gifv")
+```
+
+
+
+### The Overestimation of Richard Ayoade
+
+**Part of this series disappointment may be rooted in the high hopes we had for Richard Ayoade as a contestant; he is someone that has been on the contestant wishlist amongst the fandom.**
+
+We likely expected Richard to be a contestant who would challenge the entire premise of the show and refuse to do the tasks to his full ability (mostly for comedic effect, see his numerous appearances and performances on Big Fat Quiz of the Year). To this point, Richard  delivered on this expectation with near perfect precision. However, **refusing to conform to the show for nearly all tasks and episodes eventually got tedious. **
+
+
+The main broadcasted edit of the show lacked the most of Richard's rebuttals for his (poor) performance, which is likely where the main humour and entertainment lies when Richard appears on other panel shows. The outtakes do show that these rebuttals did occur and were entertaining. **Perhaps this is why the series was lacklustre from an Ayoade addition perspective?*8
+
+
+```{=html}
+<div class="flex-container">
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/iCGCawVw_ww?si=Um9gCyMD692cCotl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+</div>
+```
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Richard is not happy with my opinion."}
+knitr::include_graphics("https://64.media.tumblr.com/dc9213b8b00a6f45cd4237783ec53bad/55f245f4c0a2d535-d6/s1280x1920/77ad17c4a4cf535b922d51416033313e210c0f16.gifv")
+```
+
+
+
+### Conti-nental Baggage
+
+**Nina's frequent puppet related prize tasks got a bit tedious and frustrating after the 3rd episode or so. This definitely added to my disappointment in the series.**
+
+Nina definitely did seem to adopt the Daisy May Cooper, Sanjeev Bhaskar method of using existing possessions in their house as prize task submissions. However **for Nina and her puppet heavy life, and under the Cooper-Bhaskar prize task method, puppets were many of the submissions and consequently there was little variation and consequential entertainment.**
+
+**What is frustrating as a Conti-stan is that we know that Nina is a highly creative individual and she could have brought in and even created great prizes if she spent a bit more time and effort on the submissions.** Maybe she was busy with more important things at this time?
+
+From the pre-recorded tasks, Nina has stated that she is less of a planner and this may also potentially explain her weak effort in the prize tasks. 
+
+Upon reflection, **Nina was a bit more meek and passive in the studio which may have also contributed to my disappointment in this series**; she rarely argued back with the Taskmaster, or showed some true passion and vocalised her opinion. Perhaps if Nina was a bit more vocal, she could have increased her points allocation and be crowned series champion...
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Nina grinning and bearing my harsh critique. Deep down, she may be crying."}
+knitr::include_graphics("https://64.media.tumblr.com/6730f13a12f9067b8cb250bfa8f7a9c6/55f245f4c0a2d535-d7/s1280x1920/b3a85eef4df1a960fc8dc6d643e45634e234ebc0.gifv")
+```
+
+
+### 🎶 Taskmaster, tasks to be done 🎶
+The tasks can of course make or break a series.
+
+Tasks have tended to beome more complex over the evolution of Taskmaster as highlighted by other fans (see [JamieDoesTV](https://youtu.be/a5SjiEqVm2Q?si=j2dMn6JfiZoJgxYz) for example). This series was no exception, with the Gregulator potentially being one of the most complex tasks in recent history. Such **overly complex tasks do impede the entertainment of the tasks and the show in general**; they can be harder to reproduce at home, and often require a lot of more concentration to fully understand what to do (particularly in the second screen society that we live in today). 
+
+My **biggest gripe with Taskmaster these days continues to be the over use of chance related studio tasks and winner takes all tasks**, see _"Nipple-Napkin-Knapsack-Knappett"_ and  _"snag a snake"_ tasks as good example of both. **These tasks significantly lower the amount of jeopardy in a series (particularly with strong contenders such as Chloe), and thus impede my enjoyment of them**. It is not particularly entertaining when a task is won by no to little skill, and was largerly random.
+
+If anyone from Taskmaster UK is reading this, I would really appreciate it if you stopped these tasks. I'm happy to provide my services to the UK production at a significantly discounted rate!
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "You have a lot to answer for..."}
+knitr::include_graphics("https://64.media.tumblr.com/2ff311ac9911b2937f95400735682265/37828cc24583b0d3-45/s1280x1920/9a19a474dbdb6ab80354da7312f2cfaec5d24a02.gifv")
+```
+
+### End on a positive...
+**Whilst Series 22 may not be my favourite and I'm unlikely to return to it with urgency, there were some moments of brilliance and overall silliness**:
+
+- Isy's baffling mind and the introduction of the Cutlery Plait and Lentil Piano to a global audience. 
+- Nina's distinct lewks between the episodes (aging rocker in the pre-records, 60s fashion model, glamorous librarian, glamorous ladies who lunch, Grecian queen).
+- The wholesome team dynamic of Nina and Isy (like two equally zany sisters who different in their own way).
+- Chloe frequently getting annoyed and arguing with Richard, especially with a significant lead
+- Richard asking if he can take the props used in the studio tasks home.
+- Matt asking if how the Taskmaster team were accounting for those who colourblind for the studio tasks.
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Not So Subtle Suttie was a particular highlight for the series for me."}
+knitr::include_graphics("https://64.media.tumblr.com/c302198ebb9bf1d992dde383a3dcc949/55f245f4c0a2d535-7f/s540x810/6ae4ca4c26ae13d65caff7c6f981a2a0e4bc8809.gifv")
+```
+
+
+
+# What Have We Learnt Today?
+
+```{r, out.width = "40%", fig.show = "hold", fig.cap = "Whenever you feel unsafe in this troubled world..."}
+knitr::include_graphics("https://64.media.tumblr.com/c5d1256ed6b0a38aeedf0efb9c6f5f2a/ab022932deed8ce0-d2/s1280x1920/6e206e6863a33053b7eeb30863c4a112e3f26a58.gifv")
+```
+
+
+:::{.infobox .today}
+We've learnt that:
+
+- **Chloe Petts is our Series 22 Champion!**
+    - _They will join Joanne Page (Series 21) for CoC-V; my money is on Chloe at this point._
+    - Chloe being crowned champion was not entire surprise and we could have called this from episode 5 onwards.
+- **Isy was awarded 5 points the most number of times by the Taskmaster and not by series champion Chloe Petts!**
+- Unsurprisingly, **Richard was awarded the most number of 0, 1 and 2 points by the Taskmaster,**
+- _Series 22 is not my favourite Taskmaster series, and one that I will not be returning to with immediate urgency._ But remember, there are no inherently bad series of Taskmsater, but there are some which are better than others.
+- **Even with a stressful relocation in the works, I have somehow managed to provide some commentary on this series. 5 points for me?**
+
+```{r, out.width = "30%", fig.show = "hold", fig.cap = "...fear not as the Taskmaster will always provide a safe place and reassurance."}
+greg_vec <- c("https://64.media.tumblr.com/64451a12eda5aed0d2e64c7cb4970995/ab022932deed8ce0-89/s1280x1920/577a73983a9fe2be0c464cd1d3224618b0786774.gifv",
+                 "https://64.media.tumblr.com/43b87352d0a649f86f9a7e5d33e843dc/ab022932deed8ce0-13/s1280x1920/a07cc4fb5321c31b7bbae09032124492e813a807.gifv",
+                 "https://64.media.tumblr.com/75002b546d06b8952d1f0156630a3721/ab022932deed8ce0-41/s1280x1920/bd9191f47b7677a4d6eb012332cf56f64ae5ef2f.gifv"
+                 )
+
+knitr::include_graphics(greg_vec)
+```
+
+:::
